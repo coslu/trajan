@@ -33,7 +33,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -115,10 +114,10 @@ fun App() {
                             .fillParentMaxWidth(0.9f),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TableTextItem(it.name, it.url, Modifier.width(150.dp))
-                        TableBoxItem(it.type, Modifier.weight(1f, false), Color.Gray)
-                        TableBoxItem(it.location, Modifier.weight(1f, false), Color.Blue)
-                        TableBoxItem(it.status.toString(), Modifier.weight(1f, false), Color.Green)
+                        JobName(it.name, it.url, Modifier.width(150.dp))
+                        JobProperty(it.type, Modifier.weight(1f, false), Color.Gray)
+                        JobProperty(it.location, Modifier.weight(1f, false))
+                        JobProperty(it.status.toString(), Modifier.weight(1f, false), Color.Green)
                     }
                     IconButton(
                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
@@ -126,7 +125,11 @@ fun App() {
                             //TODO
                         },
                     ) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color(0xFF546524))
+                        Icon(
+                            Icons.Filled.Edit,
+                            contentDescription = "Edit",
+                            tint = Color(0xFF546524)
+                        )
                     }
                 }
             }
@@ -135,7 +138,43 @@ fun App() {
 }
 
 @Composable
-fun TableTextItem(text: String, url: String, modifier: Modifier, fontWeight: FontWeight? = null) {
+fun JobProperty(text: String, modifier: Modifier, color: Color = Color(0)) {
+    val shadowSize = if (color.alpha != 0f) 5.dp else 0.dp
+    BoxWithConstraints(modifier = modifier) {
+        if (maxWidth < 150.dp) {
+            Row(modifier = Modifier.padding(start = 5.dp)) {
+                Box(
+                    modifier = Modifier.shadow(shadowSize, RoundedCornerShape(50))
+                        .background(color, RoundedCornerShape(50)).size(40.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text.first().toString(),
+                    )
+                }
+            }
+        } else {
+            Row(modifier = Modifier.padding(start = 10.dp)) {
+                Box(
+                    modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
+                        .background(color, shape = RoundedCornerShape(30))
+                        .wrapContentWidth(), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text,
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun JobName(text: String, url: String, modifier: Modifier) {
     val uriHandler = LocalUriHandler.current
     val annotatedText = buildAnnotatedString {
         append("$text ")
@@ -164,46 +203,10 @@ fun TableTextItem(text: String, url: String, modifier: Modifier, fontWeight: Fon
             Text(
                 annotatedText,
                 inlineContent = inlineContent,
-                fontWeight = fontWeight,
                 modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-        }
-    }
-}
-
-@Composable
-fun TableBoxItem(text: String, modifier: Modifier, color: Color) {
-    BoxWithConstraints(modifier = modifier) {
-        if (maxWidth < 150.dp) {
-            Row(modifier = Modifier.padding(start = 5.dp)) {
-                Box(
-                    modifier = Modifier.shadow(5.dp, RoundedCornerShape(50))
-                        .background(color, RoundedCornerShape(50)).size(40.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text.first().toString(),
-                    )
-                }
-            }
-        } else {
-            Row(modifier = Modifier.padding(start = 10.dp)) {
-                Box(
-                    modifier = Modifier.shadow(5.dp, RoundedCornerShape(30))
-                        .background(color, shape = RoundedCornerShape(30))
-                        .wrapContentWidth(), contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text,
-                        modifier = Modifier
-                            .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
         }
     }
 }
