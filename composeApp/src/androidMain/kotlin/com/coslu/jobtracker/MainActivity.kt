@@ -1,13 +1,9 @@
 package com.coslu.jobtracker
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -36,10 +32,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             App()
         }
-    }
-
-    fun start(intent: Intent) {
-
     }
 }
 
