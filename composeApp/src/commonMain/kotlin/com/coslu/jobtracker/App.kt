@@ -16,7 +16,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,10 +55,11 @@ fun App() {
     ) {
         val list = remember { fetchJobList().toMutableStateList() }
         var showDialog by remember { mutableStateOf(false) }
+        var selectedJob by remember { mutableStateOf<Job?>(null) }
         Scaffold {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (showDialog) {
-                    JobDialog(onDismissRequest = { showDialog = false }, list)
+                    JobDialog(onDismissRequest = { showDialog = false }, list, selectedJob)
                 }
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     items(list) {
@@ -79,7 +85,8 @@ fun App() {
                             IconButton(
                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                                 onClick = {
-                                    //TODO
+                                    selectedJob = it
+                                    showDialog = true
                                 },
                             ) {
                                 Icon(
@@ -94,6 +101,7 @@ fun App() {
                 Button(
                     modifier = Modifier.wrapContentHeight().padding(top = 10.dp, bottom = 10.dp),
                     onClick = {
+                        selectedJob = null
                         showDialog = true
                     }
                 ) {

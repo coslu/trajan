@@ -46,6 +46,10 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.baseline_open_in_new_24
 import org.jetbrains.compose.resources.painterResource
 
+/**
+ * This file defines UI components for handling Jobs
+ */
+
 @Composable
 fun JobProperty(text: String, modifier: Modifier, color: Color = Color(0)) {
     val shadowSize = if (color.alpha != 0f) 5.dp else 0.dp
@@ -204,7 +208,7 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
                         TextButton(
                             onClick = {
                                 if (job != null) {
-                                    //TODO
+                                    list[list.indexOf(job)] = Job(name, url, type, location, status)
                                 } else {
                                     list.add(0, Job(name, url, type, location, status))
                                 }
