@@ -3,6 +3,7 @@ package com.coslu.jobtracker
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,10 +56,11 @@ fun App() {
         colors = colors
     ) {
         val list = remember { fetchJobList().toMutableStateList() }
+        val propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         var showDialog by remember { mutableStateOf(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         Scaffold {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 if (showDialog) {
                     JobDialog(onDismissRequest = { showDialog = false }, list, selectedJob)
                 }
@@ -74,13 +77,9 @@ fun App() {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 JobName(it.name, it.url, Modifier.width(180.dp))
-                                JobProperty(it.type, Modifier.weight(1f, false), Color.Gray)
-                                JobProperty(it.location, Modifier.weight(1f, false))
-                                JobProperty(
-                                    it.status.toString(),
-                                    Modifier.weight(1f, false),
-                                    Color.Green
-                                )
+                                JobProperty(it.type, Modifier.weight(1f, false), propertyColors)
+                                JobProperty(it.location, Modifier.weight(1f, false), propertyColors)
+                                JobProperty(it.status.toString(), Modifier.weight(1f, false), propertyColors)
                             }
                             IconButton(
                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),

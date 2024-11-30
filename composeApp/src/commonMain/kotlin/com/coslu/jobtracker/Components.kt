@@ -1,19 +1,27 @@
 package com.coslu.jobtracker
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.Card
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
@@ -32,6 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -43,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.baseline_block_24
 import job_tracker.composeapp.generated.resources.baseline_open_in_new_24
 import org.jetbrains.compose.resources.painterResource
 
@@ -51,18 +62,50 @@ import org.jetbrains.compose.resources.painterResource
  */
 
 @Composable
-fun JobProperty(text: String, modifier: Modifier, color: Color = Color(0)) {
-    val shadowSize = if (color.alpha != 0f) 5.dp else 0.dp
-    BoxWithConstraints(modifier = modifier) {
+fun JobProperty(
+    property: String,
+    modifier: Modifier,
+    propertyColors: MutableMap<String, PropertyColor>
+) {
+    val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
+    val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
+    var showColorPicker by remember { mutableStateOf(false) }
+    BoxWithConstraints(modifier = modifier.pointerHoverIcon(PointerIcon.Hand)) {
+        DropdownMenu(showColorPicker, { showColorPicker = false }) {
+            Column(Modifier.height(150.dp).width(300.dp)) {
+                LazyVerticalGrid(GridCells.Fixed(6)) {
+                    items(PropertyColor.entries.toTypedArray()) {
+                        IconButton(
+                            onClick = {
+                                propertyColors[property] = it
+                                savePropertyColors(propertyColors.toList())
+                                showColorPicker = false
+                            },
+                            modifier = Modifier.padding(5.dp)
+                                .background(it.color, shape = CircleShape).size(40.dp)
+                        ) {
+                            if (it.color.alpha == 0f)
+                                Icon(
+                                    painterResource(Res.drawable.baseline_block_24),
+                                    null,
+                                    tint = Color.LightGray
+                                )
+                        }
+                    }
+                }
+            }
+
+        }
         if (maxWidth < 150.dp) {
             Row(modifier = Modifier.padding(start = 5.dp)) {
                 Box(
                     modifier = Modifier.shadow(shadowSize, RoundedCornerShape(50))
-                        .background(color, RoundedCornerShape(50)).size(40.dp),
+                        .background(propertyColor.color, RoundedCornerShape(50)).size(40.dp)
+                        .clickable { showColorPicker = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text.first().toString(),
+                        property.first().toString(), color = propertyColor.textColor
                     )
                 }
             }
@@ -70,15 +113,17 @@ fun JobProperty(text: String, modifier: Modifier, color: Color = Color(0)) {
             Row(modifier = Modifier.padding(start = 10.dp)) {
                 Box(
                     modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
-                        .background(color, shape = RoundedCornerShape(30))
-                        .wrapContentWidth(), contentAlignment = Alignment.Center
+                        .background(propertyColor.color, shape = RoundedCornerShape(30))
+                        .wrapContentWidth().clickable { showColorPicker = true },
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text,
+                        property,
                         modifier = Modifier
                             .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        color = propertyColor.textColor
                     )
                 }
             }
@@ -138,7 +183,13 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 val modifier = Modifier.padding(top = 10.dp, bottom = 10.dp).fillMaxWidth(0.8f)
-                Text(title, modifier = modifier.padding(top = 10.dp), textAlign = TextAlign.Start, color = colors.primary, fontWeight = FontWeight.Bold)
+                Text(
+                    title,
+                    modifier = modifier.padding(top = 10.dp),
+                    textAlign = TextAlign.Start,
+                    color = colors.primary,
+                    fontWeight = FontWeight.Bold
+                )
                 TextField(
                     value = name,
                     label = { Text("Company Name") },
@@ -169,7 +220,7 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
                 )
                 ExposedDropdownMenuBox(
                     expanded = expandStatusMenu,
-                    onExpandedChange = {expandStatusMenu = !expandStatusMenu},
+                    onExpandedChange = { expandStatusMenu = !expandStatusMenu },
                 ) {
                     TextField(
                         value = status.statusText,
@@ -181,7 +232,7 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
                             Icon(Icons.Filled.ArrowDropDown, null)
                         }
                     )
-                    ExposedDropdownMenu(expandStatusMenu, {expandStatusMenu = false}) {
+                    ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
                         Status.entries.forEach {
                             DropdownMenuItem(
                                 onClick = {

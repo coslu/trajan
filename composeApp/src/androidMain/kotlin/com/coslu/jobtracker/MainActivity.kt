@@ -8,7 +8,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.io.FileNotFoundException
 
 
 lateinit var dir: File
@@ -16,13 +15,25 @@ lateinit var dir: File
 actual fun fetchJobList(): List<Job> {
     return try {
         Json.decodeFromString<MutableList<Job>>(File(dir, "jobs.txt").readText())
-    } catch (ex: FileNotFoundException) {
+    } catch (ex: Exception) {
         listOf()
     }
 }
 
 actual fun saveJobList(list: List<Job>) {
     File(dir,"jobs.txt").writeText(Json.encodeToString(list))
+}
+
+actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
+    return try {
+        Json.decodeFromString<List<Pair<String, PropertyColor>>>(File(dir,"jobs.txt").readText())
+    } catch (ex: Exception) {
+        defaultStatusColors
+    }
+}
+
+actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
+    File(dir,"colors.json").writeText(Json.encodeToString(map))
 }
 
 class MainActivity : ComponentActivity() {

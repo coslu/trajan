@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 enum class Status(val statusText: String) {
     @SerialName("Pending Application")
-    PENDING_APPLICATION("Pending"),
+    PENDING_APPLICATION("Pending Application"),
 
     @SerialName("Awaiting Response")
     AWAITING_RESPONSE("Awaiting Response"),
@@ -39,3 +39,7 @@ data class Job(
 expect fun fetchJobList(): List<Job>
 
 expect fun saveJobList(list: List<Job>)
+
+expect fun fetchPropertyColors(): List<Pair<String, PropertyColor>>
+
+expect fun savePropertyColors(map: List<Pair<String, PropertyColor>>)

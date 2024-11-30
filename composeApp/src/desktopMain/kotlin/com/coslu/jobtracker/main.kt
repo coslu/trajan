@@ -5,7 +5,6 @@ import androidx.compose.ui.window.application
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.io.FileNotFoundException
 
 fun main() = application {
     Window(
@@ -18,12 +17,24 @@ fun main() = application {
 
 actual fun fetchJobList(): List<Job> {
     return try {
-        Json.decodeFromString<MutableList<Job>>(File("jobs.txt").readText())
-    } catch (ex: FileNotFoundException) {
+        Json.decodeFromString<MutableList<Job>>(File("jobs.json").readText())
+    } catch (ex: Exception) {
         listOf()
     }
 }
 
 actual fun saveJobList(list: List<Job>) {
-    File("jobs.txt").writeText(Json.encodeToString(list))
+    File("jobs.json").writeText(Json.encodeToString(list))
+}
+
+actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
+    return try {
+        Json.decodeFromString<List<Pair<String, PropertyColor>>>(File("colors.json").readText())
+    } catch (ex: Exception) {
+        defaultStatusColors
+    }
+}
+
+actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
+    File("colors.json").writeText(Json.encodeToString(map))
 }

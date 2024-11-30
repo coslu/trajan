@@ -18,3 +18,11 @@ actual fun fetchJobList(): List<Job> {
 actual fun saveJobList(list: List<Job>) {
     //TODO
 }
+
+actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
+    return listOf() //TODO
+}
+
+actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
+    //TODO
+}
