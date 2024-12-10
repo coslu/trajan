@@ -105,8 +105,15 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.coslu.jobtracker"
+            packageName = "Trajan"
             packageVersion = "1.0.0"
+            description = "Tracking Assistant for Job Applications"
+            vendor = "Coslu"
+            licenseFile.set(project.file("../LICENSE"))
+            val icons = project.file("src/commonMain/composeResources/drawable")
+            windows{
+                iconFile.set(icons.resolve("icon-windows.ico"))
+            }
         }
     }
 }

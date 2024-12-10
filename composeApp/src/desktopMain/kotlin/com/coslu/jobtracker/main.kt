@@ -2,14 +2,18 @@ package com.coslu.jobtracker
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.icon_linux
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.compose.resources.painterResource
 import java.io.File
 
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
-        title = "job-tracker",
+        title = "Trajan",
+        icon = painterResource(Res.drawable.icon_linux)
     ) {
         App()
     }
