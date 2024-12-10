@@ -14,19 +14,19 @@ lateinit var dir: File
 
 actual fun fetchJobList(): List<Job> {
     return try {
-        Json.decodeFromString<MutableList<Job>>(File(dir, "jobs.txt").readText())
+        Json.decodeFromString<MutableList<Job>>(File(dir, "jobs.json").readText())
     } catch (ex: Exception) {
         listOf()
     }
 }
 
 actual fun saveJobList(list: List<Job>) {
-    File(dir,"jobs.txt").writeText(Json.encodeToString(list))
+    File(dir,"jobs.json").writeText(Json.encodeToString(list))
 }
 
 actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
     return try {
-        Json.decodeFromString<List<Pair<String, PropertyColor>>>(File(dir,"jobs.txt").readText())
+        Json.decodeFromString<List<Pair<String, PropertyColor>>>(File(dir,"colors.json").readText())
     } catch (ex: Exception) {
         defaultStatusColors
     }
