@@ -1,5 +1,5 @@
 <div align="center" style="margin-bottom: 20px">
-  <img src="./icon-with-name.png" alt="Thunder" width="400">
+  <img src="icon.png" alt="Thunder" width="400">
 </div>
 
 Tracking Assistant for Job Applications (Trajan) is a free open-source 
