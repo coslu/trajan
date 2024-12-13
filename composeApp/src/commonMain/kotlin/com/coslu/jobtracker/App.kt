@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
@@ -49,20 +50,28 @@ val colors = Colors(
     isLight = true
 )
 
+lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
+
 @Composable
 @Preview
 fun App() {
     MaterialTheme(
         colors = colors
     ) {
+        val locations = mutableMapOf<String, Int>()
+        val types = mutableMapOf<String, Int>()
         val list = remember { fetchJobList().toMutableStateList() }
-        val propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
+        list.forEach {
+            locations[it.location] = locations[it.location]?.plus(1) ?: 1
+            types[it.type] = types[it.type]?.plus(1) ?: 1
+        }
+        propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         var showDialog by remember { mutableStateOf(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         Scaffold {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 if (showDialog) {
-                    JobDialog(onDismissRequest = { showDialog = false }, list, selectedJob)
+                    JobDialog(onDismissRequest = { showDialog = false }, list, selectedJob, locations, types)
                 }
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     items(list) {
@@ -77,9 +86,9 @@ fun App() {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 JobName(it.name, it.url, Modifier.width(180.dp))
-                                JobProperty(it.type, Modifier.weight(1f, false), propertyColors)
-                                JobProperty(it.location, Modifier.weight(1f, false), propertyColors)
-                                JobProperty(it.status.toString(), Modifier.weight(1f, false), propertyColors)
+                                JobProperty(it.type, Modifier.weight(1f, false))
+                                JobProperty(it.location, Modifier.weight(1f, false))
+                                JobProperty(it.status.toString(), Modifier.weight(1f, false))
                             }
                             IconButton(
                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),

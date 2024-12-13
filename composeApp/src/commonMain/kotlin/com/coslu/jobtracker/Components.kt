@@ -31,6 +31,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.PopupProperties
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.baseline_block_24
 import job_tracker.composeapp.generated.resources.baseline_open_in_new_24
@@ -65,10 +67,7 @@ import org.jetbrains.compose.resources.painterResource
 fun JobProperty(
     property: String,
     modifier: Modifier,
-    propertyColors: MutableMap<String, PropertyColor>
 ) {
-    val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
-    val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
     var showColorPicker by remember { mutableStateOf(false) }
     BoxWithConstraints(modifier = modifier.pointerHoverIcon(PointerIcon.Hand)) {
         DropdownMenu(showColorPicker, { showColorPicker = false }) {
@@ -96,38 +95,10 @@ fun JobProperty(
             }
 
         }
-        if (maxWidth < 150.dp) {
-            Row(modifier = Modifier.padding(start = 5.dp)) {
-                Box(
-                    modifier = Modifier.shadow(shadowSize, RoundedCornerShape(50))
-                        .background(propertyColor.color, RoundedCornerShape(50)).size(40.dp)
-                        .clickable { showColorPicker = true },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        property.first().toString(), color = propertyColor.textColor
-                    )
-                }
-            }
-        } else {
-            Row(modifier = Modifier.padding(start = 10.dp)) {
-                Box(
-                    modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
-                        .background(propertyColor.color, shape = RoundedCornerShape(30))
-                        .wrapContentWidth().clickable { showColorPicker = true },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        property,
-                        modifier = Modifier
-                            .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = propertyColor.textColor
-                    )
-                }
-            }
-        }
+        if (maxWidth < 150.dp)
+            SmallProperty(property) { showColorPicker = true }
+        else
+            BigProperty(property) { showColorPicker = true }
     }
 }
 
@@ -170,11 +141,17 @@ fun JobName(text: String, url: String, modifier: Modifier) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: Job? = null) {
+fun JobDialog(
+    onDismissRequest: () -> Unit,
+    list: SnapshotStateList<Job>,
+    job: Job? = null,
+    locations: Map<String, Int>,
+    types: Map<String, Int>
+) {
     var name by remember { mutableStateOf(job?.name ?: "") }
     var url by remember { mutableStateOf(job?.url ?: "") }
-    var location by remember { mutableStateOf(job?.location ?: "") }
-    var type by remember { mutableStateOf(job?.type ?: "") }
+    val location = mutableStateOf(job?.location ?: "")
+    val type = mutableStateOf(job?.type ?: "")
     var status by remember { mutableStateOf(job?.status ?: Status.PENDING_APPLICATION) }
     val buttonText = if (job != null) "Save Changes" else "Add Job"
     val title = if (job != null) "Edit Job" else "New Job"
@@ -204,20 +181,8 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
                     onValueChange = { url = it },
                     singleLine = true
                 )
-                TextField(
-                    value = type,
-                    label = { Text("Type/Title of Work") },
-                    modifier = modifier,
-                    onValueChange = { type = it },
-                    singleLine = true
-                )
-                TextField(
-                    value = location,
-                    label = { Text("Job Location") },
-                    modifier = modifier,
-                    onValueChange = { location = it },
-                    singleLine = true
-                )
+                AutoCompleteTextField(type, modifier, types, "Type of Work")
+                AutoCompleteTextField(location, modifier, locations, "Location")
                 ExposedDropdownMenuBox(
                     expanded = expandStatusMenu,
                     onExpandedChange = { expandStatusMenu = !expandStatusMenu },
@@ -234,13 +199,14 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
                     )
                     ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
                         Status.entries.forEach {
+                            val onClick = {
+                                status = it
+                                expandStatusMenu = false
+                            }
                             DropdownMenuItem(
-                                onClick = {
-                                    status = it
-                                    expandStatusMenu = false
-                                }
+                                onClick = onClick
                             ) {
-                                Text(it.statusText)
+                                BigProperty(it.statusText, onClick)
                             }
                         }
                     }
@@ -259,9 +225,10 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
                         TextButton(
                             onClick = {
                                 if (job != null) {
-                                    list[list.indexOf(job)] = Job(name, url, type, location, status)
+                                    list[list.indexOf(job)] =
+                                        Job(name, url, type.value, location.value, status)
                                 } else {
-                                    list.add(0, Job(name, url, type, location, status))
+                                    list.add(0, Job(name, url, type.value, location.value, status))
                                 }
                                 saveJobList(list)
                                 onDismissRequest()
@@ -270,6 +237,97 @@ fun JobDialog(onDismissRequest: () -> Unit, list: SnapshotStateList<Job>, job: J
                             Text(buttonText)
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun BigProperty(property: String, onClick: () -> Unit = {}) {
+    val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
+    val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
+    Row(modifier = Modifier.padding(start = 5.dp, end = 5.dp)) {
+        Box(
+            modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
+                .background(propertyColor.color, shape = RoundedCornerShape(30))
+                .wrapContentWidth().clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                property,
+                modifier = Modifier
+                    .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = propertyColor.textColor
+            )
+        }
+    }
+}
+
+@Composable
+fun SmallProperty(property: String, onClick: () -> Unit = {}) {
+    val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
+    val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
+    Row(modifier = Modifier.padding(start = 5.dp)) {
+        Box(
+            modifier = Modifier.shadow(shadowSize, RoundedCornerShape(50))
+                .background(propertyColor.color, RoundedCornerShape(50)).size(40.dp)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                property.first().toString(), color = propertyColor.textColor
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun AutoCompleteTextField(
+    value: MutableState<String>,
+    modifier: Modifier,
+    autoCompleteMap: Map<String, Int>,
+    label: String
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var text by remember { value }
+    val list = autoCompleteMap.toList().sortedByDescending { it.second }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+    ) {
+        TextField(
+            value = text,
+            label = { Text(label) },
+            modifier = modifier,
+            onValueChange = {
+                text = it
+                expanded = true
+            },
+            singleLine = true
+        )
+        DropdownMenu(
+            expanded,
+            { expanded = false },
+            properties = PopupProperties(focusable = false)
+        ) {
+            list.filter {
+                it.first.startsWith(
+                    text,
+                    ignoreCase = true
+                ) && it.first.isNotEmpty()
+            }.take(3).forEach {
+                DropdownMenuItem(onClick = {
+                    text = it.first
+                    expanded = false
+                }) {
+                    BigProperty(it.first, onClick = {
+                        text = it.first
+                        expanded = false
+                    })
                 }
             }
         }
