@@ -13,6 +13,8 @@ import androidx.compose.material.Colors
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -21,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
@@ -30,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -49,6 +53,9 @@ val colors = Colors(
     isLight = true
 )
 
+lateinit var snackbarHostState: SnackbarHostState
+lateinit var coroutineScope: CoroutineScope
+
 @Composable
 @Preview
 fun App() {
@@ -59,7 +66,9 @@ fun App() {
         val propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         var showDialog by remember { mutableStateOf(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
-        Scaffold {
+        coroutineScope = rememberCoroutineScope()
+        snackbarHostState = remember { SnackbarHostState() }
+        Scaffold(snackbarHost = {SnackbarHost(hostState = snackbarHostState)}) {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 if (showDialog) {
                     JobDialog(onDismissRequest = { showDialog = false }, list, selectedJob)

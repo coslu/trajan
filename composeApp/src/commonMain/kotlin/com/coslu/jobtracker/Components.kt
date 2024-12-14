@@ -55,6 +55,7 @@ import androidx.compose.ui.window.Dialog
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.baseline_block_24
 import job_tracker.composeapp.generated.resources.baseline_open_in_new_24
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 /**
@@ -105,11 +106,11 @@ fun JobProperty(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        property.first().toString(), color = propertyColor.textColor
+                        property.firstOrNull()?.toString() ?: "", color = propertyColor.textColor
                     )
                 }
             }
-        } else {
+        } else if (property.isNotEmpty()) {
             Row(modifier = Modifier.padding(start = 10.dp)) {
                 Box(
                     modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
@@ -152,18 +153,33 @@ fun JobName(text: String, url: String, modifier: Modifier) {
             })
     )
     Row(modifier = modifier) {
-        TextButton(
-            onClick = {
-                uriHandler.openUri(url)
-            }
-        ) {
-            Text(
-                annotatedText,
-                inlineContent = inlineContent,
+        if (url.isBlank()) {
+            TextButtonStyledText(
+                text,
                 modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+        } else {
+            TextButton(
+                onClick = {
+                    try {
+                        uriHandler.openUri(url)
+                    } catch (e: Exception) {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("The URL is invalid or can't be handled by the system")
+                        }
+                    }
+                }
+            ) {
+                Text(
+                    annotatedText,
+                    inlineContent = inlineContent,
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
