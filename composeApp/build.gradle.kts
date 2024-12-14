@@ -19,9 +19,9 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm("desktop")
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -41,10 +41,10 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -77,7 +77,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
     }
     packaging {
         resources {
@@ -87,6 +87,12 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+        }
+        release {
+            isDebuggable = false
+        }
+        debug {
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -111,8 +117,12 @@ compose.desktop {
             vendor = "Coslu"
             licenseFile.set(project.file("../LICENSE"))
             val icons = project.file("src/commonMain/composeResources/drawable")
-            windows{
+            windows {
                 iconFile.set(icons.resolve("icon-windows.ico"))
+                upgradeUuid = "0AC1BD47-4C11-4D95-8CB9-F0F06302A8EA"
+            }
+            linux {
+                iconFile.set(icons.resolve("icon-linux.png"))
             }
         }
     }
