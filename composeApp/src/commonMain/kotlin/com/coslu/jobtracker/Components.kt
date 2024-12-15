@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -71,7 +72,7 @@ fun JobProperty(
     val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
     val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
     var showColorPicker by remember { mutableStateOf(false) }
-    BoxWithConstraints(modifier = modifier.pointerHoverIcon(PointerIcon.Hand)) {
+    BoxWithConstraints(modifier = modifier) {
         DropdownMenu(showColorPicker, { showColorPicker = false }) {
             Column(Modifier.height(150.dp).width(300.dp)) {
                 LazyVerticalGrid(GridCells.Fixed(6)) {
@@ -98,16 +99,22 @@ fun JobProperty(
 
         }
         if (maxWidth < 150.dp) {
-            Row(modifier = Modifier.padding(start = 5.dp)) {
-                Box(
-                    modifier = Modifier.shadow(shadowSize, RoundedCornerShape(50))
-                        .background(propertyColor.color, RoundedCornerShape(50)).size(40.dp)
-                        .clickable { showColorPicker = true },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        property.firstOrNull()?.toString() ?: "", color = propertyColor.textColor
-                    )
+            if (property.isEmpty())
+                Spacer(Modifier.size(45.dp))
+            else {
+                Row(modifier = Modifier.padding(start = 5.dp)) {
+                    Box(
+                        modifier = Modifier.shadow(shadowSize, RoundedCornerShape(50))
+                            .background(propertyColor.color, RoundedCornerShape(50)).size(40.dp)
+                            .clickable { showColorPicker = true }
+                            .pointerHoverIcon(PointerIcon.Hand),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            property.first().toString(),
+                            color = propertyColor.textColor
+                        )
+                    }
                 }
             }
         } else if (property.isNotEmpty()) {
@@ -115,7 +122,8 @@ fun JobProperty(
                 Box(
                     modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
                         .background(propertyColor.color, shape = RoundedCornerShape(30))
-                        .wrapContentWidth().clickable { showColorPicker = true },
+                        .wrapContentWidth().clickable { showColorPicker = true }
+                        .pointerHoverIcon(PointerIcon.Hand),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
