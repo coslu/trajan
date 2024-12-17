@@ -9,32 +9,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
-
-lateinit var dir: File
-
-actual fun fetchJobList(): List<Job> {
-    return try {
-        Json.decodeFromString<MutableList<Job>>(File(dir, "jobs.json").readText())
-    } catch (ex: Exception) {
-        listOf()
-    }
-}
-
-actual fun saveJobList(list: List<Job>) {
-    File(dir,"jobs.json").writeText(Json.encodeToString(list))
-}
-
-actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
-    return try {
-        Json.decodeFromString<List<Pair<String, PropertyColor>>>(File(dir,"colors.json").readText())
-    } catch (ex: Exception) {
-        defaultStatusColors
-    }
-}
-
-actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
-    File(dir,"colors.json").writeText(Json.encodeToString(map))
-}
+private lateinit var dir: File
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,4 +25,38 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppAndroidPreview() {
     App()
+}
+
+actual fun fetchJobList(): List<Job> {
+    return try {
+        Json.decodeFromString<MutableList<Job>>(File(dir, "jobs.json").readText())
+    } catch (ex: Exception) {
+        listOf()
+    }
+}
+
+actual fun saveJobList(list: List<Job>) {
+    try {
+        File(dir, "jobs.json").writeText(Json.encodeToString(list))
+    } catch (e: Exception) {
+        showSnackbar("Error when saving file: '${e.message}'")
+    }
+}
+
+actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
+    return try {
+        Json.decodeFromString<List<Pair<String, PropertyColor>>>(
+            File(dir, "colors.json").readText()
+        )
+    } catch (ex: Exception) {
+        defaultStatusColors
+    }
+}
+
+actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
+    try {
+        File(dir, "colors.json").writeText(Json.encodeToString(map))
+    } catch (e: Exception) {
+        showSnackbar("Error when saving file: '${e.message}'")
+    }
 }

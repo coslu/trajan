@@ -34,9 +34,11 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
+const val versionName = "1.0.0"
 val colors = Colors(
     primary = Color(0xFF546524),
     primaryVariant = Color(0xFFD7EB9B),
@@ -53,8 +55,8 @@ val colors = Colors(
     isLight = true
 )
 
-lateinit var snackbarHostState: SnackbarHostState
-lateinit var coroutineScope: CoroutineScope
+private lateinit var snackbarHostState: SnackbarHostState
+private lateinit var coroutineScope: CoroutineScope
 
 @Composable
 @Preview
@@ -68,8 +70,11 @@ fun App() {
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
         snackbarHostState = remember { SnackbarHostState() }
-        Scaffold(snackbarHost = {SnackbarHost(hostState = snackbarHostState)}) {
-            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 if (showDialog) {
                     JobDialog(onDismissRequest = { showDialog = false }, list, selectedJob)
                 }
@@ -88,7 +93,11 @@ fun App() {
                                 JobName(it.name, it.url, Modifier.width(180.dp))
                                 JobProperty(it.type, Modifier.weight(1f, false), propertyColors)
                                 JobProperty(it.location, Modifier.weight(1f, false), propertyColors)
-                                JobProperty(it.status.toString(), Modifier.weight(1f, false), propertyColors)
+                                JobProperty(
+                                    it.status.toString(),
+                                    Modifier.weight(1f, false),
+                                    propertyColors
+                                )
                             }
                             IconButton(
                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
@@ -120,3 +129,6 @@ fun App() {
         }
     }
 }
+
+fun showSnackbar(message: String) =
+    coroutineScope.launch { snackbarHostState.showSnackbar(message) }

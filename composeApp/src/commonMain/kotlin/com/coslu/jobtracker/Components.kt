@@ -56,7 +56,6 @@ import androidx.compose.ui.window.Dialog
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.baseline_block_24
 import job_tracker.composeapp.generated.resources.baseline_open_in_new_24
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 /**
@@ -174,9 +173,7 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                     try {
                         uriHandler.openUri(url)
                     } catch (e: Exception) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("The URL is invalid or can't be handled by the system")
-                        }
+                        showSnackbar("The URL is invalid or can't be handled by the system")
                     }
                 }
             ) {

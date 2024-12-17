@@ -1,3 +1,4 @@
+import org.gradle.internal.extensions.core.extra
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -76,8 +77,8 @@ android {
         applicationId = "com.coslu.jobtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = rootProject.extra["versionCode"] as Int
+        versionName = rootProject.extra["versionName"] as String
     }
     packaging {
         resources {
@@ -112,7 +113,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Trajan"
-            packageVersion = "1.0.0"
+            packageVersion = rootProject.extra["versionName"] as String
             description = "Tracking Assistant for Job Applications"
             vendor = "Coslu"
             licenseFile.set(project.file("../LICENSE"))
