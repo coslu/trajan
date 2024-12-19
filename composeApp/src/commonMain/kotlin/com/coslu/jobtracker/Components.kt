@@ -70,7 +70,7 @@ fun JobProperty(
     modifier: Modifier,
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
-    BoxWithConstraints(modifier = modifier) {
+    BoxWithConstraints(modifier = modifier.pointerHoverIcon(PointerIcon.Hand)) {
         DropdownMenu(showColorPicker, { showColorPicker = false }) {
             Column(Modifier.height(150.dp).width(300.dp)) {
                 LazyVerticalGrid(GridCells.Fixed(6)) {
@@ -99,7 +99,7 @@ fun JobProperty(
         if (maxWidth < 150.dp)
             SmallProperty(property) { showColorPicker = true }
         else if (property.isNotEmpty())
-            BigProperty(property) { showColorPicker = true }
+            BigProperty(property, clickable = true) { showColorPicker = true }
     }
 }
 
@@ -213,14 +213,13 @@ fun JobDialog(
                     )
                     ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
                         Status.entries.forEach {
-                            val onClick = {
-                                status = it
-                                expandStatusMenu = false
-                            }
                             DropdownMenuItem(
-                                onClick = onClick
+                                onClick = {
+                                    status = it
+                                    expandStatusMenu = false
+                                }
                             ) {
-                                BigProperty(it.statusText, onClick)
+                                BigProperty(it.statusText)
                             }
                         }
                     }
@@ -258,14 +257,17 @@ fun JobDialog(
 }
 
 @Composable
-fun BigProperty(property: String, onClick: () -> Unit = {}) {
+fun BigProperty(property: String, clickable: Boolean = false, onClick: () -> Unit = {}) {
     val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
     val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
     Row(modifier = Modifier.padding(start = 5.dp, end = 5.dp)) {
+        var modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
+            .background(propertyColor.color, shape = RoundedCornerShape(30))
+            .wrapContentWidth()
+        if (clickable)
+            modifier = modifier.clickable(onClick = onClick)
         Box(
-            modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
-                .background(propertyColor.color, shape = RoundedCornerShape(30))
-                .wrapContentWidth().clickable(onClick = onClick),
+            modifier = modifier,
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -343,10 +345,7 @@ fun AutoCompleteTextField(
                     text = it.first
                     expanded = false
                 }) {
-                    BigProperty(it.first, onClick = {
-                        text = it.first
-                        expanded = false
-                    })
+                    BigProperty(it.first)
                 }
             }
         }
