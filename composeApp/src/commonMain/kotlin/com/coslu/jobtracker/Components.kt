@@ -47,8 +47,10 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -315,17 +317,19 @@ fun AutoCompleteTextField(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var text by remember { value }
+    var textFileValue by remember { mutableStateOf(TextFieldValue(text)) }
     val list = autoCompleteMap.toList().sortedByDescending { it.second }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
         TextField(
-            value = text,
+            value = textFileValue,
             label = { Text(label) },
             modifier = modifier,
             onValueChange = {
-                text = it
+                textFileValue = it
+                text = it.text
                 expanded = true
             },
             singleLine = true
@@ -337,12 +341,13 @@ fun AutoCompleteTextField(
         ) {
             list.filter {
                 it.first.startsWith(
-                    text,
+                    textFileValue.text,
                     ignoreCase = true
                 ) && it.first.isNotEmpty()
             }.take(3).forEach {
                 DropdownMenuItem(onClick = {
                     text = it.first
+                    textFileValue = TextFieldValue(text, selection = TextRange(text.length))
                     expanded = false
                 }) {
                     BigProperty(it.first)
