@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -169,87 +170,107 @@ fun JobDialog(
     val location = mutableStateOf(job?.location ?: "")
     val type = mutableStateOf(job?.type ?: "")
     var status by remember { mutableStateOf(job?.status ?: Status.PENDING_APPLICATION) }
-    val buttonText = if (job != null) "Save Changes" else "Add Job"
+    val buttonText = if (job != null) "Save" else "Add Job"
     val title = if (job != null) "Edit Job" else "New Job"
     var expandStatusMenu by remember { mutableStateOf(false) }
     Dialog(onDismissRequest = onDismissRequest) {
         Card(modifier = Modifier.fillMaxWidth()) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
                 val modifier = Modifier.padding(top = 10.dp, bottom = 10.dp).fillMaxWidth(0.8f)
-                Text(
-                    title,
-                    modifier = modifier.padding(top = 10.dp),
-                    textAlign = TextAlign.Start,
-                    color = colors.primary,
-                    fontWeight = FontWeight.Bold
-                )
-                TextField(
-                    value = name,
-                    label = { Text("Company Name") },
-                    modifier = modifier,
-                    onValueChange = { name = it },
-                    singleLine = true
-                )
-                TextField(
-                    value = url,
-                    label = { Text("URL of Job Posting") },
-                    modifier = modifier,
-                    onValueChange = { url = it },
-                    singleLine = true
-                )
-                AutoCompleteTextField(type, modifier, types, "Type of Work")
-                AutoCompleteTextField(location, modifier, locations, "Location")
-                ExposedDropdownMenuBox(
-                    expanded = expandStatusMenu,
-                    onExpandedChange = { expandStatusMenu = !expandStatusMenu },
-                ) {
-                    TextField(
-                        value = status.statusText,
-                        label = { Text("Application Status") },
-                        readOnly = true,
-                        modifier = modifier,
-                        onValueChange = {},
-                        trailingIcon = {
-                            Icon(Icons.Filled.ArrowDropDown, null)
-                        }
+                item {
+                    Text(
+                        title,
+                        modifier = modifier.padding(top = 10.dp),
+                        textAlign = TextAlign.Start,
+                        color = colors.primary,
+                        fontWeight = FontWeight.Bold
                     )
-                    ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
-                        Status.entries.forEach {
-                            DropdownMenuItem(
-                                onClick = {
-                                    status = it
-                                    expandStatusMenu = false
+                }
+                item {
+                    TextField(
+                        value = name,
+                        label = { Text("Company Name") },
+                        modifier = modifier,
+                        onValueChange = { name = it },
+                        singleLine = true
+                    )
+                }
+                item {
+                    TextField(
+                        value = url,
+                        label = { Text("URL of Job Posting") },
+                        modifier = modifier,
+                        onValueChange = { url = it },
+                        singleLine = true
+                    )
+                }
+                item {
+                    AutoCompleteTextField(type, modifier, types, "Type of Work")
+                }
+                item {
+                    AutoCompleteTextField(location, modifier, locations, "Location")
+                }
+                item {
+                    ExposedDropdownMenuBox(
+                        expanded = expandStatusMenu,
+                        onExpandedChange = { expandStatusMenu = !expandStatusMenu },
+                    ) {
+                        TextField(
+                            value = status.statusText,
+                            label = { Text("Application Status") },
+                            readOnly = true,
+                            modifier = modifier,
+                            onValueChange = {},
+                            trailingIcon = {
+                                Icon(Icons.Filled.ArrowDropDown, null)
+                            }
+                        )
+                        ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
+                            Status.entries.forEach {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        status = it
+                                        expandStatusMenu = false
+                                    }
+                                ) {
+                                    BigProperty(it.statusText)
                                 }
-                            ) {
-                                BigProperty(it.statusText)
                             }
                         }
                     }
                 }
-                Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-                    Row(modifier = Modifier.weight(0.5f)) {
-                        TextButton(
-                            onClick = {
-                                onDismissRequest()
-                            },
-                        ) {
-                            Text("Dismiss")
+                item {
+                    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                        Row(modifier = Modifier.weight(0.5f)) {
+                            TextButton(
+                                onClick = {
+                                    onDismissRequest()
+                                },
+                            ) {
+                                Text("Dismiss")
+                            }
                         }
-                    }
-                    Row(modifier = modifier.weight(0.5f), horizontalArrangement = Arrangement.End) {
-                        TextButton(
-                            onClick = {
-                                if (job != null) {
-                                    list[list.indexOf(job)] =
-                                        Job(name, url, type.value, location.value, status)
-                                } else {
-                                    list.add(0, Job(name, url, type.value, location.value, status))
-                                }
-                                saveJobList(list)
-                                onDismissRequest()
-                            },
+                        Row(
+                            modifier = modifier.weight(0.5f),
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            Text(buttonText)
+                            TextButton(
+                                onClick = {
+                                    if (job != null) {
+                                        list[list.indexOf(job)] =
+                                            Job(name, url, type.value, location.value, status)
+                                    } else {
+                                        list.add(
+                                            0,
+                                            Job(name, url, type.value, location.value, status)
+                                        )
+                                    }
+                                    saveJobList(list)
+                                    onDismissRequest()
+                                },
+                            ) {
+                                Text(buttonText)
+                            }
                         }
                     }
                 }
