@@ -32,11 +32,13 @@ import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
+import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.baseline_comment_24
+import job_tracker.composeapp.generated.resources.baseline_mode_comment_24
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -109,10 +111,15 @@ fun App() {
                                 JobName(it.name, it.url, Modifier.width(180.dp))
                                 JobProperty(it.type, Modifier.weight(1f, false))
                                 JobProperty(it.location, Modifier.weight(1f, false))
-                                JobProperty(it.status.toString(), Modifier.weight(1f, false))
+                                JobProperty(it.status, Modifier.weight(1f, false))
+                                IconButton({}) {
+                                    if(it.comment.isBlank())
+                                        Icon(painterResource(Res.drawable.baseline_mode_comment_24), "Comment", tint= colors.primary.copy(alpha = 0.25f))
+                                    else
+                                        Icon(painterResource(Res.drawable.baseline_comment_24), "Comment", tint = colors.primary)
+                                }
                             }
                             IconButton(
-                                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                                 onClick = {
                                     selectedJob = it
                                     showDialog = true

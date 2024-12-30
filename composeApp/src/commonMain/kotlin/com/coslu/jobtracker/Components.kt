@@ -170,7 +170,7 @@ fun JobDialog(
     var url by remember { mutableStateOf(job?.url ?: "") }
     val location = mutableStateOf(job?.location ?: "")
     val type = mutableStateOf(job?.type ?: "")
-    var status by remember { mutableStateOf(job?.status ?: Status.PENDING_APPLICATION) }
+    var status by remember { mutableStateOf(job?.status ?: "Pending Application") }
     val buttonText = if (job != null) "Save" else "Add Job"
     val title = if (job != null) "Edit Job" else "New Job"
     var expandStatusMenu by remember { mutableStateOf(false) }
@@ -259,7 +259,7 @@ fun JobDialog(
                         onExpandedChange = { expandStatusMenu = !expandStatusMenu },
                     ) {
                         TextField(
-                            value = status.statusText,
+                            value = status,
                             label = { Text("Application Status") },
                             readOnly = true,
                             modifier = modifier,
@@ -269,14 +269,14 @@ fun JobDialog(
                             }
                         )
                         ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
-                            Status.entries.forEach {
+                            statuses.forEach {
                                 DropdownMenuItem(
                                     onClick = {
                                         status = it
                                         expandStatusMenu = false
                                     }
                                 ) {
-                                    BigProperty(it.statusText)
+                                    BigProperty(it)
                                 }
                             }
                         }
@@ -301,11 +301,11 @@ fun JobDialog(
                                 onClick = {
                                     if (job != null) {
                                         jobs[jobs.indexOf(job)] =
-                                            Job(name, url, type.value, location.value, status)
+                                            Job(name, url, type.value, location.value, status, job.comment)
                                     } else {
                                         jobs.add(
                                             0,
-                                            Job(name, url, type.value, location.value, status)
+                                            Job(name, url, type.value, location.value, status, "")
                                         )
                                     }
                                     saveJobList(jobs)
