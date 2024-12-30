@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 
 /**
  * This file overrides some existing material components
@@ -144,5 +145,26 @@ fun TextButtonStyledText(
             onTextLayout,
             style = MaterialTheme.typography.button
         )
+    }
+}
+
+@Composable
+fun AlertDialogButtons(
+    confirmButton: @Composable () -> Unit,
+    dismissButton: @Composable () -> Unit
+) {
+    Row(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 2.dp, bottom = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(modifier = Modifier.weight(0.5f)) {
+            dismissButton()
+        }
+        Row(
+            modifier = Modifier.weight(0.5f),
+            horizontalArrangement = Arrangement.End
+        ) {
+            confirmButton()
+        }
     }
 }

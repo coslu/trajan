@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
@@ -60,6 +61,7 @@ private lateinit var snackbarHostState: SnackbarHostState
 private lateinit var coroutineScope: CoroutineScope
 
 lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
+lateinit var jobs: SnapshotStateList<Job>
 
 @Composable
 @Preview
@@ -69,8 +71,8 @@ fun App() {
     ) {
         val locations = mutableMapOf<String, Int>()
         val types = mutableMapOf<String, Int>()
-        val list = remember { fetchJobList().toMutableStateList() }
-        list.forEach {
+        jobs = remember { fetchJobList().toMutableStateList() }
+        jobs.forEach {
             locations[it.location] = locations[it.location]?.plus(1) ?: 1
             types[it.type] = types[it.type]?.plus(1) ?: 1
         }
@@ -85,10 +87,15 @@ fun App() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (showDialog) {
-                    JobDialog(onDismissRequest = { showDialog = false }, list, selectedJob, locations, types)
+                    JobDialog(
+                        onDismissRequest = { showDialog = false },
+                        selectedJob,
+                        locations,
+                        types
+                    )
                 }
                 LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(list) {
+                    items(jobs) {
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
