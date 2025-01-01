@@ -21,7 +21,7 @@ data class Job(
     var type: String = "",
     var location: String = "",
     var status: String = "Pending Application",
-    var comment: String = ""
+    var notes: String = ""
 )
 
 private class JobSerializer : KSerializer<Job> {
@@ -31,7 +31,7 @@ private class JobSerializer : KSerializer<Job> {
         element<String>("type")
         element<String>("location")
         element<String>("status")
-        element<String>("comment")
+        element<String>("notes")
     }
 
     override fun deserialize(decoder: Decoder): Job {
@@ -45,7 +45,7 @@ private class JobSerializer : KSerializer<Job> {
                     2 -> job.type = decodeStringElement(descriptor, 2)
                     3 -> job.location = decodeStringElement(descriptor, 3)
                     4 -> job.status = decodeStringElement(descriptor, 4)
-                    5 -> job.comment = decodeStringElement(descriptor, 5)
+                    5 -> job.notes = decodeStringElement(descriptor, 5)
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }
@@ -60,7 +60,7 @@ private class JobSerializer : KSerializer<Job> {
             encodeStringElement(descriptor, 2, value.type)
             encodeStringElement(descriptor, 3, value.location)
             encodeStringElement(descriptor, 4, value.status)
-            encodeStringElement(descriptor, 5, value.comment)
+            encodeStringElement(descriptor, 5, value.notes)
         }
     }
 }

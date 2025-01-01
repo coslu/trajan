@@ -1,6 +1,5 @@
 package com.coslu.jobtracker
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Colors
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.baseline_comment_24
-import job_tracker.composeapp.generated.resources.baseline_mode_comment_24
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -98,25 +97,30 @@ fun App() {
                 }
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     items(jobs) {
+                        var showNotes by remember { mutableStateOf(false) }
                         Row(
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillParentMaxWidth()
+                            modifier = Modifier.fillParentMaxWidth().padding(10.dp)
                         ) {
                             Row(
-                                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
-                                    .fillParentMaxWidth(0.9f),
+                                modifier = Modifier
+                                    .weight(1f),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 JobName(it.name, it.url, Modifier.width(180.dp))
                                 JobProperty(it.type, Modifier.weight(1f, false))
                                 JobProperty(it.location, Modifier.weight(1f, false))
                                 JobProperty(it.status, Modifier.weight(1f, false))
-                                IconButton({}) {
-                                    if(it.comment.isBlank())
-                                        Icon(painterResource(Res.drawable.baseline_mode_comment_24), "Comment", tint= colors.primary.copy(alpha = 0.25f))
-                                    else
-                                        Icon(painterResource(Res.drawable.baseline_comment_24), "Comment", tint = colors.primary)
+                                if (it.notes.isNotEmpty()) {
+                                    IconButton({showNotes = true}) {
+                                        DropdownMenu(showNotes, {showNotes = false}) {
+                                            Text(it.notes, Modifier.padding(10.dp))
+                                        }
+                                        Icon(
+                                            painterResource(Res.drawable.baseline_comment_24),
+                                            "Comment",
+                                            tint = colors.primary
+                                        )
+                                    }
                                 }
                             }
                             IconButton(

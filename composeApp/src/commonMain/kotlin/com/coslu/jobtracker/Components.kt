@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,6 +32,7 @@ import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
@@ -171,6 +173,7 @@ fun JobDialog(
     val location = mutableStateOf(job?.location ?: "")
     val type = mutableStateOf(job?.type ?: "")
     var status by remember { mutableStateOf(job?.status ?: "Pending Application") }
+    var notes by remember { mutableStateOf(job?.notes ?: "") }
     val buttonText = if (job != null) "Save" else "Add Job"
     val title = if (job != null) "Edit Job" else "New Job"
     var expandStatusMenu by remember { mutableStateOf(false) }
@@ -283,6 +286,15 @@ fun JobDialog(
                     }
                 }
                 item {
+                    TextField(
+                        value = notes,
+                        label = { Text("Additional Notes") },
+                        modifier = modifier.heightIn(min = TextFieldDefaults.MinHeight * 1.6f),
+                        onValueChange = { notes = it },
+                        singleLine = false,
+                    )
+                }
+                item {
                     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
                         Row(modifier = Modifier.weight(0.5f)) {
                             TextButton(
@@ -301,11 +313,18 @@ fun JobDialog(
                                 onClick = {
                                     if (job != null) {
                                         jobs[jobs.indexOf(job)] =
-                                            Job(name, url, type.value, location.value, status, job.comment)
+                                            Job(
+                                                name,
+                                                url,
+                                                type.value,
+                                                location.value,
+                                                status,
+                                                notes
+                                            )
                                     } else {
                                         jobs.add(
                                             0,
-                                            Job(name, url, type.value, location.value, status, "")
+                                            Job(name, url, type.value, location.value, status, notes)
                                         )
                                     }
                                     saveJobList(jobs)
