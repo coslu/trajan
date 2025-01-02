@@ -8,5 +8,5 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
 }
-val versionCode by extra(1)
-val versionName by extra("1.0.0")
+val versionCode by extra(2)
+val versionName by extra("1.0.1")
