@@ -1,5 +1,6 @@
 package com.coslu.jobtracker
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -105,36 +106,56 @@ fun App() {
                             modifier = Modifier.fillParentMaxWidth().padding(10.dp)
                         ) {
                             Row(
-                                modifier = Modifier
-                                    .weight(1f),
+                                modifier = Modifier.weight(1f),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                JobName(it.name, it.url, Modifier.width(180.dp))
-                                JobProperty(it.type, Modifier.weight(1f, false))
-                                JobProperty(it.location, Modifier.weight(1f, false))
-                                JobProperty(it.status, Modifier.weight(1f, false))
-                                if (it.notes.isNotEmpty()) {
-                                    IconButton({ showNotes = true }) {
-                                        if (showNotes) {
-                                            Popup(
-                                                onDismissRequest = { showNotes = false },
-                                                offset = IntOffset(0, 28.dp.toInt())
-                                            ) {
-                                                Card(
-                                                    Modifier.padding(10.dp),
-                                                    elevation = 8.dp,
-                                                    shape = RoundedCornerShape(0, 20, 20, 20)
-                                                ) {
-                                                    Text(it.notes, Modifier.padding(10.dp))
+                                BoxWithConstraints {
+                                    val smallWindow = maxWidth < 500.dp
+                                    Row {
+                                        val nameModifier =
+                                            if (smallWindow) Modifier.width(150.dp)
+                                            else Modifier.weight(0.3f)
+                                        JobName(it.name, it.url, nameModifier)
+                                        Row(Modifier.weight(0.7f)) {
+                                            JobProperty(it.type, Modifier.weight(1f, false))
+                                            JobProperty(it.location, Modifier.weight(1f, false))
+                                            JobProperty(it.status, Modifier.weight(1f, false))
+                                            if (it.notes.isNotEmpty()) {
+                                                IconButton({ showNotes = true }) {
+                                                    if (showNotes) {
+                                                        Popup(
+                                                            onDismissRequest = {
+                                                                showNotes = false
+                                                            },
+                                                            offset = IntOffset(0, 28.dp.toInt())
+                                                        ) {
+                                                            Card(
+                                                                Modifier.padding(10.dp),
+                                                                elevation = 8.dp,
+                                                                shape = RoundedCornerShape(
+                                                                    0,
+                                                                    20,
+                                                                    20,
+                                                                    20
+                                                                )
+                                                            ) {
+                                                                Text(
+                                                                    it.notes,
+                                                                    Modifier.padding(10.dp)
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                    Icon(
+                                                        painterResource(Res.drawable.baseline_comment_24),
+                                                        "Comment",
+                                                        tint = colors.primary
+                                                    )
                                                 }
                                             }
                                         }
-                                        Icon(
-                                            painterResource(Res.drawable.baseline_comment_24),
-                                            "Comment",
-                                            tint = colors.primary
-                                        )
                                     }
+
                                 }
                             }
                             IconButton(
