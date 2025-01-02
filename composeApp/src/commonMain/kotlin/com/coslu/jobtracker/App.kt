@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Colors
-import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -32,7 +33,9 @@ import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.baseline_comment_24
 import kotlinx.coroutines.CoroutineScope
@@ -111,9 +114,20 @@ fun App() {
                                 JobProperty(it.location, Modifier.weight(1f, false))
                                 JobProperty(it.status, Modifier.weight(1f, false))
                                 if (it.notes.isNotEmpty()) {
-                                    IconButton({showNotes = true}) {
-                                        DropdownMenu(showNotes, {showNotes = false}) {
-                                            Text(it.notes, Modifier.padding(10.dp))
+                                    IconButton({ showNotes = true }) {
+                                        if (showNotes) {
+                                            Popup(
+                                                onDismissRequest = { showNotes = false },
+                                                offset = IntOffset(0, 28.dp.toInt())
+                                            ) {
+                                                Card(
+                                                    Modifier.padding(10.dp),
+                                                    elevation = 8.dp,
+                                                    shape = RoundedCornerShape(0, 20, 20, 20)
+                                                ) {
+                                                    Text(it.notes, Modifier.padding(10.dp))
+                                                }
+                                            }
                                         }
                                         Icon(
                                             painterResource(Res.drawable.baseline_comment_24),

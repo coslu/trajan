@@ -412,8 +412,9 @@ fun AutoCompleteTextField(
             modifier = modifier,
             onValueChange = {
                 textFileValue = it
+                if (it.text != text)
+                    expanded = true
                 text = it.text
-                expanded = true
             },
             singleLine = true
         )
