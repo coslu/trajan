@@ -1,7 +1,8 @@
 package com.coslu.jobtracker
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -77,6 +78,7 @@ fun JobProperty(
     modifier: Modifier,
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
+    var showFullName by remember { mutableStateOf(false) }
     BoxWithConstraints(modifier = modifier.pointerHoverIcon(PointerIcon.Hand)) {
         DropdownMenu(showColorPicker, { showColorPicker = false }) {
             Column(Modifier.height(150.dp).width(300.dp)) {
@@ -101,12 +103,26 @@ fun JobProperty(
                     }
                 }
             }
-
         }
-        if (maxWidth < 150.dp)
-            SmallProperty(property) { showColorPicker = true }
-        else if (property.isNotEmpty())
-            BigProperty(property, clickable = true) { showColorPicker = true }
+        DropdownMenu(showFullName, { showFullName = false }) {
+            DropdownMenuItem({ showFullName = false }) {
+                BigProperty(property)
+            }
+        }
+        if (maxWidth < 150.dp) {
+            SmallProperty(
+                property,
+                onClick = { showColorPicker = true },
+                onLongClick = { showFullName = true }
+            )
+        } else if (property.isNotEmpty()) {
+            BigProperty(
+                property,
+                clickable = true,
+                onClick = { showColorPicker = true },
+                onLongClick = { showFullName = true }
+            )
+        }
     }
 }
 
@@ -324,7 +340,14 @@ fun JobDialog(
                                     } else {
                                         jobs.add(
                                             0,
-                                            Job(name, url, type.value, location.value, status, notes)
+                                            Job(
+                                                name,
+                                                url,
+                                                type.value,
+                                                location.value,
+                                                status,
+                                                notes
+                                            )
                                         )
                                     }
                                     saveJobList(jobs)
@@ -341,8 +364,14 @@ fun JobDialog(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BigProperty(property: String, clickable: Boolean = false, onClick: () -> Unit = {}) {
+fun BigProperty(
+    property: String,
+    clickable: Boolean = false,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {}
+) {
     val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
     val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
     Row(modifier = Modifier.padding(start = 5.dp, end = 5.dp)) {
@@ -350,7 +379,7 @@ fun BigProperty(property: String, clickable: Boolean = false, onClick: () -> Uni
             .background(propertyColor.color, shape = RoundedCornerShape(30))
             .wrapContentWidth()
         if (clickable)
-            modifier = modifier.clickable(onClick = onClick)
+            modifier = modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
@@ -367,8 +396,9 @@ fun BigProperty(property: String, clickable: Boolean = false, onClick: () -> Uni
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SmallProperty(property: String, onClick: () -> Unit = {}) {
+fun SmallProperty(property: String, onClick: () -> Unit = {}, onLongClick: () -> Unit = {}) {
     val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
     val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
     if (property.isEmpty())
@@ -378,7 +408,7 @@ fun SmallProperty(property: String, onClick: () -> Unit = {}) {
             Box(
                 modifier = Modifier.shadow(shadowSize, RoundedCornerShape(50))
                     .background(propertyColor.color, RoundedCornerShape(50)).size(40.dp)
-                    .clickable(onClick = onClick),
+                    .combinedClickable(onClick = onClick, onLongClick = onLongClick),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
