@@ -25,9 +25,9 @@ fun main() = application {
 private val homeDir = Path(System.getProperty("user.home"))
 private val dataDir =
     if (System.getProperty("os.name").lowercase().startsWith("windows"))
-        homeDir.resolve("AppData/Roaming/Coslu/Trajan/$versionName")
+        homeDir.resolve("AppData/Roaming/Trajan")
     else
-        homeDir.resolve(".local/share/Trajan/$versionName")
+        homeDir.resolve(".local/share/Trajan")
 
 actual fun fetchJobList(): List<Job> {
     return try {

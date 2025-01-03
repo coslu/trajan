@@ -45,7 +45,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
-const val versionName = "1.0.1"
 val colors = Colors(
     primary = Color(0xFF546524),
     primaryVariant = Color(0xFFD7EB9B),
