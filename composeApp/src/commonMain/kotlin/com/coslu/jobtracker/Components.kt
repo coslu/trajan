@@ -59,9 +59,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.baseline_block_24
@@ -104,9 +106,27 @@ fun JobProperty(
                 }
             }
         }
-        DropdownMenu(showFullName, { showFullName = false }) {
-            DropdownMenuItem({ showFullName = false }) {
-                BigProperty(property)
+        if (showFullName) {
+            Popup(
+                offset = IntOffset(25.dp.toInt(), -40.dp.toInt()),
+                onDismissRequest = {
+                    showFullName = false
+                },
+            ) {
+                Card(
+                    shape = RoundedCornerShape(
+                        30,
+                        30,
+                        30,
+                        0
+                    ),
+                    elevation = 5.dp
+                ) {
+                    Box(Modifier.padding(5.dp)) {
+                        BigProperty(property)
+                    }
+
+                }
             }
         }
         if (maxWidth < 150.dp) {
@@ -290,6 +310,7 @@ fun JobDialog(
                         ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
                             statuses.forEach {
                                 DropdownMenuItem(
+                                    modifier = Modifier.padding(5.dp),
                                     onClick = {
                                         status = it
                                         expandStatusMenu = false
@@ -374,7 +395,7 @@ fun BigProperty(
 ) {
     val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
     val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
-    Row(modifier = Modifier.padding(start = 5.dp, end = 5.dp)) {
+    Row(modifier = Modifier.padding(5.dp)) {
         var modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
             .background(propertyColor.color, shape = RoundedCornerShape(30))
             .wrapContentWidth()
@@ -459,11 +480,14 @@ fun AutoCompleteTextField(
                     ignoreCase = true
                 ) && it.first.isNotEmpty()
             }.take(3).forEach {
-                DropdownMenuItem(onClick = {
-                    text = it.first
-                    textFileValue = TextFieldValue(text, selection = TextRange(text.length))
-                    expanded = false
-                }) {
+                DropdownMenuItem(
+                    modifier = Modifier.padding(5.dp),
+                    onClick = {
+                        text = it.first
+                        textFileValue = TextFieldValue(text, selection = TextRange(text.length))
+                        expanded = false
+                    }
+                ) {
                     BigProperty(it.first)
                 }
             }
