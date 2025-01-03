@@ -110,7 +110,7 @@ fun App() {
                             ) {
                                 BoxWithConstraints {
                                     val smallWindow = maxWidth < 500.dp
-                                    Row {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
                                         val nameModifier =
                                             if (smallWindow) Modifier.width(150.dp)
                                             else Modifier.weight(0.3f)
