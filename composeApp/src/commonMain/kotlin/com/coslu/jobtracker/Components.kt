@@ -1,5 +1,6 @@
 package com.coslu.jobtracker
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -113,19 +114,23 @@ fun JobProperty(
                     showFullName = false
                 },
             ) {
+                val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
                 Card(
                     shape = RoundedCornerShape(
-                        30,
-                        30,
-                        30,
+                        20,
+                        20,
+                        20,
                         0
                     ),
-                    elevation = 5.dp
+                    elevation = 5.dp,
+                    backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else colors.surface,
+                    border = BorderStroke(1.dp, propertyColor.textColor)
                 ) {
-                    Box(Modifier.padding(5.dp)) {
-                        BigProperty(property)
-                    }
-
+                    Text(
+                        property,
+                        color = propertyColor.textColor,
+                        modifier = Modifier.padding(10.dp)
+                    )
                 }
             }
         }

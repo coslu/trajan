@@ -1,5 +1,6 @@
 package com.coslu.jobtracker
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -136,6 +137,10 @@ fun App() {
                                                                     20,
                                                                     20,
                                                                     20
+                                                                ),
+                                                                border = BorderStroke(
+                                                                    1.dp,
+                                                                    color = colors.onSurface
                                                                 )
                                                             ) {
                                                                 Text(
