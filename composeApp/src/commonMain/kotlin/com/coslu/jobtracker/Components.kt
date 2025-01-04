@@ -134,7 +134,7 @@ fun JobProperty(
                 }
             }
         }
-        if (maxWidth < 150.dp) {
+        if (maxWidth < 120.dp) {
             SmallProperty(
                 property,
                 onClick = { showColorPicker = true },
