@@ -9,4 +9,4 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
 }
 val versionCode by extra(2)
-val versionName by extra("1.0.1")
+val versionName by extra("1.1.0")
