@@ -1,15 +1,21 @@
 package com.coslu.jobtracker
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Colors
@@ -64,9 +70,10 @@ val colors = Colors(
 
 private lateinit var snackbarHostState: SnackbarHostState
 private lateinit var coroutineScope: CoroutineScope
-
-lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
-lateinit var jobs: SnapshotStateList<Job>
+private lateinit var listState: LazyListState
+private lateinit var jobs: MutableList<Job>
+private lateinit var lazyJobs: SnapshotStateList<Job>
+private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
 @Composable
 @Preview
@@ -76,7 +83,8 @@ fun App() {
     ) {
         val locations = mutableMapOf<String, Int>()
         val types = mutableMapOf<String, Int>()
-        jobs = remember { fetchJobList().toMutableStateList() }
+        jobs = fetchJobList().toMutableList()
+        lazyJobs = remember { jobs.toMutableStateList() }
         jobs.forEach {
             locations[it.location] = locations[it.location]?.plus(1) ?: 1
             types[it.type] = types[it.type]?.plus(1) ?: 1
@@ -99,80 +107,86 @@ fun App() {
                         types
                     )
                 }
-                LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(jobs) {
+                listState = rememberLazyListState()
+                LazyColumn(modifier = Modifier.weight(1f), state = listState) {
+                    item {
+                        Box(modifier = Modifier.height(1.dp))
+                    }
+                    items(lazyJobs) {
                         var showNotes by remember { mutableStateOf(false) }
-                        Row(
-                            modifier = Modifier.fillParentMaxWidth().padding(10.dp)
-                        ) {
+                        AnimatedVisibility(it.visible) {
                             Row(
-                                modifier = Modifier.weight(1f),
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier = Modifier.fillParentMaxWidth().padding(10.dp)
                             ) {
-                                BoxWithConstraints {
-                                    val smallWindow = maxWidth < 500.dp
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        val nameModifier =
-                                            if (smallWindow) Modifier.width(150.dp)
-                                            else Modifier.weight(0.3f)
-                                        JobName(it.name, it.url, nameModifier)
-                                        Row(Modifier.weight(0.7f)) {
-                                            JobProperty(it.type, Modifier.weight(1f, false))
-                                            JobProperty(it.location, Modifier.weight(1f, false))
-                                            JobProperty(it.status, Modifier.weight(1f, false))
-                                            if (it.notes.isNotEmpty()) {
-                                                IconButton({ showNotes = true }) {
-                                                    if (showNotes) {
-                                                        Popup(
-                                                            onDismissRequest = {
-                                                                showNotes = false
-                                                            },
-                                                            offset = IntOffset(0, 28.dp.toInt())
-                                                        ) {
-                                                            Card(
-                                                                Modifier.padding(10.dp),
-                                                                elevation = 8.dp,
-                                                                shape = RoundedCornerShape(
-                                                                    0,
-                                                                    20,
-                                                                    20,
-                                                                    20
-                                                                ),
-                                                                border = BorderStroke(
-                                                                    1.dp,
-                                                                    color = colors.onSurface
-                                                                )
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    BoxWithConstraints {
+                                        val smallWindow = maxWidth < 500.dp
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            val nameModifier =
+                                                if (smallWindow) Modifier.width(150.dp)
+                                                else Modifier.weight(0.3f)
+                                            JobName(it.name, it.url, nameModifier)
+                                            Row(Modifier.weight(0.7f)) {
+                                                JobProperty(it.type, Modifier.weight(1f, false))
+                                                JobProperty(it.location, Modifier.weight(1f, false))
+                                                JobProperty(it.status, Modifier.weight(1f, false))
+                                                if (it.notes.isNotEmpty()) {
+                                                    IconButton({ showNotes = true }) {
+                                                        if (showNotes) {
+                                                            Popup(
+                                                                onDismissRequest = {
+                                                                    showNotes = false
+                                                                },
+                                                                offset = IntOffset(0, 28.dp.toInt())
                                                             ) {
-                                                                Text(
-                                                                    it.notes,
-                                                                    Modifier.padding(10.dp)
-                                                                )
+                                                                Card(
+                                                                    Modifier.padding(10.dp),
+                                                                    elevation = 8.dp,
+                                                                    shape = RoundedCornerShape(
+                                                                        0,
+                                                                        20,
+                                                                        20,
+                                                                        20
+                                                                    ),
+                                                                    border = BorderStroke(
+                                                                        1.dp,
+                                                                        color = colors.onSurface
+                                                                    )
+                                                                ) {
+                                                                    Text(
+                                                                        it.notes,
+                                                                        Modifier.padding(10.dp)
+                                                                    )
+                                                                }
                                                             }
                                                         }
+                                                        Icon(
+                                                            painterResource(Res.drawable.baseline_comment_24),
+                                                            "Comment",
+                                                            tint = colors.primary
+                                                        )
                                                     }
-                                                    Icon(
-                                                        painterResource(Res.drawable.baseline_comment_24),
-                                                        "Comment",
-                                                        tint = colors.primary
-                                                    )
                                                 }
                                             }
                                         }
-                                    }
 
+                                    }
                                 }
-                            }
-                            IconButton(
-                                onClick = {
-                                    selectedJob = it
-                                    showDialog = true
-                                },
-                            ) {
-                                Icon(
-                                    Icons.Filled.Edit,
-                                    contentDescription = "Edit",
-                                    tint = colors.primary
-                                )
+                                IconButton(
+                                    onClick = {
+                                        selectedJob = it
+                                        showDialog = true
+                                    },
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Edit,
+                                        contentDescription = "Edit",
+                                        tint = colors.primary
+                                    )
+                                }
                             }
                         }
                     }
@@ -194,3 +208,37 @@ fun App() {
 
 fun showSnackbar(message: String) =
     coroutineScope.launch { snackbarHostState.showSnackbar(message) }
+
+fun jumpToTop() = coroutineScope.launch { listState.scrollToItem(0) }
+
+fun addJob(job: Job) {
+    job.visible = MutableTransitionState(false).apply { targetState = true }
+    jobs.add(0, job)
+    saveJobList(jobs)
+    lazyJobs.add(0, job)
+    jumpToTop()
+}
+
+fun removeJob(job: Job) {
+    jobs.remove(job)
+    saveJobList(jobs)
+    job.visible.targetState = false
+}
+
+fun editJob(job: Job, newJob: Job) {
+    jobs[jobs.indexOf(job)] = newJob
+    saveJobList(jobs)
+    lazyJobs[lazyJobs.indexOf(job)] = newJob
+}
+
+fun getPropertyColor(
+    property: String,
+    default: PropertyColor = PropertyColor.Transparent
+): PropertyColor {
+    return propertyColors[property] ?: default
+}
+
+fun setPropertyColor(property: String, color: PropertyColor) {
+    propertyColors[property] = color
+    savePropertyColors(propertyColors.toList())
+}

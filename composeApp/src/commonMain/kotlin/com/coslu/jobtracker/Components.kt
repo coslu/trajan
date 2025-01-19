@@ -89,8 +89,7 @@ fun JobProperty(
                     items(PropertyColor.entries.toTypedArray()) {
                         IconButton(
                             onClick = {
-                                propertyColors[property] = it
-                                savePropertyColors(propertyColors.toList())
+                                setPropertyColor(property, it)
                                 showColorPicker = false
                             },
                             modifier = Modifier.padding(5.dp)
@@ -114,7 +113,7 @@ fun JobProperty(
                     showFullName = false
                 },
             ) {
-                val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
+                val propertyColor = getPropertyColor(property)
                 Card(
                     shape = RoundedCornerShape(
                         20,
@@ -229,8 +228,7 @@ fun JobDialog(
                             confirmButton = {
                                 TextButton(
                                     onClick = {
-                                        jobs.remove(job)
-                                        saveJobList(jobs)
+                                        removeJob(job!!)
                                         onDismissRequest()
                                     }
                                 ) {
@@ -353,30 +351,13 @@ fun JobDialog(
                         ) {
                             TextButton(
                                 onClick = {
+                                    val newJob =
+                                        Job(name, url, type.value, location.value, status, notes)
                                     if (job != null) {
-                                        jobs[jobs.indexOf(job)] =
-                                            Job(
-                                                name,
-                                                url,
-                                                type.value,
-                                                location.value,
-                                                status,
-                                                notes
-                                            )
+                                        editJob(job, newJob)
                                     } else {
-                                        jobs.add(
-                                            0,
-                                            Job(
-                                                name,
-                                                url,
-                                                type.value,
-                                                location.value,
-                                                status,
-                                                notes
-                                            )
-                                        )
+                                        addJob(newJob)
                                     }
-                                    saveJobList(jobs)
                                     onDismissRequest()
                                 },
                             ) {
@@ -398,7 +379,7 @@ fun BigProperty(
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {}
 ) {
-    val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
+    val propertyColor = getPropertyColor(property)
     val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
     Row(modifier = Modifier.padding(5.dp)) {
         var modifier = Modifier.shadow(shadowSize, RoundedCornerShape(30))
@@ -425,7 +406,7 @@ fun BigProperty(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SmallProperty(property: String, onClick: () -> Unit = {}, onLongClick: () -> Unit = {}) {
-    val propertyColor = propertyColors[property] ?: PropertyColor.Transparent
+    val propertyColor = getPropertyColor(property)
     val shadowSize = if (propertyColor != PropertyColor.Transparent) 5.dp else 0.dp
     if (property.isEmpty())
         Spacer(Modifier.size(45.dp))

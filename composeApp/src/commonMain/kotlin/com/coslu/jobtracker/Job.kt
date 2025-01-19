@@ -1,5 +1,6 @@
 package com.coslu.jobtracker
 
+import androidx.compose.animation.core.MutableTransitionState
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -21,8 +22,10 @@ data class Job(
     var type: String = "",
     var location: String = "",
     var status: String = "Pending Application",
-    var notes: String = ""
-)
+    var notes: String = "",
+) {
+    var visible: MutableTransitionState<Boolean> = MutableTransitionState(true)
+}
 
 private class JobSerializer : KSerializer<Job> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("com.coslu.job") {
