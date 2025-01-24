@@ -1,5 +1,11 @@
 package com.coslu.jobtracker
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -40,6 +46,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -218,150 +225,177 @@ fun JobDialog(
     val title = if (job != null) "Edit Job" else "New Job"
     var expandStatusMenu by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
-    Dialog(onDismissRequest = onDismissRequest) {
-        Card(modifier = Modifier.fillMaxWidth()) {
-            if (showDeleteDialog) {
-                AlertDialog(
-                    onDismissRequest = { showDeleteDialog = false },
-                    buttons = {
-                        AlertDialogButtons(
-                            confirmButton = {
+    val transitionState = remember { MutableTransitionState(false).apply { targetState = true } }
+    val closeWithAnimation = { transitionState.targetState = false }
+    Dialog(onDismissRequest = closeWithAnimation) {
+        LaunchedEffect(transitionState.currentState) {
+            if (!transitionState.currentState && !transitionState.targetState) {
+                onDismissRequest()
+            }
+        }
+        AnimatedVisibility(
+            transitionState,
+            enter = fadeIn() + slideInVertically(),
+            exit = fadeOut() + slideOutVertically()
+        ) {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                if (showDeleteDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDeleteDialog = false },
+                        buttons = {
+                            AlertDialogButtons(
+                                confirmButton = {
+                                    TextButton(
+                                        onClick = {
+                                            removeJob(job!!)
+                                            showDeleteDialog = false
+                                            onDismissRequest()
+                                        }
+                                    ) {
+                                        Text("Delete")
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton({ showDeleteDialog = false }) {
+                                        Text("Dismiss")
+                                    }
+                                }
+                            )
+                        },
+                        title = {
+                            Text(
+                                "Confirm Delete",
+                                color = colors.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        },
+                        text = { Text("Are you sure you want to delete this job?") }
+                    )
+                }
+                LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val modifier = Modifier.padding(top = 10.dp, bottom = 10.dp).fillMaxWidth(0.8f)
+                        .minimumInteractiveComponentSize()
+                    item {
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+                            Text(
+                                title,
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Start,
+                                color = colors.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            if (job != null) {
+                                IconButton({ showDeleteDialog = true }) {
+                                    Icon(Icons.Filled.Delete, "Delete Job", tint = colors.primary)
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        TextField(
+                            value = name,
+                            label = { Text("Company Name") },
+                            modifier = modifier,
+                            onValueChange = { name = it },
+                            singleLine = true
+                        )
+                    }
+                    item {
+                        TextField(
+                            value = url,
+                            label = { Text("URL of Job Posting") },
+                            modifier = modifier,
+                            onValueChange = { url = it },
+                            singleLine = true
+                        )
+                    }
+                    item {
+                        AutoCompleteTextField(type, modifier, types, "Type of Work")
+                    }
+                    item {
+                        AutoCompleteTextField(location, modifier, locations, "Location")
+                    }
+                    item {
+                        ExposedDropdownMenuBox(
+                            expanded = expandStatusMenu,
+                            onExpandedChange = { expandStatusMenu = !expandStatusMenu },
+                        ) {
+                            TextField(
+                                value = status,
+                                label = { Text("Application Status") },
+                                readOnly = true,
+                                modifier = modifier,
+                                onValueChange = {},
+                                trailingIcon = {
+                                    Icon(Icons.Filled.ArrowDropDown, null)
+                                }
+                            )
+                            ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
+                                statuses.forEach {
+                                    DropdownMenuItem(
+                                        modifier = Modifier.padding(5.dp),
+                                        onClick = {
+                                            status = it
+                                            expandStatusMenu = false
+                                        }
+                                    ) {
+                                        BigProperty(it)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        TextField(
+                            value = notes,
+                            label = { Text("Additional Notes") },
+                            modifier = modifier.heightIn(min = TextFieldDefaults.MinHeight * 1.6f),
+                            onValueChange = { notes = it },
+                            singleLine = false,
+                        )
+                    }
+                    item {
+                        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                            Row(modifier = Modifier.weight(0.5f)) {
                                 TextButton(
                                     onClick = {
-                                        removeJob(job!!)
-                                        onDismissRequest()
-                                    }
+                                        closeWithAnimation()
+                                    },
                                 ) {
-                                    Text("Delete")
-                                }
-                            },
-                            dismissButton = {
-                                TextButton({ showDeleteDialog = false }) {
                                     Text("Dismiss")
                                 }
                             }
-                        )
-                    },
-                    title = {
-                        Text(
-                            "Confirm Delete",
-                            color = colors.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    text = { Text("Are you sure you want to delete this job?") }
-                )
-            }
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-                val modifier = Modifier.padding(top = 10.dp, bottom = 10.dp).fillMaxWidth(0.8f)
-                    .minimumInteractiveComponentSize()
-                item {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-                        Text(
-                            title,
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.Start,
-                            color = colors.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        if (job != null) {
-                            IconButton({ showDeleteDialog = true }) {
-                                Icon(Icons.Filled.Delete, "Delete Job", tint = colors.primary)
-                            }
-                        }
-                    }
-                }
-                item {
-                    TextField(
-                        value = name,
-                        label = { Text("Company Name") },
-                        modifier = modifier,
-                        onValueChange = { name = it },
-                        singleLine = true
-                    )
-                }
-                item {
-                    TextField(
-                        value = url,
-                        label = { Text("URL of Job Posting") },
-                        modifier = modifier,
-                        onValueChange = { url = it },
-                        singleLine = true
-                    )
-                }
-                item {
-                    AutoCompleteTextField(type, modifier, types, "Type of Work")
-                }
-                item {
-                    AutoCompleteTextField(location, modifier, locations, "Location")
-                }
-                item {
-                    ExposedDropdownMenuBox(
-                        expanded = expandStatusMenu,
-                        onExpandedChange = { expandStatusMenu = !expandStatusMenu },
-                    ) {
-                        TextField(
-                            value = status,
-                            label = { Text("Application Status") },
-                            readOnly = true,
-                            modifier = modifier,
-                            onValueChange = {},
-                            trailingIcon = {
-                                Icon(Icons.Filled.ArrowDropDown, null)
-                            }
-                        )
-                        ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
-                            statuses.forEach {
-                                DropdownMenuItem(
-                                    modifier = Modifier.padding(5.dp),
+                            Row(
+                                modifier = modifier.weight(0.5f),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(
                                     onClick = {
-                                        status = it
-                                        expandStatusMenu = false
-                                    }
+                                        println("here")
+                                        println(type.value)
+                                        val newJob =
+                                            Job(
+                                                name,
+                                                url,
+                                                type.value,
+                                                location.value,
+                                                status,
+                                                notes
+                                            )
+                                        if (job != null) {
+                                            editJob(job, newJob)
+                                            closeWithAnimation()
+                                        } else {
+                                            println("here")
+                                            println(type.value)
+                                            println(newJob.type)
+                                            addJob(newJob)
+                                            onDismissRequest()
+                                        }
+                                    },
                                 ) {
-                                    BigProperty(it)
+                                    Text(buttonText)
                                 }
-                            }
-                        }
-                    }
-                }
-                item {
-                    TextField(
-                        value = notes,
-                        label = { Text("Additional Notes") },
-                        modifier = modifier.heightIn(min = TextFieldDefaults.MinHeight * 1.6f),
-                        onValueChange = { notes = it },
-                        singleLine = false,
-                    )
-                }
-                item {
-                    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-                        Row(modifier = Modifier.weight(0.5f)) {
-                            TextButton(
-                                onClick = {
-                                    onDismissRequest()
-                                },
-                            ) {
-                                Text("Dismiss")
-                            }
-                        }
-                        Row(
-                            modifier = modifier.weight(0.5f),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            TextButton(
-                                onClick = {
-                                    val newJob =
-                                        Job(name, url, type.value, location.value, status, notes)
-                                    if (job != null) {
-                                        editJob(job, newJob)
-                                    } else {
-                                        addJob(newJob)
-                                    }
-                                    onDismissRequest()
-                                },
-                            ) {
-                                Text(buttonText)
                             }
                         }
                     }

@@ -2,6 +2,10 @@ package com.coslu.jobtracker
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -114,7 +118,11 @@ fun App() {
                     }
                     items(lazyJobs) {
                         var showNotes by remember { mutableStateOf(false) }
-                        AnimatedVisibility(it.visible) {
+                        AnimatedVisibility(
+                            it.visible,
+                            enter = expandIn() + fadeIn(),
+                            exit = shrinkOut() + fadeOut()
+                        ) {
                             Row(
                                 modifier = Modifier.fillParentMaxWidth().padding(10.dp)
                             ) {

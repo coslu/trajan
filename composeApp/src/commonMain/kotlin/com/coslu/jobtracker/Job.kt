@@ -14,9 +14,10 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 
 val statuses = listOf("Pending Application", "Awaiting Response", "Rejected", "Meeting Scheduled")
+private var count = 0
 
 @Serializable(with = JobSerializer::class)
-data class Job(
+class Job(
     var name: String = "",
     var url: String = "",
     var type: String = "",
@@ -25,6 +26,20 @@ data class Job(
     var notes: String = "",
 ) {
     var visible: MutableTransitionState<Boolean> = MutableTransitionState(true)
+    private val id = count++
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Job
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
 }
 
 private class JobSerializer : KSerializer<Job> {
