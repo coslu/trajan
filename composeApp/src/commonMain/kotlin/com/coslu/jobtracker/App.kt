@@ -124,7 +124,8 @@ fun App() {
                             exit = shrinkOut() + fadeOut()
                         ) {
                             Row(
-                                modifier = Modifier.fillParentMaxWidth().padding(10.dp)
+                                modifier = Modifier.fillParentMaxWidth().padding(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(
                                     modifier = Modifier.weight(1f),
@@ -137,7 +138,10 @@ fun App() {
                                                 if (smallWindow) Modifier.width(150.dp)
                                                 else Modifier.weight(0.3f)
                                             JobName(it.name, it.url, nameModifier)
-                                            Row(Modifier.weight(0.7f)) {
+                                            Row(
+                                                Modifier.weight(0.7f),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
                                                 JobProperty(it.type, Modifier.weight(1f, false))
                                                 JobProperty(it.location, Modifier.weight(1f, false))
                                                 JobProperty(it.status, Modifier.weight(1f, false))
