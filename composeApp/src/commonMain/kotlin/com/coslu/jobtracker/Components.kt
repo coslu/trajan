@@ -247,7 +247,7 @@ fun JobDialog(
                                 confirmButton = {
                                     TextButton(
                                         onClick = {
-                                            removeJob(job!!)
+                                            job?.remove()
                                             showDeleteDialog = false
                                             onDismissRequest()
                                         }
@@ -369,31 +369,29 @@ fun JobDialog(
                                 modifier = modifier.weight(0.5f),
                                 horizontalArrangement = Arrangement.End
                             ) {
-                                TextButton(
-                                    onClick = {
-                                        println("here")
-                                        println(type.value)
-                                        val newJob =
-                                            Job(
-                                                name,
-                                                url,
-                                                type.value,
-                                                location.value,
-                                                status,
-                                                notes
-                                            )
-                                        if (job != null) {
-                                            editJob(job, newJob)
-                                            closeWithAnimation()
-                                        } else {
-                                            println("here")
-                                            println(type.value)
-                                            println(newJob.type)
-                                            addJob(newJob)
-                                            onDismissRequest()
-                                        }
-                                    },
-                                ) {
+                                TextButton({
+                                    if (job != null) {
+                                        job.edit(
+                                            name,
+                                            url,
+                                            type.value,
+                                            location.value,
+                                            status,
+                                            notes
+                                        )
+                                        closeWithAnimation()
+                                    } else {
+                                        Job(
+                                            name,
+                                            url,
+                                            type.value,
+                                            location.value,
+                                            status,
+                                            notes
+                                        ).add()
+                                        onDismissRequest()
+                                    }
+                                }) {
                                     Text(buttonText)
                                 }
                             }

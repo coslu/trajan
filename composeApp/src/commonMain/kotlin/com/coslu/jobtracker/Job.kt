@@ -14,6 +14,11 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 
 val statuses = listOf("Pending Application", "Awaiting Response", "Rejected", "Meeting Scheduled")
+val locations = mutableMapOf<String, Int>()
+val types = mutableMapOf<String, Int>()
+val jobs = fetchJobList().toMutableList().onEach {
+    it.addPropertiesToDictionary()
+}
 private var count = 0
 
 @Serializable(with = JobSerializer::class)
@@ -39,6 +44,52 @@ class Job(
 
     override fun hashCode(): Int {
         return id
+    }
+
+    fun addPropertiesToDictionary() {
+        locations[location] = locations[location]?.plus(1) ?: 1
+        types[type] = types[type]?.plus(1) ?: 1
+    }
+
+    private fun removePropertiesFromDictionary() {
+        locations[location] = locations.getValue(location) - 1
+        if (locations[location] == 0)
+            locations.remove(location)
+        types[type] = types.getValue(type) - 1
+        if (types[type] == 0)
+            types.remove(type)
+    }
+
+    fun add() {
+        visible = MutableTransitionState(false).apply { targetState = true }
+        jobs.add(0, this)
+        saveJobList(jobs)
+        addPropertiesToDictionary()
+        lazyJobs.add(0, this)
+        jumpToTop()
+    }
+
+    fun remove() {
+        jobs.remove(this)
+        saveJobList(jobs)
+        removePropertiesFromDictionary()
+        visible.targetState = false
+    }
+
+    fun edit(name: String, url: String, type: String, location: String, status: String, notes: String) {
+        removePropertiesFromDictionary()
+        this.name = name
+        this.url = url
+        this.type = type
+        this.location = location
+        this.status = status
+        this.notes = notes
+        saveJobList(jobs)
+        // we do the following to update lazy column
+        val index = lazyJobs.indexOf(this)
+        lazyJobs.removeAt(index)
+        lazyJobs.add(index, this)
+        addPropertiesToDictionary()
     }
 }
 
