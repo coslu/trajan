@@ -13,14 +13,6 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 
-val statuses = listOf("Pending Application", "Awaiting Response", "Rejected", "Meeting Scheduled")
-val locations = mutableMapOf<String, Int>()
-val types = mutableMapOf<String, Int>()
-val jobs = fetchJobList().toMutableList().onEach {
-    it.addPropertiesToDictionary()
-}
-private var count = 0
-
 @Serializable(with = JobSerializer::class)
 class Job(
     var name: String = "",
@@ -30,6 +22,15 @@ class Job(
     var status: String = "Pending Application",
     var notes: String = "",
 ) {
+    companion object {
+        val locations = mutableMapOf<String, Int>()
+        val types = mutableMapOf<String, Int>()
+        val list = fetchJobList().toMutableList().onEach {
+            it.addPropertiesToDictionary()
+        }
+        private var count = 0
+    }
+
     var visible: MutableTransitionState<Boolean> = MutableTransitionState(true)
     private val id = count++
 
@@ -46,9 +47,9 @@ class Job(
         return id
     }
 
-    fun addPropertiesToDictionary() {
-        locations[location] = locations[location]?.plus(1) ?: 1
-        types[type] = types[type]?.plus(1) ?: 1
+    private fun addPropertiesToDictionary() {
+        locations[location] = locations.getOrDefault(location, 0) + 1
+        types[type] = types.getOrDefault(type, 0) + 1
     }
 
     private fun removePropertiesFromDictionary() {
@@ -62,21 +63,28 @@ class Job(
 
     fun add() {
         visible = MutableTransitionState(false).apply { targetState = true }
-        jobs.add(0, this)
-        saveJobList(jobs)
+        list.add(0, this)
+        saveJobList(list)
         addPropertiesToDictionary()
-        lazyJobs.add(0, this)
+        jobs.add(0, this)
         jumpToTop()
     }
 
     fun remove() {
-        jobs.remove(this)
-        saveJobList(jobs)
+        list.remove(this)
+        saveJobList(list)
         removePropertiesFromDictionary()
         visible.targetState = false
     }
 
-    fun edit(name: String, url: String, type: String, location: String, status: String, notes: String) {
+    fun edit(
+        name: String,
+        url: String,
+        type: String,
+        location: String,
+        status: String,
+        notes: String
+    ) {
         removePropertiesFromDictionary()
         this.name = name
         this.url = url
@@ -84,12 +92,12 @@ class Job(
         this.location = location
         this.status = status
         this.notes = notes
-        saveJobList(jobs)
-        // we do the following to update lazy column
-        val index = lazyJobs.indexOf(this)
-        lazyJobs.removeAt(index)
-        lazyJobs.add(index, this)
+        saveJobList(list)
         addPropertiesToDictionary()
+        // we do the following to update lazy column
+        val index = jobs.indexOf(this)
+        jobs.removeAt(index)
+        jobs.add(index, this)
     }
 }
 

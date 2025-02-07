@@ -107,7 +107,10 @@ private class WindowStateSerializer : KSerializer<WindowState> {
 
 private fun fetchWindowState(): WindowState {
     return try {
-        Json.decodeFromString(WindowStateSerializer(), dataDir.resolve("settings.json").readText())
+        Json.decodeFromString(
+            WindowStateSerializer(),
+            dataDir.resolve("window_state.json").readText()
+        )
     } catch (e: Exception) {
         WindowState(WindowPlacement.Maximized)
     }
@@ -119,7 +122,7 @@ private fun saveWindowState() {
         windowState.size = size
     }
     try {
-        dataDir.resolve("settings.json").createParentDirectories()
+        dataDir.resolve("window_state.json").createParentDirectories()
             .writeText(Json.encodeToString(WindowStateSerializer(), windowState))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")

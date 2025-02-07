@@ -191,7 +191,7 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                     try {
                         uriHandler.openUri(url)
                     } catch (e: Exception) {
-                        showSnackbar("The URL is invalid or can't be handled by the system")
+                        showSnackbar("The URL is invalid or cannot be handled by the system.")
                     }
                 }
             ) {
@@ -212,8 +212,6 @@ fun JobName(text: String, url: String, modifier: Modifier) {
 fun JobDialog(
     onDismissRequest: () -> Unit,
     job: Job? = null,
-    locations: Map<String, Int>,
-    types: Map<String, Int>
 ) {
     var name by remember { mutableStateOf(job?.name ?: "") }
     var url by remember { mutableStateOf(job?.url ?: "") }
@@ -310,10 +308,10 @@ fun JobDialog(
                         )
                     }
                     item {
-                        AutoCompleteTextField(type, modifier, types, "Type of Work")
+                        AutoCompleteTextField(type, modifier, Job.types, "Type of Work")
                     }
                     item {
-                        AutoCompleteTextField(location, modifier, locations, "Location")
+                        AutoCompleteTextField(location, modifier, Job.locations, "Location")
                     }
                     item {
                         ExposedDropdownMenuBox(
@@ -331,7 +329,12 @@ fun JobDialog(
                                 }
                             )
                             ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
-                                statuses.forEach {
+                                listOf(
+                                    "Pending Application",
+                                    "Awaiting Response",
+                                    "Rejected",
+                                    "Meeting Scheduled"
+                                ).forEach {
                                     DropdownMenuItem(
                                         modifier = Modifier.padding(5.dp),
                                         onClick = {
