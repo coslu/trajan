@@ -113,14 +113,14 @@ fun JobProperty(
                 }
             }
         }
-        if (showFullName) {
-            Popup(
-                offset = IntOffset(25.dp.toInt(), -40.dp.toInt()),
-                onDismissRequest = {
-                    showFullName = false
-                },
-            ) {
-                val propertyColor = getPropertyColor(property)
+        Popup(
+            offset = IntOffset(25.dp.toInt(), -40.dp.toInt()),
+            onDismissRequest = {
+                showFullName = false
+            },
+        ) {
+            val propertyColor = getPropertyColor(property)
+            AnimatedVisibility(showFullName, enter = fadeIn(), exit = fadeOut()) {
                 Card(
                     shape = RoundedCornerShape(
                         20,

@@ -1,6 +1,7 @@
 package com.coslu.jobtracker
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -130,7 +131,8 @@ fun App() {
                         Box(modifier = Modifier.height(1.dp))
                     }
                     items(jobs) {
-                        var showNotes by remember { mutableStateOf(false) }
+                        val showNotes =
+                            remember { MutableTransitionState(false).apply { targetState = false } }
                         AnimatedVisibility(
                             it.visible,
                             enter = expandIn(),
@@ -165,16 +167,23 @@ fun App() {
                                                     Modifier.weight(1f, false)
                                                 )
                                                 if (it.notes.isNotEmpty()) {
-                                                    IconButton({ showNotes = true }) {
-                                                        if (showNotes) {
-                                                            Popup(
-                                                                onDismissRequest = {
-                                                                    showNotes = false
-                                                                },
-                                                                offset = IntOffset(
-                                                                    0,
-                                                                    28.dp.toInt()
-                                                                )
+                                                    IconButton({
+                                                        showNotes.targetState =
+                                                            !showNotes.currentState
+                                                    }) {
+                                                        Popup(
+                                                            onDismissRequest = {
+                                                                showNotes.targetState = false
+                                                            },
+                                                            offset = IntOffset(
+                                                                0,
+                                                                28.dp.toInt()
+                                                            )
+                                                        ) {
+                                                            AnimatedVisibility(
+                                                                showNotes,
+                                                                enter = fadeIn(),
+                                                                exit = fadeOut()
                                                             ) {
                                                                 Card(
                                                                     Modifier.padding(10.dp),
@@ -199,7 +208,7 @@ fun App() {
                                                         }
                                                         Icon(
                                                             painterResource(Res.drawable.baseline_comment_24),
-                                                            "Comment",
+                                                            "Show additional notes",
                                                             tint = colors.primary
                                                         )
                                                     }
