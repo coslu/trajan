@@ -4,11 +4,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -33,15 +38,19 @@ import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
+import androidx.compose.material.Checkbox
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.Icon
+import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.minimumInteractiveComponentSize
@@ -74,8 +83,15 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import job_tracker.composeapp.generated.resources.Res
-import job_tracker.composeapp.generated.resources.baseline_block_24
-import job_tracker.composeapp.generated.resources.baseline_open_in_new_24
+import job_tracker.composeapp.generated.resources.date
+import job_tracker.composeapp.generated.resources.filter
+import job_tracker.composeapp.generated.resources.location
+import job_tracker.composeapp.generated.resources.name
+import job_tracker.composeapp.generated.resources.open_link
+import job_tracker.composeapp.generated.resources.sort
+import job_tracker.composeapp.generated.resources.status
+import job_tracker.composeapp.generated.resources.transparent
+import job_tracker.composeapp.generated.resources.type
 import org.jetbrains.compose.resources.painterResource
 
 /**
@@ -104,7 +120,7 @@ fun JobProperty(
                         ) {
                             if (it.color.alpha == 0f)
                                 Icon(
-                                    painterResource(Res.drawable.baseline_block_24),
+                                    painterResource(Res.drawable.transparent),
                                     null,
                                     tint = Color.LightGray
                                 )
@@ -174,7 +190,7 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                     placeholderVerticalAlign = PlaceholderVerticalAlign.Center
                 )
             ) {
-                Icon(painterResource(Res.drawable.baseline_open_in_new_24), "Go to Job")
+                Icon(painterResource(Res.drawable.open_link), "Go to Job")
             })
     )
     Row(modifier = modifier) {
@@ -513,5 +529,174 @@ fun AutoCompleteTextField(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SideSheet(
+    showSideSheet: MutableTransitionState<Boolean>,
+    arrangeToEnd: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    AnimatedVisibility(showSideSheet, enter = fadeIn(), exit = fadeOut()) {
+        Box(
+            Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.6f))
+                .clickable(interactionSource = null, indication = null) {
+                    showSideSheet.targetState = false
+                })
+    }
+    Row(
+        Modifier.fillMaxSize(),
+        horizontalArrangement = if (arrangeToEnd) Arrangement.End else Arrangement.Start
+    ) {
+        AnimatedVisibility(
+            showSideSheet,
+            enter = slideInHorizontally { if (arrangeToEnd) it else -it },
+            exit = slideOutHorizontally { if (arrangeToEnd) it else -it }) {
+            BoxWithConstraints {
+                Card(
+                    Modifier.fillMaxHeight()
+                        .width(if (maxWidth * 0.8f > 600.dp) 600.dp else maxWidth * 0.8f)
+                ) {
+                    Column {
+                        Row {
+                            IconButton({ showSideSheet.targetState = false }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                            }
+                        }
+                        content()
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SortAndFilter() {
+    Row(
+        Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painterResource(Res.drawable.sort),
+            null,
+            tint = colors.primary
+        )
+        Text("Sort", Modifier.padding(horizontal = 10.dp), color = colors.primary)
+        Divider(
+            Modifier.padding(horizontal = 10.dp),
+            color = colors.primary,
+            thickness = 1.5.dp
+        )
+    }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(
+            SortingMethod.current.descending,
+            onCheckedChange = {
+                SortingMethod.current = when (SortingMethod.current) {
+                    is SortingMethod.Date -> SortingMethod.Date(it)
+                    is SortingMethod.Name -> SortingMethod.Name(it)
+                    is SortingMethod.Type -> SortingMethod.Type(it)
+                    is SortingMethod.Location -> SortingMethod.Location(it)
+                    is SortingMethod.Status -> SortingMethod.Status(it)
+                }
+            }
+        )
+        Text("Descending")
+    }
+    LazyVerticalGrid(GridCells.Adaptive(150.dp)) {
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    SortingMethod.current is SortingMethod.Date,
+                    { SortingMethod.current = SortingMethod.Date(SortingMethod.current.descending) }
+                )
+                Icon(
+                    painterResource(Res.drawable.date),
+                    null,
+                    Modifier.padding(end = 10.dp)
+                )
+                Text("Date")
+            }
+        }
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    SortingMethod.current is SortingMethod.Name,
+                    { SortingMethod.current = SortingMethod.Name(SortingMethod.current.descending) }
+                )
+                Icon(
+                    painterResource(Res.drawable.name),
+                    null,
+                    Modifier.padding(end = 10.dp)
+                )
+                Text("Name")
+            }
+        }
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    SortingMethod.current is SortingMethod.Type,
+                    { SortingMethod.current = SortingMethod.Type(SortingMethod.current.descending) }
+                )
+                Icon(
+                    painterResource(Res.drawable.type),
+                    null,
+                    Modifier.padding(end = 10.dp),
+                )
+                Text("Type")
+            }
+        }
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    SortingMethod.current is SortingMethod.Location,
+                    {
+                        SortingMethod.current =
+                            SortingMethod.Location(SortingMethod.current.descending)
+                    }
+                )
+                Icon(
+                    painterResource(Res.drawable.location),
+                    null,
+                    Modifier.padding(end = 10.dp)
+                )
+                Text("Location")
+            }
+        }
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    SortingMethod.current is SortingMethod.Status,
+                    {
+                        SortingMethod.current =
+                            SortingMethod.Status(SortingMethod.current.descending)
+                    }
+                )
+                Icon(
+                    painterResource(Res.drawable.status),
+                    null,
+                    Modifier.padding(end = 10.dp)
+                )
+                Text("Status")
+            }
+        }
+    }
+    Row(
+        Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painterResource(Res.drawable.filter),
+            null,
+            tint = colors.primary
+        )
+        Text("Filter", Modifier.padding(horizontal = 10.dp), color = colors.primary)
+        Divider(
+            Modifier.padding(horizontal = 10.dp),
+            color = colors.primary,
+            thickness = 1.5.dp
+        )
     }
 }

@@ -8,6 +8,11 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import com.coslu.jobtracker.SortingMethod.Date
+import com.coslu.jobtracker.SortingMethod.Location
+import com.coslu.jobtracker.SortingMethod.Name
+import com.coslu.jobtracker.SortingMethod.Status
+import com.coslu.jobtracker.SortingMethod.Type
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.icon_linux
 import kotlinx.serialization.KSerializer
@@ -160,5 +165,31 @@ actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
         dataDir.resolve("colors.json").createParentDirectories().writeText(Json.encodeToString(map))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
+    }
+}
+
+actual fun saveSortingMethod(sortingMethod: SortingMethod) {
+    try {
+        dataDir.resolve("sort.txt").createParentDirectories().writeText(sortingMethod.toString())
+    } catch (e: Exception) {
+        showSnackbar("Error when saving file: '${e.message}'")
+    }
+}
+
+actual fun fetchSortingMethod(): SortingMethod {
+    return try {
+        dataDir.resolve("sort.txt").createParentDirectories().readText().let {
+            val descending = it.contains("true")
+            when (it[0]) {
+                'D' -> Date(descending)
+                'N' -> Name(descending)
+                'T' -> Type(descending)
+                'L' -> Location(descending)
+                'S' -> Status(descending)
+                else -> Date(true)
+            }
+        }
+    } catch (e: Exception) {
+        Date(true)
     }
 }

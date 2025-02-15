@@ -1,6 +1,7 @@
 package com.coslu.jobtracker
 
 import androidx.compose.animation.core.MutableTransitionState
+import kotlinx.datetime.Clock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -21,6 +22,7 @@ class Job(
     var location: String = "",
     var status: String = "Pending Application",
     var notes: String = "",
+    val date: Long = Clock.System.now().toEpochMilliseconds()
 ) {
     companion object {
         val locations = mutableMapOf<String, Int>()

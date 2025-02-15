@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -51,8 +50,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import job_tracker.composeapp.generated.resources.Res
-import job_tracker.composeapp.generated.resources.baseline_comment_24
 import job_tracker.composeapp.generated.resources.logo
+import job_tracker.composeapp.generated.resources.notes
+import job_tracker.composeapp.generated.resources.sort_filter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -87,9 +87,13 @@ fun App() {
     MaterialTheme(
         colors = colors
     ) {
-        jobs = remember { fetchJobList(); Job.list.toMutableStateList() }
+        jobs = remember {
+            fetchJobList(); Job.list.sortedWith(SortingMethod.current.comparator)
+            .toMutableStateList()
+        }
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         var showDialog by remember { mutableStateOf(false) }
+        val showSideSheet = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
         snackbarHostState = remember { SnackbarHostState() }
@@ -207,7 +211,7 @@ fun App() {
                                                             }
                                                         }
                                                         Icon(
-                                                            painterResource(Res.drawable.baseline_comment_24),
+                                                            painterResource(Res.drawable.notes),
                                                             "Show additional notes",
                                                             tint = colors.primary
                                                         )
@@ -234,16 +238,24 @@ fun App() {
                         }
                     }
                 }
-                Button(
-                    modifier = Modifier.wrapContentHeight().padding(top = 10.dp, bottom = 10.dp),
-                    onClick = {
-                        selectedJob = null
-                        showDialog = true
+                Row(Modifier.padding(vertical = 10.dp)) {
+                    if (jobs.any { it.visible.targetState }) {
+                        Button(
+                            { showSideSheet.targetState = true },
+                            Modifier.padding(end = 20.dp)
+                        ) {
+                            Icon(painterResource(Res.drawable.sort_filter), null)
+                            Text("Sort & Filter", modifier = Modifier.padding(start = 10.dp))
+                        }
                     }
-                ) {
-                    Icon(Icons.Filled.Add, null)
-                    Text("Add Job", modifier = Modifier.padding(start = 10.dp))
+                    Button({ selectedJob = null; showDialog = true }) {
+                        Icon(Icons.Filled.Add, null)
+                        Text("Add Job", modifier = Modifier.padding(start = 10.dp))
+                    }
                 }
+            }
+            SideSheet(showSideSheet) {
+                SortAndFilter()
             }
         }
     }
