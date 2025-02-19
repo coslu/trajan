@@ -88,8 +88,8 @@ fun App() {
         colors = colors
     ) {
         jobs = remember {
-            fetchJobList(); Job.list.sortedWith(SortingMethod.current.comparator)
-            .toMutableStateList()
+            fetchJobList()
+            Job.list.sortedWith(SortingMethod.current.comparator).toMutableStateList()
         }
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         var showDialog by remember { mutableStateOf(false) }
@@ -140,7 +140,7 @@ fun App() {
                         AnimatedVisibility(
                             it.visible,
                             enter = expandIn(),
-                            exit = shrinkOut()
+                            exit = shrinkOut(),
                         ) {
                             Row(
                                 modifier = Modifier.fillParentMaxWidth().padding(10.dp),
@@ -264,7 +264,7 @@ fun App() {
 fun showSnackbar(message: String) =
     coroutineScope.launch { snackbarHostState.showSnackbar(message) }
 
-fun jumpToTop() = coroutineScope.launch { listState.scrollToItem(0) }
+fun jumpToItem(index: Int) = coroutineScope.launch { listState.scrollToItem(index)}
 
 fun getPropertyColor(
     property: String,

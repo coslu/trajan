@@ -1,5 +1,6 @@
 package com.coslu.jobtracker
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
@@ -8,6 +9,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
@@ -83,6 +86,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.arrow_right
 import job_tracker.composeapp.generated.resources.date
 import job_tracker.composeapp.generated.resources.filter
 import job_tracker.composeapp.generated.resources.location
@@ -574,38 +578,44 @@ fun SideSheet(
 
 @Composable
 fun SortAndFilter() {
-    Row(
-        Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painterResource(Res.drawable.sort),
-            null,
-            tint = colors.primary
-        )
-        Text("Sort", Modifier.padding(horizontal = 10.dp), color = colors.primary)
-        Divider(
-            Modifier.padding(horizontal = 10.dp),
-            color = colors.primary,
-            thickness = 1.5.dp
-        )
-    }
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(
-            SortingMethod.current.descending,
-            onCheckedChange = {
-                SortingMethod.current = when (SortingMethod.current) {
-                    is SortingMethod.Date -> SortingMethod.Date(it)
-                    is SortingMethod.Name -> SortingMethod.Name(it)
-                    is SortingMethod.Type -> SortingMethod.Type(it)
-                    is SortingMethod.Location -> SortingMethod.Location(it)
-                    is SortingMethod.Status -> SortingMethod.Status(it)
-                }
+    var openLocations by remember { mutableStateOf(false) }
+    var openTypes by remember { mutableStateOf(false) }
+    LazyVerticalGrid(GridCells.Adaptive(180.dp)) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(
+                Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painterResource(Res.drawable.sort),
+                    null,
+                    tint = colors.primary
+                )
+                Text("Sort", Modifier.padding(horizontal = 10.dp), color = colors.primary)
+                Divider(
+                    Modifier.padding(horizontal = 10.dp),
+                    color = colors.primary,
+                    thickness = 1.5.dp
+                )
             }
-        )
-        Text("Descending")
-    }
-    LazyVerticalGrid(GridCells.Adaptive(150.dp)) {
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    SortingMethod.current.descending,
+                    onCheckedChange = {
+                        SortingMethod.current = when (SortingMethod.current) {
+                            is SortingMethod.Date -> SortingMethod.Date(it)
+                            is SortingMethod.Name -> SortingMethod.Name(it)
+                            is SortingMethod.Type -> SortingMethod.Type(it)
+                            is SortingMethod.Location -> SortingMethod.Location(it)
+                            is SortingMethod.Status -> SortingMethod.Status(it)
+                        }
+                    }
+                )
+                Text("Descending")
+            }
+        }
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
@@ -682,21 +692,75 @@ fun SortAndFilter() {
                 Text("Status")
             }
         }
-    }
-    Row(
-        Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painterResource(Res.drawable.filter),
-            null,
-            tint = colors.primary
-        )
-        Text("Filter", Modifier.padding(horizontal = 10.dp), color = colors.primary)
-        Divider(
-            Modifier.padding(horizontal = 10.dp),
-            color = colors.primary,
-            thickness = 1.5.dp
-        )
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(
+                Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painterResource(Res.drawable.filter),
+                    null,
+                    tint = colors.primary
+                )
+                Text("Filter", Modifier.padding(horizontal = 10.dp), color = colors.primary)
+                Divider(
+                    Modifier.padding(horizontal = 10.dp),
+                    color = colors.primary,
+                    thickness = 1.5.dp
+                )
+            }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(
+                Modifier.fillMaxWidth().clickable(interactionSource = null, indication = null) {
+                    openTypes = !openTypes
+                }.pointerHoverIcon(PointerIcon.Hand).padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnimatedContent(openTypes, transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
+                    if (openTypes)
+                        Icon(Icons.Filled.ArrowDropDown, null)
+                    else
+                        Icon(painterResource(Res.drawable.arrow_right), null)
+                }
+                Checkbox(false, {})
+                Text("Types")
+            }
+        }
+        items(Job.types.keys.toList().sorted()) {
+            AnimatedVisibility(openTypes) {
+                Row {
+                    Checkbox(false, {})
+                    BigProperty(it.ifBlank { "-" })
+                }
+            }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(
+                Modifier.fillMaxWidth().clickable(interactionSource = null, indication = null) {
+                    openLocations = !openLocations
+                }.pointerHoverIcon(PointerIcon.Hand).padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnimatedContent(
+                    openLocations,
+                    transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
+                    if (openLocations)
+                        Icon(Icons.Filled.ArrowDropDown, null)
+                    else
+                        Icon(painterResource(Res.drawable.arrow_right), null)
+                }
+                Checkbox(false, {})
+                Text("Locations")
+            }
+        }
+        items(Job.locations.keys.toList().sorted()) {
+            AnimatedVisibility(openLocations) {
+                Row {
+                    Checkbox(false, {})
+                    BigProperty(it.ifBlank { "-" })
+                }
+            }
+        }
     }
 }

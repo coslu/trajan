@@ -65,11 +65,12 @@ class Job(
 
     fun add() {
         visible = MutableTransitionState(false).apply { targetState = true }
-        list.add(0, this)
+        list.add(this)
         saveJobList(list)
         addPropertiesToDictionary()
-        jobs.add(0, this)
-        jumpToTop()
+        jobs.add(this)
+        jobs.sortWith(SortingMethod.current.comparator)
+        jumpToItem(jobs.indexOf(this))
     }
 
     fun remove() {
@@ -100,6 +101,7 @@ class Job(
         val index = jobs.indexOf(this)
         jobs.removeAt(index)
         jobs.add(index, this)
+        jobs.sortWith(SortingMethod.current.comparator)
     }
 }
 
