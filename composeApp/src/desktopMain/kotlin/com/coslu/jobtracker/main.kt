@@ -38,6 +38,7 @@ private val dataDir =
 private var windowState = fetchWindowState()
 private var position = windowState.position
 private var size = windowState.size
+private val json = Json { prettyPrint = true }
 
 fun main() = application {
     LaunchedEffect(windowState.position, windowState.size) {
@@ -107,7 +108,7 @@ private class WindowStateSerializer : KSerializer<WindowState> {
 
 private fun fetchWindowState(): WindowState {
     return try {
-        Json.decodeFromString(
+        json.decodeFromString(
             WindowStateSerializer(),
             dataDir.resolve("window_state.json").readText()
         )
@@ -123,7 +124,7 @@ private fun saveWindowState() {
     }
     try {
         dataDir.resolve("window_state.json").createParentDirectories()
-            .writeText(Json.encodeToString(WindowStateSerializer(), windowState))
+            .writeText(json.encodeToString(WindowStateSerializer(), windowState))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
@@ -131,7 +132,7 @@ private fun saveWindowState() {
 
 actual fun fetchJobList(): List<Job> {
     return try {
-        Json.decodeFromString<MutableList<Job>>(dataDir.resolve("jobs.json").readText())
+        json.decodeFromString<MutableList<Job>>(dataDir.resolve("jobs.json").readText())
     } catch (_: Exception) {
         listOf()
     }
@@ -139,7 +140,7 @@ actual fun fetchJobList(): List<Job> {
 
 actual fun saveJobList(list: List<Job>) {
     try {
-        dataDir.resolve("jobs.json").createParentDirectories().writeText(Json.encodeToString(list))
+        dataDir.resolve("jobs.json").createParentDirectories().writeText(json.encodeToString(list))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
@@ -147,7 +148,7 @@ actual fun saveJobList(list: List<Job>) {
 
 actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
     return try {
-        Json.decodeFromString<List<Pair<String, PropertyColor>>>(
+        json.decodeFromString<List<Pair<String, PropertyColor>>>(
             dataDir.resolve("colors.json").readText()
         )
     } catch (e: Exception) {
@@ -157,7 +158,7 @@ actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
 
 actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
     try {
-        dataDir.resolve("colors.json").createParentDirectories().writeText(Json.encodeToString(map))
+        dataDir.resolve("colors.json").createParentDirectories().writeText(json.encodeToString(map))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
@@ -165,7 +166,8 @@ actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
 
 actual fun saveSettings() {
     try {
-        dataDir.resolve("settings.json").createParentDirectories().writeText(Json.encodeToString(Settings))
+        dataDir.resolve("settings.json").createParentDirectories()
+            .writeText(json.encodeToString(Settings))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
@@ -173,6 +175,6 @@ actual fun saveSettings() {
 
 actual fun fetchSettings() {
     runCatching {
-        Json.decodeFromString<Settings>(dataDir.resolve("settings.json").readText())
+        json.decodeFromString<Settings>(dataDir.resolve("settings.json").readText())
     }
 }

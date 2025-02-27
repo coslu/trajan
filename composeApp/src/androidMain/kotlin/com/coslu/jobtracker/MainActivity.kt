@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 private lateinit var dir: File
+private val json = Json { prettyPrint = true }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +30,7 @@ fun AppAndroidPreview() {
 
 actual fun fetchJobList(): List<Job> {
     return try {
-        Json.decodeFromString<MutableList<Job>>(File(dir, "jobs.json").readText())
+        json.decodeFromString<MutableList<Job>>(File(dir, "jobs.json").readText())
     } catch (ex: Exception) {
         listOf()
     }
@@ -37,7 +38,7 @@ actual fun fetchJobList(): List<Job> {
 
 actual fun saveJobList(list: List<Job>) {
     try {
-        File(dir, "jobs.json").writeText(Json.encodeToString(list))
+        File(dir, "jobs.json").writeText(json.encodeToString(list))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
@@ -45,7 +46,7 @@ actual fun saveJobList(list: List<Job>) {
 
 actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
     return try {
-        Json.decodeFromString<List<Pair<String, PropertyColor>>>(
+        json.decodeFromString<List<Pair<String, PropertyColor>>>(
             File(dir, "colors.json").readText()
         )
     } catch (ex: Exception) {
@@ -55,7 +56,7 @@ actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
 
 actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
     try {
-        File(dir, "colors.json").writeText(Json.encodeToString(map))
+        File(dir, "colors.json").writeText(json.encodeToString(map))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
@@ -63,7 +64,7 @@ actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
 
 actual fun saveSettings() {
     try {
-        File(dir, "settings.json").writeText(Json.encodeToString(Settings))
+        File(dir, "settings.json").writeText(json.encodeToString(Settings))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
@@ -71,6 +72,6 @@ actual fun saveSettings() {
 
 actual fun fetchSettings() {
     runCatching {
-        Json.decodeFromString<Settings>(File(dir, "settings.json").readText())
+        json.decodeFromString<Settings>(File(dir, "settings.json").readText())
     }
 }

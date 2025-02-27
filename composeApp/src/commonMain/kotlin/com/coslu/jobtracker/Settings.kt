@@ -12,14 +12,18 @@ import com.coslu.jobtracker.SortingMethod.Type
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.descriptors.mapSerialDescriptor
+import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.encoding.encodeStructure
 
 @Serializable(with = SettingsSerializer::class)
 object Settings {
@@ -58,28 +62,38 @@ private class SettingsSerializer : KSerializer<Settings> {
         }
 
     override fun deserialize(decoder: Decoder): Settings {
-        Settings.sortingMethod = decoder.decodeString().let {
-            val descending = it.contains("true")
-            when (it[0]) {
-                'D' -> Date(descending)
-                'N' -> Name(descending)
-                'T' -> Type(descending)
-                'L' -> Location(descending)
-                'S' -> Status(descending)
-                else -> Date(true)
+        decoder.decodeStructure(descriptor) {
+            loop@ while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    DECODE_DONE -> break@loop
+                    0 -> Settings.sortingMethod = decodeStringElement(descriptor, 0).let {
+                        val descending = it.contains("true")
+                        when (it[0]) {
+                            'D' -> Date(descending)
+                            'N' -> Name(descending)
+                            'T' -> Type(descending)
+                            'L' -> Location(descending)
+                            'S' -> Status(descending)
+                            else -> Date(true)
+                        }
+                    }
+                    1 -> Settings.typeFilters.putAll(decodeSerializableElement(descriptor, 1, filterSerializer))
+                    2 -> Settings.locationFilters.putAll(decodeSerializableElement(descriptor, 2, filterSerializer))
+                    3 -> Settings.statusFilters.putAll(decodeSerializableElement(descriptor, 3, filterSerializer))
+                    else -> throw SerializationException("Unexpected index $index")
+                }
             }
         }
-        Settings.typeFilters.putAll(decoder.decodeSerializableValue(filterSerializer))
-        Settings.locationFilters.putAll(decoder.decodeSerializableValue(filterSerializer))
-        Settings.statusFilters.putAll(decoder.decodeSerializableValue(filterSerializer))
         return Settings
     }
 
     override fun serialize(encoder: Encoder, value: Settings) {
-        encoder.encodeString(value.sortingMethod.toString())
-        encoder.encodeSerializableValue(filterSerializer, value.typeFilters)
-        encoder.encodeSerializableValue(filterSerializer, value.locationFilters)
-        encoder.encodeSerializableValue(filterSerializer, value.statusFilters)
+        encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, value.sortingMethod.toString())
+            encodeSerializableElement(descriptor, 1, filterSerializer, value.typeFilters)
+            encodeSerializableElement(descriptor, 2, filterSerializer, value.locationFilters)
+            encodeSerializableElement(descriptor, 3, filterSerializer, value.statusFilters)
+        }
     }
 }
 
