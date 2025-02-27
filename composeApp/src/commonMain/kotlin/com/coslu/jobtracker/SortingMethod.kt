@@ -1,19 +1,6 @@
 package com.coslu.jobtracker
 
-import androidx.compose.runtime.mutableStateOf
-
 sealed class SortingMethod(val descending: Boolean) {
-    companion object {
-        private val state = mutableStateOf(fetchSortingMethod())
-        var current
-            get() = state.value
-            set(value) {
-                state.value = value
-                jobs.sortWith(SortingMethod.current.comparator)
-                saveSortingMethod(current)
-            }
-    }
-
     protected abstract val selector: (Job) -> Comparable<*>
 
     val comparator
@@ -45,7 +32,3 @@ sealed class SortingMethod(val descending: Boolean) {
         override val selector: (Job) -> Comparable<*> = { it.status }
     }
 }
-
-expect fun saveSortingMethod(sortingMethod: SortingMethod)
-
-expect fun fetchSortingMethod(): SortingMethod

@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import com.coslu.jobtracker.Settings.sortingMethod
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
@@ -88,9 +89,9 @@ fun App() {
         colors = colors
     ) {
         jobs = remember {
-            fetchJobList()
-            Job.list.sortedWith(SortingMethod.current.comparator).toMutableStateList()
+            Job.list.sortedWith(sortingMethod.comparator).toMutableStateList()
         }
+        remember { fetchSettings(); Settings.applyFilters() }
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         var showDialog by remember { mutableStateOf(false) }
         val showSideSheet = remember { MutableTransitionState(false) }

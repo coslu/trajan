@@ -1,6 +1,10 @@
 package com.coslu.jobtracker
 
 import androidx.compose.animation.core.MutableTransitionState
+import com.coslu.jobtracker.Settings.applyFilters
+import com.coslu.jobtracker.Settings.locationFilters
+import com.coslu.jobtracker.Settings.sortingMethod
+import com.coslu.jobtracker.Settings.typeFilters
 import kotlinx.datetime.Clock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -27,6 +31,12 @@ class Job(
     companion object {
         val locations = mutableMapOf<String, Int>()
         val types = mutableMapOf<String, Int>()
+        val statuses = listOf(
+            "Awaiting Response",
+            "Meeting Scheduled",
+            "Pending Application",
+            "Rejected"
+        )
         val list = fetchJobList().toMutableList().onEach {
             it.addPropertiesToDictionary()
         }
@@ -51,16 +61,22 @@ class Job(
 
     private fun addPropertiesToDictionary() {
         locations[location] = locations.getOrDefault(location, 0) + 1
+        locationFilters.getOrPut(location) { true }
         types[type] = types.getOrDefault(type, 0) + 1
+        typeFilters.getOrPut(type) { true }
     }
 
     private fun removePropertiesFromDictionary() {
         locations[location] = locations.getValue(location) - 1
-        if (locations[location] == 0)
+        if (locations[location] == 0) {
             locations.remove(location)
+            locationFilters.remove(location)
+        }
         types[type] = types.getValue(type) - 1
-        if (types[type] == 0)
+        if (types[type] == 0) {
             types.remove(type)
+            typeFilters.remove(type)
+        }
     }
 
     fun add() {
@@ -68,9 +84,9 @@ class Job(
         list.add(this)
         saveJobList(list)
         addPropertiesToDictionary()
-        jobs.add(this)
-        jobs.sortWith(SortingMethod.current.comparator)
-        jumpToItem(jobs.indexOf(this))
+        applyFilters()
+        if (jobs.contains(this))
+            jumpToItem(jobs.indexOf(this))
     }
 
     fun remove() {
@@ -101,7 +117,7 @@ class Job(
         val index = jobs.indexOf(this)
         jobs.removeAt(index)
         jobs.add(index, this)
-        jobs.sortWith(SortingMethod.current.comparator)
+        jobs.sortWith(sortingMethod.comparator)
     }
 }
 

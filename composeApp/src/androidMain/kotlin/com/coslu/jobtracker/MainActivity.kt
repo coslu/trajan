@@ -5,11 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.coslu.jobtracker.SortingMethod.Date
-import com.coslu.jobtracker.SortingMethod.Location
-import com.coslu.jobtracker.SortingMethod.Name
-import com.coslu.jobtracker.SortingMethod.Status
-import com.coslu.jobtracker.SortingMethod.Type
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -66,28 +61,16 @@ actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
     }
 }
 
-actual fun saveSortingMethod(sortingMethod: SortingMethod) {
+actual fun saveSettings() {
     try {
-        File(dir, "sort.txt").writeText(sortingMethod.toString())
+        File(dir, "settings.json").writeText(Json.encodeToString(Settings))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 
-actual fun fetchSortingMethod(): SortingMethod {
-    return try {
-        File(dir, "sort.txt").readText().let {
-            val descending = it.contains("true")
-            when (it[0]) {
-                'D' -> Date(descending)
-                'N' -> Name(descending)
-                'T' -> Type(descending)
-                'L' -> Location(descending)
-                'S' -> Status(descending)
-                else -> Date(true)
-            }
-        }
-    } catch (e: Exception) {
-        Date(true)
+actual fun fetchSettings() {
+    runCatching {
+        Json.decodeFromString<Settings>(File(dir, "settings.json").readText())
     }
 }

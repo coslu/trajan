@@ -85,6 +85,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.coslu.jobtracker.Settings.applyFilters
+import com.coslu.jobtracker.Settings.locationFilters
+import com.coslu.jobtracker.Settings.sortingMethod
+import com.coslu.jobtracker.Settings.statusFilters
+import com.coslu.jobtracker.Settings.typeFilters
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.arrow_right
 import job_tracker.composeapp.generated.resources.date
@@ -349,12 +354,7 @@ fun JobDialog(
                                 }
                             )
                             ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
-                                listOf(
-                                    "Pending Application",
-                                    "Awaiting Response",
-                                    "Rejected",
-                                    "Meeting Scheduled"
-                                ).forEach {
+                                Job.statuses.forEach {
                                     DropdownMenuItem(
                                         modifier = Modifier.padding(5.dp),
                                         onClick = {
@@ -580,6 +580,7 @@ fun SideSheet(
 fun SortAndFilter() {
     var openLocations by remember { mutableStateOf(false) }
     var openTypes by remember { mutableStateOf(false) }
+    var openStatuses by remember { mutableStateOf(false) }
     LazyVerticalGrid(GridCells.Adaptive(180.dp)) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Row(
@@ -602,9 +603,9 @@ fun SortAndFilter() {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    SortingMethod.current.descending,
+                    sortingMethod.descending,
                     onCheckedChange = {
-                        SortingMethod.current = when (SortingMethod.current) {
+                        sortingMethod = when (sortingMethod) {
                             is SortingMethod.Date -> SortingMethod.Date(it)
                             is SortingMethod.Name -> SortingMethod.Name(it)
                             is SortingMethod.Type -> SortingMethod.Type(it)
@@ -619,8 +620,8 @@ fun SortAndFilter() {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    SortingMethod.current is SortingMethod.Date,
-                    { SortingMethod.current = SortingMethod.Date(SortingMethod.current.descending) }
+                    sortingMethod is SortingMethod.Date,
+                    { sortingMethod = SortingMethod.Date(sortingMethod.descending) }
                 )
                 Icon(
                     painterResource(Res.drawable.date),
@@ -633,8 +634,8 @@ fun SortAndFilter() {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    SortingMethod.current is SortingMethod.Name,
-                    { SortingMethod.current = SortingMethod.Name(SortingMethod.current.descending) }
+                    sortingMethod is SortingMethod.Name,
+                    { sortingMethod = SortingMethod.Name(sortingMethod.descending) }
                 )
                 Icon(
                     painterResource(Res.drawable.name),
@@ -647,8 +648,8 @@ fun SortAndFilter() {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    SortingMethod.current is SortingMethod.Type,
-                    { SortingMethod.current = SortingMethod.Type(SortingMethod.current.descending) }
+                    sortingMethod is SortingMethod.Type,
+                    { sortingMethod = SortingMethod.Type(sortingMethod.descending) }
                 )
                 Icon(
                     painterResource(Res.drawable.type),
@@ -661,10 +662,10 @@ fun SortAndFilter() {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    SortingMethod.current is SortingMethod.Location,
+                    sortingMethod is SortingMethod.Location,
                     {
-                        SortingMethod.current =
-                            SortingMethod.Location(SortingMethod.current.descending)
+                        sortingMethod =
+                            SortingMethod.Location(sortingMethod.descending)
                     }
                 )
                 Icon(
@@ -678,10 +679,10 @@ fun SortAndFilter() {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    SortingMethod.current is SortingMethod.Status,
+                    sortingMethod is SortingMethod.Status,
                     {
-                        SortingMethod.current =
-                            SortingMethod.Status(SortingMethod.current.descending)
+                        sortingMethod =
+                            SortingMethod.Status(sortingMethod.descending)
                     }
                 )
                 Icon(
@@ -717,21 +718,35 @@ fun SortAndFilter() {
                 }.pointerHoverIcon(PointerIcon.Hand).padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AnimatedContent(openTypes, transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
+                AnimatedContent(
+                    openTypes,
+                    transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
                     if (openTypes)
                         Icon(Icons.Filled.ArrowDropDown, null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
-                Checkbox(false, {})
+                Checkbox(
+                    typeFilters.all { it.value },
+                    onCheckedChange = { checked ->
+                        typeFilters.keys.forEach { typeFilters[it] = checked }
+                        applyFilters()
+                    }
+                )
                 Text("Types")
             }
         }
-        items(Job.types.keys.toList().sorted()) {
+        items(Job.types.keys.toList().sorted()) { item ->
             AnimatedVisibility(openTypes) {
                 Row {
-                    Checkbox(false, {})
-                    BigProperty(it.ifBlank { "-" })
+                    Checkbox(
+                        typeFilters[item] ?: true,
+                        onCheckedChange = {
+                            typeFilters[item] = it
+                            applyFilters()
+                        }
+                    )
+                    BigProperty(item.ifBlank { "-" })
                 }
             }
         }
@@ -750,15 +765,66 @@ fun SortAndFilter() {
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
-                Checkbox(false, {})
+                Checkbox(
+                    locationFilters.all { it.value },
+                    onCheckedChange = { checked ->
+                        locationFilters.keys.forEach { locationFilters[it] = checked }
+                        applyFilters()
+                    }
+                )
                 Text("Locations")
             }
         }
-        items(Job.locations.keys.toList().sorted()) {
+        items(Job.locations.keys.toList().sorted()) { item ->
             AnimatedVisibility(openLocations) {
                 Row {
-                    Checkbox(false, {})
-                    BigProperty(it.ifBlank { "-" })
+                    Checkbox(
+                        locationFilters[item] ?: true,
+                        onCheckedChange = {
+                            locationFilters[item] = it
+                            applyFilters()
+                        }
+                    )
+                    BigProperty(item.ifBlank { "-" })
+                }
+            }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(
+                Modifier.fillMaxWidth().clickable(interactionSource = null, indication = null) {
+                    openStatuses = !openStatuses
+                }.pointerHoverIcon(PointerIcon.Hand).padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnimatedContent(
+                    openStatuses,
+                    transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
+                    if (openStatuses)
+                        Icon(Icons.Filled.ArrowDropDown, null)
+                    else
+                        Icon(painterResource(Res.drawable.arrow_right), null)
+                }
+                Checkbox(
+                    statusFilters.all { it.value },
+                    onCheckedChange = { checked ->
+                        statusFilters.keys.forEach { statusFilters[it] = checked }
+                        applyFilters()
+                    }
+                )
+                Text("Status")
+            }
+        }
+        items(Job.statuses) { item ->
+            AnimatedVisibility(openStatuses) {
+                Row {
+                    Checkbox(
+                        statusFilters[item] ?: true,
+                        onCheckedChange = {
+                            statusFilters[item] = it
+                            applyFilters()
+                        }
+                    )
+                    BigProperty(item.ifBlank { "-" })
                 }
             }
         }
