@@ -28,6 +28,7 @@ import kotlin.io.path.createParentDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
+private val json = Json { prettyPrint = true }
 private val homeDir = Path(System.getProperty("user.home"))
 private val dataDir =
     if (System.getProperty("os.name").lowercase().startsWith("windows"))
@@ -38,7 +39,6 @@ private val dataDir =
 private var windowState = fetchWindowState()
 private var position = windowState.position
 private var size = windowState.size
-private val json = Json { prettyPrint = true }
 
 fun main() = application {
     LaunchedEffect(windowState.position, windowState.size) {

@@ -26,7 +26,7 @@ class Job(
     var location: String = "",
     var status: String = "Pending Application",
     var notes: String = "",
-    val date: Long = Clock.System.now().toEpochMilliseconds()
+    var date: Long = Clock.System.now().toEpochMilliseconds()
 ) {
     companion object {
         val locations = mutableMapOf<String, Int>()
@@ -111,6 +111,7 @@ class Job(
         this.location = location
         this.status = status
         this.notes = notes
+        date = Clock.System.now().toEpochMilliseconds()
         saveJobList(list)
         addPropertiesToDictionary()
         // we do the following to update lazy column
@@ -118,10 +119,13 @@ class Job(
         jobs.removeAt(index)
         jobs.add(index, this)
         jobs.sortWith(sortingMethod.comparator)
+        applyFilters()
     }
 }
 
 private class JobSerializer : KSerializer<Job> {
+    private val now = Clock.System.now().toEpochMilliseconds()
+
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("com.coslu.job") {
         element<String>("name")
         element<String>("url")
@@ -129,10 +133,11 @@ private class JobSerializer : KSerializer<Job> {
         element<String>("location")
         element<String>("status")
         element<String>("notes")
+        element<Long>("date")
     }
 
     override fun deserialize(decoder: Decoder): Job {
-        val job = Job()
+        val job = Job(date = now)
         decoder.decodeStructure(descriptor) {
             loop@ while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
@@ -143,6 +148,7 @@ private class JobSerializer : KSerializer<Job> {
                     3 -> job.location = decodeStringElement(descriptor, 3)
                     4 -> job.status = decodeStringElement(descriptor, 4)
                     5 -> job.notes = decodeStringElement(descriptor, 5)
+                    6 -> job.date = decodeLongElement(descriptor, 6)
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }
@@ -158,6 +164,7 @@ private class JobSerializer : KSerializer<Job> {
             encodeStringElement(descriptor, 3, value.location)
             encodeStringElement(descriptor, 4, value.status)
             encodeStringElement(descriptor, 5, value.notes)
+            encodeLongElement(descriptor, 6, value.date)
         }
     }
 }

@@ -10,13 +10,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -24,6 +22,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Colors
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -56,6 +55,12 @@ import job_tracker.composeapp.generated.resources.notes
 import job_tracker.composeapp.generated.resources.sort_filter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -143,99 +148,92 @@ fun App() {
                             enter = expandIn(),
                             exit = shrinkOut(),
                         ) {
-                            Row(
-                                modifier = Modifier.fillParentMaxWidth().padding(10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    modifier = Modifier.weight(1f),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    BoxWithConstraints {
-                                        val smallWindow = maxWidth < 500.dp
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            val nameModifier =
-                                                if (smallWindow) Modifier.width(150.dp)
-                                                else Modifier.weight(0.3f)
-                                            JobName(it.name, it.url, nameModifier)
-                                            Row(
-                                                Modifier.weight(0.7f),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                JobProperty(it.type, Modifier.weight(1f, false))
-                                                JobProperty(
-                                                    it.location,
-                                                    Modifier.weight(1f, false)
-                                                )
-                                                JobProperty(
-                                                    it.status,
-                                                    Modifier.weight(1f, false)
-                                                )
-                                                if (it.notes.isNotEmpty()) {
-                                                    IconButton({
-                                                        showNotes.targetState =
-                                                            !showNotes.currentState
-                                                    }) {
-                                                        Popup(
-                                                            onDismissRequest = {
-                                                                showNotes.targetState = false
-                                                            },
-                                                            offset = IntOffset(
-                                                                0,
-                                                                28.dp.toInt()
-                                                            )
-                                                        ) {
-                                                            AnimatedVisibility(
-                                                                showNotes,
-                                                                enter = fadeIn(),
-                                                                exit = fadeOut()
-                                                            ) {
-                                                                Card(
-                                                                    Modifier.padding(10.dp),
-                                                                    elevation = 8.dp,
-                                                                    shape = RoundedCornerShape(
-                                                                        0,
-                                                                        20,
-                                                                        20,
-                                                                        20
-                                                                    ),
-                                                                    border = BorderStroke(
-                                                                        1.dp,
-                                                                        color = colors.onSurface
-                                                                    )
-                                                                ) {
-                                                                    Text(
-                                                                        it.notes,
-                                                                        Modifier.padding(10.dp)
-                                                                    )
-                                                                }
-                                                            }
-                                                        }
-                                                        Icon(
-                                                            painterResource(Res.drawable.notes),
-                                                            "Show additional notes",
-                                                            tint = colors.primary
-                                                        )
-                                                    }
+                            Column(Modifier.padding(20.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    JobName(it.name, it.url, Modifier.weight(1f))
+                                    Text(
+                                        Instant.fromEpochMilliseconds(it.date)
+                                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                                            .format(
+                                                LocalDateTime.Format {
+                                                    dayOfMonth()
+                                                    char('.')
+                                                    monthNumber()
+                                                    char('.')
+                                                    year()
                                                 }
-                                            }
-                                        }
-
-                                    }
-                                }
-                                IconButton(
-                                    onClick = {
-                                        selectedJob = it
-                                        showDialog = true
-                                    },
-                                ) {
-                                    Icon(
-                                        Icons.Filled.Edit,
-                                        contentDescription = "Edit",
-                                        tint = colors.primary
+                                            ),
+                                        modifier = Modifier.padding(horizontal = 10.dp)
                                     )
                                 }
+                                Row(Modifier, verticalAlignment = Alignment.CenterVertically) {
+                                    Row(Modifier.weight(1f).padding(start=40.dp)) {
+                                        JobProperty(it.type, Modifier.weight(1f, false))
+                                        JobProperty(it.location, Modifier.weight(1f, false))
+                                        JobProperty(it.status, Modifier.weight(1f, false))
+                                        if (it.notes.isNotEmpty()) {
+                                            IconButton({
+                                                showNotes.targetState =
+                                                    !showNotes.currentState
+                                            }) {
+                                                Popup(
+                                                    onDismissRequest = {
+                                                        showNotes.targetState = false
+                                                    },
+                                                    offset = IntOffset(
+                                                        0,
+                                                        28.dp.toInt()
+                                                    )
+                                                ) {
+                                                    AnimatedVisibility(
+                                                        showNotes,
+                                                        enter = fadeIn(),
+                                                        exit = fadeOut()
+                                                    ) {
+                                                        Card(
+                                                            Modifier.padding(10.dp),
+                                                            elevation = 8.dp,
+                                                            shape = RoundedCornerShape(
+                                                                0,
+                                                                20,
+                                                                20,
+                                                                20
+                                                            ),
+                                                            border = BorderStroke(
+                                                                1.dp,
+                                                                color = colors.onSurface
+                                                            )
+                                                        ) {
+                                                            Text(
+                                                                it.notes,
+                                                                Modifier.padding(10.dp)
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                                Icon(
+                                                    painterResource(Res.drawable.notes),
+                                                    "Show additional notes",
+                                                    tint = colors.primary
+                                                )
+                                            }
+                                        }
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            selectedJob = it
+                                            showDialog = true
+                                        },
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.Edit,
+                                            contentDescription = "Edit",
+                                            tint = colors.primary
+                                        )
+                                    }
+                                }
                             }
+                            Divider()
                         }
                     }
                 }
@@ -265,7 +263,7 @@ fun App() {
 fun showSnackbar(message: String) =
     coroutineScope.launch { snackbarHostState.showSnackbar(message) }
 
-fun jumpToItem(index: Int) = coroutineScope.launch { listState.scrollToItem(index)}
+fun jumpToItem(index: Int) = coroutineScope.launch { listState.scrollToItem(index) }
 
 fun getPropertyColor(
     property: String,
