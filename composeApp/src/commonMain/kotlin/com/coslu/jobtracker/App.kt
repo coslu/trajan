@@ -167,7 +167,7 @@ fun App() {
                                     )
                                 }
                                 Row(Modifier, verticalAlignment = Alignment.CenterVertically) {
-                                    Row(Modifier.weight(1f).padding(start=40.dp)) {
+                                    Row(Modifier.weight(1f).padding(start = 40.dp)) {
                                         JobProperty(it.type, Modifier.weight(1f, false))
                                         JobProperty(it.location, Modifier.weight(1f, false))
                                         JobProperty(it.status, Modifier.weight(1f, false))
@@ -238,7 +238,7 @@ fun App() {
                     }
                 }
                 Row(Modifier.padding(vertical = 10.dp)) {
-                    if (jobs.any { it.visible.targetState }) {
+                    if (Job.list.isNotEmpty()) {
                         Button(
                             { showSideSheet.targetState = true },
                             Modifier.padding(end = 20.dp)

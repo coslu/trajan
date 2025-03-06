@@ -15,6 +15,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -57,6 +62,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.minimumInteractiveComponentSize
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -70,6 +76,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -738,16 +745,7 @@ fun SortAndFilter() {
         }
         items(Job.types.keys.toList().sorted()) { item ->
             AnimatedVisibility(openTypes) {
-                Row {
-                    Checkbox(
-                        typeFilters[item] ?: true,
-                        onCheckedChange = {
-                            typeFilters[item] = it
-                            applyFilters()
-                        }
-                    )
-                    BigProperty(item.ifBlank { "-" })
-                }
+                FilterControl(item, typeFilters)
             }
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -777,16 +775,7 @@ fun SortAndFilter() {
         }
         items(Job.locations.keys.toList().sorted()) { item ->
             AnimatedVisibility(openLocations) {
-                Row {
-                    Checkbox(
-                        locationFilters[item] ?: true,
-                        onCheckedChange = {
-                            locationFilters[item] = it
-                            applyFilters()
-                        }
-                    )
-                    BigProperty(item.ifBlank { "-" })
-                }
+                FilterControl(item, locationFilters)
             }
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -816,17 +805,41 @@ fun SortAndFilter() {
         }
         items(Job.statuses) { item ->
             AnimatedVisibility(openStatuses) {
-                Row {
-                    Checkbox(
-                        statusFilters[item] ?: true,
-                        onCheckedChange = {
-                            statusFilters[item] = it
-                            applyFilters()
-                        }
-                    )
-                    BigProperty(item.ifBlank { "-" })
-                }
+                FilterControl(item, statusFilters)
             }
         }
+    }
+}
+
+@Composable
+fun FilterControl(item: String, filterMap: MutableMap<String, Boolean>) {
+    Row {
+        val interactionSource = remember { MutableInteractionSource() }
+        Checkbox(
+            filterMap[item] ?: true,
+            modifier = Modifier.pointerInput(null) {
+                detectTapGestures(
+                    onPress = {
+                        filterMap[item] = !filterMap[item]!!
+                        applyFilters()
+                        val press = PressInteraction.Press(it)
+                        interactionSource.emit(press)
+                        tryAwaitRelease()
+                        interactionSource.emit(PressInteraction.Release(press))
+                    },
+                    onDoubleTap = {
+                        filterMap.keys.forEach {
+                            filterMap[it] = false
+                        }
+                        filterMap[item] = true
+                        applyFilters()
+                    }
+                )
+            }.minimumInteractiveComponentSize()
+                .hoverable(interactionSource)
+                .indication(interactionSource, ripple(bounded = false, radius = 24.dp)),
+            onCheckedChange = null
+        )
+        BigProperty(item.ifBlank { "-" })
     }
 }
