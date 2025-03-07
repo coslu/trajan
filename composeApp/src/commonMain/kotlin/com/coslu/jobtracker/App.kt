@@ -20,10 +20,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
@@ -45,10 +47,19 @@ import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Settings.sortingMethod
+import com.coslu.jobtracker.components.JobDialog
+import com.coslu.jobtracker.components.JobName
+import com.coslu.jobtracker.components.JobProperty
+import com.coslu.jobtracker.components.SideSheet
+import com.coslu.jobtracker.components.SortAndFilter
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
@@ -172,10 +183,13 @@ fun App() {
                                         JobProperty(it.location, Modifier.weight(1f, false))
                                         JobProperty(it.status, Modifier.weight(1f, false))
                                         if (it.notes.isNotEmpty()) {
-                                            IconButton({
-                                                showNotes.targetState =
-                                                    !showNotes.currentState
-                                            }) {
+                                            IconButton(
+                                                onClick = {
+                                                    showNotes.targetState =
+                                                        !showNotes.currentState
+                                                },
+                                                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                                            ) {
                                                 Popup(
                                                     onDismissRequest = {
                                                         showNotes.targetState = false
@@ -224,6 +238,7 @@ fun App() {
                                             selectedJob = it
                                             showDialog = true
                                         },
+                                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                     ) {
                                         Icon(
                                             Icons.Filled.Edit,
@@ -240,14 +255,18 @@ fun App() {
                 Row(Modifier.padding(vertical = 10.dp)) {
                     if (Job.list.isNotEmpty()) {
                         Button(
-                            { showSideSheet.targetState = true },
-                            Modifier.padding(end = 20.dp)
+                            onClick = { showSideSheet.targetState = true },
+                            modifier = Modifier.padding(end = 20.dp)
+                                .pointerHoverIcon(PointerIcon.Hand)
                         ) {
                             Icon(painterResource(Res.drawable.sort_filter), null)
                             Text("Sort & Filter", modifier = Modifier.padding(start = 10.dp))
                         }
                     }
-                    Button({ selectedJob = null; showDialog = true }) {
+                    Button(
+                        onClick = { selectedJob = null; showDialog = true },
+                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                    ) {
                         Icon(Icons.Filled.Add, null)
                         Text("Add Job", modifier = Modifier.padding(start = 10.dp))
                     }
@@ -275,4 +294,9 @@ fun getPropertyColor(
 fun setPropertyColor(property: String, color: PropertyColor) {
     propertyColors[property] = color
     savePropertyColors(propertyColors.toList())
+}
+
+@Composable
+fun Dp.toInt(): Int {
+    return LocalDensity.current.run { roundToPx() }
 }
