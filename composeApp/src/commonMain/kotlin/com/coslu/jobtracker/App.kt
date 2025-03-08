@@ -109,8 +109,8 @@ fun App() {
         }
         remember { fetchSettings(); Settings.applyFilters() }
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
-        var showDialog by remember { mutableStateOf(false) }
-        val showSideSheet = remember { MutableTransitionState(false) }
+        val showDialog = remember { MutableTransitionState(false) }
+        val showFilters = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
         snackbarHostState = remember { SnackbarHostState() }
@@ -143,9 +143,6 @@ fun App() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                if (showDialog)
-                    JobDialog(onDismissRequest = { showDialog = false }, selectedJob)
-
                 listState = rememberLazyListState()
                 LazyColumn(modifier = Modifier.weight(1f), state = listState) {
                     item {
@@ -236,7 +233,7 @@ fun App() {
                                     IconButton(
                                         onClick = {
                                             selectedJob = it
-                                            showDialog = true
+                                            showDialog.targetState = true
                                         },
                                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                     ) {
@@ -255,7 +252,7 @@ fun App() {
                 Row(Modifier.padding(vertical = 10.dp)) {
                     if (Job.list.isNotEmpty()) {
                         Button(
-                            onClick = { showSideSheet.targetState = true },
+                            onClick = { showFilters.targetState = true },
                             modifier = Modifier.padding(end = 20.dp)
                                 .pointerHoverIcon(PointerIcon.Hand)
                         ) {
@@ -264,7 +261,7 @@ fun App() {
                         }
                     }
                     Button(
-                        onClick = { selectedJob = null; showDialog = true },
+                        onClick = { selectedJob = null; showDialog.targetState = true },
                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                     ) {
                         Icon(Icons.Filled.Add, null)
@@ -272,8 +269,11 @@ fun App() {
                     }
                 }
             }
-            SideSheet(showSideSheet) {
+            SideSheet(showFilters) {
                 SortAndFilter()
+            }
+            SideSheet(showDialog, true) {
+                JobDialog(onDismissRequest = { showDialog.targetState = false }, selectedJob)
             }
         }
     }

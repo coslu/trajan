@@ -39,7 +39,8 @@ fun SideSheet(
             Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.6f))
                 .clickable(interactionSource = null, indication = null) {
                     showSideSheet.targetState = false
-                })
+                }
+        )
     }
     Row(
         Modifier.fillMaxSize(),
