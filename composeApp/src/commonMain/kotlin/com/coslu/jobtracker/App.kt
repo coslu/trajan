@@ -109,7 +109,7 @@ fun App() {
         }
         remember { fetchSettings(); Settings.applyFilters() }
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
-        val showDialog = remember { MutableTransitionState(false) }
+        val showJobDialog = remember { MutableTransitionState(false) }
         val showFilters = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
@@ -233,7 +233,7 @@ fun App() {
                                     IconButton(
                                         onClick = {
                                             selectedJob = it
-                                            showDialog.targetState = true
+                                            showJobDialog.targetState = true
                                         },
                                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                     ) {
@@ -261,7 +261,7 @@ fun App() {
                         }
                     }
                     Button(
-                        onClick = { selectedJob = null; showDialog.targetState = true },
+                        onClick = { selectedJob = null; showJobDialog.targetState = true },
                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                     ) {
                         Icon(Icons.Filled.Add, null)
@@ -272,8 +272,13 @@ fun App() {
             SideSheet(showFilters) {
                 SortAndFilter()
             }
-            SideSheet(showDialog, true) {
-                JobDialog(onDismissRequest = { showDialog.targetState = false }, selectedJob)
+            val showDeleteDialog = remember { MutableTransitionState(false) }
+            SideSheet(showJobDialog, true, showDeleteDialog) {
+                JobDialog(
+                    onDismissRequest = { showJobDialog.targetState = false },
+                    selectedJob,
+                    showDeleteDialog
+                )
             }
         }
     }

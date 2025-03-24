@@ -1,16 +1,13 @@
 package com.coslu.jobtracker.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -38,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +51,7 @@ import com.coslu.jobtracker.toInt
 fun JobDialog(
     onDismissRequest: () -> Unit,
     job: Job? = null,
+    showDeleteDialog: MutableTransitionState<Boolean>? = null
 ) {
     var name by remember { mutableStateOf(job?.name ?: "") }
     var url by remember { mutableStateOf(job?.url ?: "") }
@@ -65,7 +62,6 @@ fun JobDialog(
     val buttonText = if (job != null) "Save" else "Add Job"
     val title = if (job != null) "Edit Job" else "New Job"
     var expandStatusMenu by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -81,30 +77,13 @@ fun JobDialog(
                         fontWeight = FontWeight.Bold
                     )
                     if (job != null) {
+                        showDeleteDialog as MutableTransitionState<Boolean>
                         IconButton(
-                            onClick = { showDeleteDialog = true },
+                            onClick = { showDeleteDialog.targetState = true },
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                         ) {
                             Popup(
-                                onDismissRequest = { showDeleteDialog = false }
-                            ) {
-                                AnimatedVisibility(
-                                    showDeleteDialog,
-                                    enter = fadeIn(),
-                                    exit = fadeOut()
-                                ) {
-                                    Box(
-                                        Modifier.fillMaxSize()
-                                            .background(Color.Black.copy(alpha = 0.3f))
-                                            .clickable(
-                                                interactionSource = null,
-                                                indication = null,
-                                                onClick = { showDeleteDialog = false })
-                                    )
-                                }
-                            }
-                            Popup(
-                                onDismissRequest = { showDeleteDialog = false },
+                                onDismissRequest = { showDeleteDialog.targetState = false },
                                 offset = IntOffset(-384.dp.toInt(), 24.dp.toInt()),
                             ) {
                                 AnimatedVisibility(
@@ -134,7 +113,9 @@ fun JobDialog(
                                             Row(Modifier.width(340.dp)) {
                                                 Row(Modifier.weight(1f)) {
                                                     TextButton(
-                                                        onClick = { showDeleteDialog = false },
+                                                        onClick = {
+                                                            showDeleteDialog.targetState = false
+                                                        },
                                                         modifier = Modifier.pointerHoverIcon(
                                                             PointerIcon.Hand
                                                         )
@@ -145,7 +126,7 @@ fun JobDialog(
                                                 TextButton(
                                                     onClick = {
                                                         job.remove()
-                                                        showDeleteDialog = false
+                                                        showDeleteDialog.targetState = false
                                                         onDismissRequest()
                                                     },
                                                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)

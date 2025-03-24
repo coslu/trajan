@@ -27,11 +27,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 
 @Composable
 fun SideSheet(
     showSideSheet: MutableTransitionState<Boolean>,
     arrangeToEnd: Boolean = false,
+    showDialog: MutableTransitionState<Boolean>? = null,
     content: @Composable () -> Unit
 ) {
     AnimatedVisibility(showSideSheet, enter = fadeIn(), exit = fadeOut()) {
@@ -67,6 +69,26 @@ fun SideSheet(
                         content()
                     }
                 }
+            }
+        }
+    }
+    if (showDialog != null) {
+        Popup(
+            onDismissRequest = { showDialog.targetState = false }
+        ) {
+            AnimatedVisibility(
+                showDialog,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Box(
+                    Modifier.fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.3f))
+                        .clickable(
+                            interactionSource = null,
+                            indication = null,
+                            onClick = { showDialog.targetState = false })
+                )
             }
         }
     }
