@@ -6,9 +6,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -181,6 +183,10 @@ fun JobDialog(
                         trailingIcon = {
                             Icon(Icons.Filled.ArrowDropDown, null)
                         }
+                    )
+                    Box(
+                        modifier.height(TextFieldDefaults.MinHeight)
+                            .pointerHoverIcon(PointerIcon.Hand)
                     )
                     ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
                         Job.statuses.forEach {

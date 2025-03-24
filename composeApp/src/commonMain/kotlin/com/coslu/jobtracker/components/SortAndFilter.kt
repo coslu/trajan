@@ -247,7 +247,7 @@ fun SortAndFilter() {
                         applyFilters()
                     }
                 )
-                Text("Types")
+                Text("Type")
             }
         }
         items(Job.types.keys.toList().sorted()) { item ->
@@ -277,7 +277,7 @@ fun SortAndFilter() {
                         applyFilters()
                     }
                 )
-                Text("Locations")
+                Text("Location")
             }
         }
         items(Job.locations.keys.toList().sorted()) { item ->
