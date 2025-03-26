@@ -81,7 +81,7 @@ class Job(
 
     fun add() {
         visible = MutableTransitionState(false).apply { targetState = true }
-        list.add(this)
+        list.add(0, this)
         saveJobList(list)
         addPropertiesToDictionary()
         applyFilters()
