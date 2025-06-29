@@ -10,20 +10,23 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -31,9 +34,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +59,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.components.JobDialog
@@ -249,25 +256,65 @@ fun App() {
                         }
                     }
                 }
-                Row(Modifier.padding(vertical = 10.dp)) {
-                    if (Job.list.isNotEmpty()) {
-                        Button(
-                            onClick = { showFilters.targetState = true },
-                            modifier = Modifier.padding(end = 20.dp)
-                                .pointerHoverIcon(PointerIcon.Hand)
-                        ) {
+                BoxWithConstraints {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = {}) {
+                            Icon(
+                                Icons.Filled.Settings,
+                                "Settings"
+                            )
+                        }
+                        val searchString by remember { mutableStateOf("") }
+                        TextField(
+                            modifier = Modifier.width(
+                                max(
+                                    this@BoxWithConstraints.maxWidth / 2,
+                                    160.dp
+                                )
+                            ),
+                            value = searchString,
+                            onValueChange = {},
+                            singleLine = true,
+                            leadingIcon = { Icon(Icons.Filled.Search, null) },
+                            placeholder = { Text("Search in jobs") }
+                        )
+                        IconButton(onClick = { showFilters.targetState = true }) {
                             Icon(painterResource(Res.drawable.sort_filter), null)
-                            Text("Sort & Filter", modifier = Modifier.padding(start = 10.dp))
+                        }
+                        if (this@BoxWithConstraints.maxWidth > 600.dp) {
+                            ExtendedFloatingActionButton(
+                                text = { Text("Add Job") },
+                                onClick = { selectedJob = null; showJobDialog.targetState = true },
+                                icon = { Icon(Icons.Filled.Add, "Add Job") }
+                            )
+                        } else {
+                            FloatingActionButton(onClick = { selectedJob = null; showJobDialog.targetState = true }) {
+                                Icon(Icons.Filled.Add, "Add Job")
+                            }
                         }
                     }
+                }
+
+                /*if (Job.list.isNotEmpty()) {
                     Button(
-                        onClick = { selectedJob = null; showJobDialog.targetState = true },
-                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                        onClick = { showFilters.targetState = true },
+                        modifier = Modifier.padding(end = 20.dp)
+                            .pointerHoverIcon(PointerIcon.Hand)
                     ) {
-                        Icon(Icons.Filled.Add, null)
-                        Text("Add Job", modifier = Modifier.padding(start = 10.dp))
+                        Icon(painterResource(Res.drawable.sort_filter), null)
+                        Text("Sort & Filter", modifier = Modifier.padding(start = 10.dp))
                     }
                 }
+                Button(
+                    onClick = { selectedJob = null; showJobDialog.targetState = true },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                ) {
+                    Icon(Icons.Filled.Add, null)
+                    Text("Add Job", modifier = Modifier.padding(start = 10.dp))
+                }*/
             }
             SideSheet(showFilters) {
                 SortAndFilter()
