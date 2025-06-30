@@ -22,19 +22,21 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
-import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -59,7 +61,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.components.JobDialog
@@ -257,64 +258,82 @@ fun App() {
                     }
                 }
                 BoxWithConstraints {
+                    val maxWidth = maxWidth
                     Row(
                         horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                Icons.Filled.Settings,
-                                "Settings"
-                            )
+                        if (maxWidth >= 1040.dp) {
+                            OutlinedButton(
+                                onClick = { showFilters.targetState = true },
+                                modifier = Modifier.padding(horizontal = 5.dp)
+                                    .pointerHoverIcon(PointerIcon.Hand),
+                            ) {
+                                Icon(Icons.Filled.Settings, null)
+                                Text("Settings", Modifier.padding(start = 10.dp))
+                            }
+                            OutlinedButton(
+                                onClick = { showFilters.targetState = true },
+                                modifier = Modifier.padding(horizontal = 5.dp)
+                                    .pointerHoverIcon(PointerIcon.Hand),
+                            ) {
+                                Icon(painterResource(Res.drawable.sort_filter), null)
+                                Text("Sort & Filter", Modifier.padding(start = 10.dp))
+                            }
+                        } else {
+                            IconButton(
+                                onClick = { showFilters.targetState = true },
+                                modifier = Modifier.padding(horizontal = 5.dp)
+                                    .pointerHoverIcon(PointerIcon.Hand),
+                            ) {
+                                Icon(Icons.Filled.Settings, "Settings")
+                            }
+                            IconButton(
+                                onClick = { showFilters.targetState = true },
+                                modifier = Modifier.padding(horizontal = 5.dp)
+                                    .pointerHoverIcon(PointerIcon.Hand),
+                            ) {
+                                Icon(painterResource(Res.drawable.sort_filter), "Sort and Filter")
+                            }
                         }
-                        val searchString by remember { mutableStateOf("") }
+                        var searchString by remember { mutableStateOf("") }
                         TextField(
                             modifier = Modifier.width(
-                                max(
-                                    this@BoxWithConstraints.maxWidth / 2,
-                                    160.dp
-                                )
-                            ),
+                                if (maxWidth * 0.5f > 600.dp) 600.dp else maxWidth * 0.5f
+                            ).padding(vertical = 2.dp, horizontal = 5.dp),
                             value = searchString,
-                            onValueChange = {},
+                            onValueChange = { searchString = it },
                             singleLine = true,
                             leadingIcon = { Icon(Icons.Filled.Search, null) },
-                            placeholder = { Text("Search in jobs") }
-                        )
-                        IconButton(onClick = { showFilters.targetState = true }) {
-                            Icon(painterResource(Res.drawable.sort_filter), null)
-                        }
-                        if (this@BoxWithConstraints.maxWidth > 600.dp) {
-                            ExtendedFloatingActionButton(
-                                text = { Text("Add Job") },
-                                onClick = { selectedJob = null; showJobDialog.targetState = true },
-                                icon = { Icon(Icons.Filled.Add, "Add Job") }
+                            placeholder = { Text("Search in jobs") },
+                            shape = RoundedCornerShape(50),
+                            colors = TextFieldDefaults.textFieldColors(
+                                focusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                errorIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
                             )
+                        )
+                        if (maxWidth >= 1040.dp) {
+                            Button(
+                                onClick = { selectedJob = null; showJobDialog.targetState = true },
+                                modifier = Modifier.padding(horizontal = 5.dp)
+                                    .pointerHoverIcon(PointerIcon.Hand),
+                            ) {
+                                Icon(Icons.Filled.Add, null)
+                                Text("Add Job", Modifier.padding(start = 10.dp))
+                            }
                         } else {
-                            FloatingActionButton(onClick = { selectedJob = null; showJobDialog.targetState = true }) {
+                            FloatingActionButton(
+                                onClick = { selectedJob = null; showJobDialog.targetState = true },
+                                modifier = Modifier.padding(horizontal = 5.dp)
+                                    .pointerHoverIcon(PointerIcon.Hand),
+                            ) {
                                 Icon(Icons.Filled.Add, "Add Job")
                             }
                         }
                     }
                 }
-
-                /*if (Job.list.isNotEmpty()) {
-                    Button(
-                        onClick = { showFilters.targetState = true },
-                        modifier = Modifier.padding(end = 20.dp)
-                            .pointerHoverIcon(PointerIcon.Hand)
-                    ) {
-                        Icon(painterResource(Res.drawable.sort_filter), null)
-                        Text("Sort & Filter", modifier = Modifier.padding(start = 10.dp))
-                    }
-                }
-                Button(
-                    onClick = { selectedJob = null; showJobDialog.targetState = true },
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
-                ) {
-                    Icon(Icons.Filled.Add, null)
-                    Text("Add Job", modifier = Modifier.padding(start = 10.dp))
-                }*/
             }
             SideSheet(showFilters) {
                 SortAndFilter()
