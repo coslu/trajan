@@ -135,7 +135,7 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Date,
-                    { sortingMethod = SortingMethod.Date(sortingMethod.descending) }
+                    { sortingMethod = SortingMethod.Date(true) }
                 )
                 Icon(
                     painterResource(Res.drawable.date),
@@ -149,7 +149,7 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Name,
-                    { sortingMethod = SortingMethod.Name(sortingMethod.descending) }
+                    { sortingMethod = SortingMethod.Name(false) }
                 )
                 Icon(
                     painterResource(Res.drawable.name),
@@ -163,7 +163,7 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Type,
-                    { sortingMethod = SortingMethod.Type(sortingMethod.descending) }
+                    { sortingMethod = SortingMethod.Type(false) }
                 )
                 Icon(
                     painterResource(Res.drawable.type),
@@ -179,7 +179,7 @@ fun SortAndFilter() {
                     sortingMethod is SortingMethod.Location,
                     {
                         sortingMethod =
-                            SortingMethod.Location(sortingMethod.descending)
+                            SortingMethod.Location(false)
                     }
                 )
                 Icon(
@@ -196,7 +196,7 @@ fun SortAndFilter() {
                     sortingMethod is SortingMethod.Status,
                     {
                         sortingMethod =
-                            SortingMethod.Status(sortingMethod.descending)
+                            SortingMethod.Status(false)
                     }
                 )
                 Icon(
