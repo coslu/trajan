@@ -5,6 +5,7 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,15 +14,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Checkbox
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -41,12 +45,16 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Job
 import com.coslu.jobtracker.colors
 import com.coslu.jobtracker.toInt
+import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.help
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -64,6 +72,7 @@ fun JobDialog(
     val buttonText = if (job != null) "Save" else "Add Job"
     val title = if (job != null) "Edit Job" else "New Job"
     var expandStatusMenu by remember { mutableStateOf(false) }
+    var actualizeDate by remember { mutableStateOf(false) }
 
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -212,6 +221,29 @@ fun JobDialog(
                     singleLine = false,
                 )
             }
+            if (job != null) {
+                item {
+                    val showActualizeDateHelp = remember { MutableTransitionState(false) }
+                    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(actualizeDate, { actualizeDate = it })
+                        Text("Actualize Date", Modifier.padding(end = 5.dp))
+                        Icon(
+                            painterResource(Res.drawable.help),
+                            "Help",
+                            modifier = Modifier.size(16.dp).pointerHoverIcon(PointerIcon.Hand)
+                                .clickable {
+                                    showActualizeDateHelp.targetState = true
+                                },
+                            tint = LocalContentColor.current.copy(alpha = 0.5f)
+                        )
+                        PopupBubble(
+                            dpOffset = DpOffset(180.dp, (-45).dp),
+                            visible = showActualizeDateHelp,
+                            text = "When checked, sets the date of this job\nto today upon saving changes."
+                        )
+                    }
+                }
+            }
             item {
                 Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
                     Row(modifier = Modifier.weight(0.5f)) {
@@ -235,7 +267,8 @@ fun JobDialog(
                                         type.value,
                                         location.value,
                                         status,
-                                        notes
+                                        notes,
+                                        actualizeDate
                                     )
                                 } else {
                                     Job(

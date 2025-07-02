@@ -1,9 +1,6 @@
 package com.coslu.jobtracker.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -22,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -39,14 +35,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.PropertyColor
 import com.coslu.jobtracker.colors
 import com.coslu.jobtracker.getPropertyColor
 import com.coslu.jobtracker.setPropertyColor
-import com.coslu.jobtracker.toInt
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.transparent
 import org.jetbrains.compose.resources.painterResource
@@ -57,7 +51,7 @@ fun JobProperty(
     modifier: Modifier,
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
-    var showFullName by remember { mutableStateOf(false) }
+    val showFullName = remember { MutableTransitionState(false) }
     BoxWithConstraints(modifier = modifier.pointerHoverIcon(PointerIcon.Hand)) {
         DropdownMenu(showColorPicker, { showColorPicker = false }) {
             Column(Modifier.height(150.dp).width(300.dp)) {
@@ -83,45 +77,26 @@ fun JobProperty(
                 }
             }
         }
-        Popup(
-            offset = IntOffset(25.dp.toInt(), -40.dp.toInt()),
-            onDismissRequest = {
-                showFullName = false
-            },
-        ) {
-            val propertyColor = getPropertyColor(property)
-            AnimatedVisibility(showFullName, enter = fadeIn(), exit = fadeOut()) {
-                Card(
-                    shape = RoundedCornerShape(
-                        20,
-                        20,
-                        20,
-                        0
-                    ),
-                    elevation = 5.dp,
-                    backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else colors.surface,
-                    border = BorderStroke(1.dp, propertyColor.textColor)
-                ) {
-                    Text(
-                        property,
-                        color = propertyColor.textColor,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
+        val propertyColor = remember { getPropertyColor(property) }
+        PopupBubble(
+            dpOffset = DpOffset(25.dp, (-40).dp),
+            visible = showFullName,
+            text = property,
+            backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else colors.surface,
+            textColor = propertyColor.textColor
+        )
         if (maxWidth < 120.dp) {
             SmallProperty(
                 property,
                 onClick = { showColorPicker = true },
-                onLongClick = { showFullName = true }
+                onLongClick = { showFullName.targetState = true }
             )
         } else if (property.isNotEmpty()) {
             BigProperty(
                 property,
                 clickable = true,
                 onClick = { showColorPicker = true },
-                onLongClick = { showFullName = true }
+                onLongClick = { showFullName.targetState = true }
             )
         }
     }

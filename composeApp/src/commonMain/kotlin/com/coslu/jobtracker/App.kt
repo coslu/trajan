@@ -6,7 +6,6 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,9 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.Card
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -51,13 +48,13 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.components.JobDialog
 import com.coslu.jobtracker.components.JobName
 import com.coslu.jobtracker.components.JobProperty
+import com.coslu.jobtracker.components.PopupBubble
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
 import job_tracker.composeapp.generated.resources.Res
@@ -187,41 +184,12 @@ fun App() {
                                                 },
                                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                             ) {
-                                                Popup(
-                                                    onDismissRequest = {
-                                                        showNotes.targetState = false
-                                                    },
-                                                    offset = IntOffset(
-                                                        0,
-                                                        28.dp.toInt()
-                                                    )
-                                                ) {
-                                                    AnimatedVisibility(
-                                                        showNotes,
-                                                        enter = fadeIn(),
-                                                        exit = fadeOut()
-                                                    ) {
-                                                        Card(
-                                                            Modifier.padding(10.dp),
-                                                            elevation = 8.dp,
-                                                            shape = RoundedCornerShape(
-                                                                0,
-                                                                20,
-                                                                20,
-                                                                20
-                                                            ),
-                                                            border = BorderStroke(
-                                                                1.dp,
-                                                                color = colors.onSurface
-                                                            )
-                                                        ) {
-                                                            Text(
-                                                                it.notes,
-                                                                Modifier.padding(10.dp)
-                                                            )
-                                                        }
-                                                    }
-                                                }
+                                                PopupBubble(
+                                                    DpOffset(0.dp, 28.dp),
+                                                    showNotes,
+                                                    it.notes,
+                                                    true
+                                                )
                                                 Icon(
                                                     painterResource(Res.drawable.notes),
                                                     "Show additional notes",

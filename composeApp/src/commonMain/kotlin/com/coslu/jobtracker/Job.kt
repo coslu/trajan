@@ -102,7 +102,8 @@ class Job(
         type: String,
         location: String,
         status: String,
-        notes: String
+        notes: String,
+        actualizeDate: Boolean
     ) {
         removePropertiesFromDictionary()
         this.name = name
@@ -111,7 +112,8 @@ class Job(
         this.location = location
         this.status = status
         this.notes = notes
-        date = Clock.System.now().toEpochMilliseconds()
+        if (actualizeDate)
+            date = Clock.System.now().toEpochMilliseconds()
         saveJobList(list)
         addPropertiesToDictionary()
         // we do the following to update lazy column
