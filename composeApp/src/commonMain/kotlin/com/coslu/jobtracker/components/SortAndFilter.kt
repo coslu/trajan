@@ -235,7 +235,7 @@ fun SortAndFilter() {
                 AnimatedContent(
                     openTypes,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
-                    if (openTypes)
+                    if (it)
                         Icon(Icons.Filled.ArrowDropDown, null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
@@ -265,7 +265,7 @@ fun SortAndFilter() {
                 AnimatedContent(
                     openLocations,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
-                    if (openLocations)
+                    if (it)
                         Icon(Icons.Filled.ArrowDropDown, null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
@@ -295,7 +295,7 @@ fun SortAndFilter() {
                 AnimatedContent(
                     openStatuses,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
-                    if (openStatuses)
+                    if (it)
                         Icon(Icons.Filled.ArrowDropDown, null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)

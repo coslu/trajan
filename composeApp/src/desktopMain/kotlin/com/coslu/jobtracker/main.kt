@@ -15,7 +15,6 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -112,7 +111,7 @@ private fun fetchWindowState(): WindowState {
             WindowStateSerializer(),
             dataDir.resolve("window_state.json").readText()
         )
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         WindowState(WindowPlacement.Maximized)
     }
 }
@@ -151,7 +150,7 @@ actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
         json.decodeFromString<List<Pair<String, PropertyColor>>>(
             dataDir.resolve("colors.json").readText()
         )
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         defaultStatusColors
     }
 }

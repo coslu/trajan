@@ -65,8 +65,8 @@ fun JobDialog(
 ) {
     var name by remember { mutableStateOf(job?.name ?: "") }
     var url by remember { mutableStateOf(job?.url ?: "") }
-    val location = mutableStateOf(job?.location ?: "")
-    val type = mutableStateOf(job?.type ?: "")
+    val location = remember { mutableStateOf(job?.location ?: "") }
+    val type = remember { mutableStateOf(job?.type ?: "") }
     var status by remember { mutableStateOf(job?.status ?: "Pending Application") }
     var notes by remember { mutableStateOf(job?.notes ?: "") }
     val buttonText = if (job != null) "Save" else "Add Job"

@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,7 +64,6 @@ import job_tracker.composeapp.generated.resources.notes
 import job_tracker.composeapp.generated.resources.sort_filter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -71,6 +71,8 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 
 val colors = Colors(
@@ -95,6 +97,7 @@ private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
+@OptIn(ExperimentalTime::class)
 @Composable
 @Preview
 fun App() {
@@ -104,16 +107,17 @@ fun App() {
         jobs = remember {
             Job.list.sortedWith(sortingMethod.comparator).toMutableStateList()
         }
-        remember { fetchSettings(); Settings.applyFilters() }
+        LaunchedEffect(Unit) { fetchSettings(); Settings.applyFilters() }
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         val showJobDialog = remember { MutableTransitionState(false) }
         val showFilters = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
         snackbarHostState = remember { SnackbarHostState() }
-        Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) {
+        Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { contentPadding ->
             AnimatedVisibility(
                 !jobs.any { it.visible.targetState },
+                Modifier.padding(contentPadding),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
@@ -136,7 +140,7 @@ fun App() {
                 }
             }
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -161,7 +165,7 @@ fun App() {
                                             .toLocalDateTime(TimeZone.currentSystemDefault())
                                             .format(
                                                 LocalDateTime.Format {
-                                                    dayOfMonth()
+                                                    day()
                                                     char('.')
                                                     monthNumber()
                                                     char('.')
@@ -185,7 +189,7 @@ fun App() {
                                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                             ) {
                                                 PopupBubble(
-                                                    DpOffset(0.dp, 28.dp),
+                                                    DpOffset(34.dp, 20.dp),
                                                     showNotes,
                                                     it.notes,
                                                     true

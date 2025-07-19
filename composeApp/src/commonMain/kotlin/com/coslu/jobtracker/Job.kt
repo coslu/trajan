@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.coslu.jobtracker
 
 import androidx.compose.animation.core.MutableTransitionState
@@ -5,7 +7,6 @@ import com.coslu.jobtracker.Settings.applyFilters
 import com.coslu.jobtracker.Settings.locationFilters
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.Settings.typeFilters
-import kotlinx.datetime.Clock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -17,6 +18,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Serializable(with = JobSerializer::class)
 class Job(

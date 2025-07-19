@@ -1,10 +1,11 @@
-import org.gradle.internal.extensions.core.extra
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+private val trajanVersionCode = 4
+private val trajanVersionName = "1.2.0"
+
 plugins {
-    kotlin("plugin.serialization") version "2.0.21"
+    kotlin("plugin.serialization") version "2.2.0"
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
@@ -13,7 +14,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -40,6 +40,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.androidx.material.icons.core)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -56,8 +57,8 @@ android {
         applicationId = "com.coslu.jobtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = rootProject.extra["versionCode"] as Int
-        versionName = rootProject.extra["versionName"] as String
+        versionCode = trajanVersionCode
+        versionName = trajanVersionName
     }
     packaging {
         resources {
@@ -86,13 +87,16 @@ dependencies {
 }
 
 compose.desktop {
+    configurations.all {
+        exclude(group = "androidx.compose.ui", module = "ui-util")
+    }
     application {
         mainClass = "com.coslu.jobtracker.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Trajan"
-            packageVersion = rootProject.extra["versionName"] as String
+            packageVersion = trajanVersionName
             description = "Tracking Assistant for Job Applications"
             vendor = "Coslu"
             licenseFile.set(project.file("../LICENSE"))

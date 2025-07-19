@@ -1,7 +1,6 @@
 package com.coslu.jobtracker.components
 
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -45,6 +44,7 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.transparent
 import org.jetbrains.compose.resources.painterResource
 
+@Suppress("UnusedBoxWithConstraintsScope")
 @Composable
 fun JobProperty(
     property: String,
@@ -79,12 +79,13 @@ fun JobProperty(
         }
         val propertyColor = remember { getPropertyColor(property) }
         PopupBubble(
-            dpOffset = DpOffset(25.dp, (-40).dp),
+            dpOffset = DpOffset(25.dp, (-35).dp),
             visible = showFullName,
             text = property,
             backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else colors.surface,
             textColor = propertyColor.textColor
         )
+        // This uses the BoxWithConstraints scope
         if (maxWidth < 120.dp) {
             SmallProperty(
                 property,
@@ -102,7 +103,6 @@ fun JobProperty(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BigProperty(
     property: String,
@@ -134,7 +134,6 @@ fun BigProperty(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SmallProperty(property: String, onClick: () -> Unit = {}, onLongClick: () -> Unit = {}) {
     val propertyColor = getPropertyColor(property)

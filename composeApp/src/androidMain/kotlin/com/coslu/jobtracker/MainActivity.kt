@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
@@ -31,7 +30,7 @@ fun AppAndroidPreview() {
 actual fun fetchJobList(): List<Job> {
     return try {
         json.decodeFromString<MutableList<Job>>(File(dir, "jobs.json").readText())
-    } catch (ex: Exception) {
+    } catch (_: Exception) {
         listOf()
     }
 }
@@ -49,7 +48,7 @@ actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
         json.decodeFromString<List<Pair<String, PropertyColor>>>(
             File(dir, "colors.json").readText()
         )
-    } catch (ex: Exception) {
+    } catch (_: Exception) {
         defaultStatusColors
     }
 }
