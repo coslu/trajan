@@ -18,15 +18,15 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.minimumInteractiveComponentSize
 import androidx.compose.material.ripple
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -107,10 +107,10 @@ fun SortAndFilter() {
                     tint = colors.primary
                 )
                 Text("Sort", Modifier.padding(horizontal = 10.dp), color = colors.primary)
-                Divider(
+                HorizontalDivider(
                     Modifier.padding(horizontal = 10.dp),
-                    color = colors.primary,
-                    thickness = 1.5.dp
+                    1.5.dp,
+                    colors.primary
                 )
             }
         }
@@ -218,10 +218,10 @@ fun SortAndFilter() {
                     tint = colors.primary
                 )
                 Text("Filter", Modifier.padding(horizontal = 10.dp), color = colors.primary)
-                Divider(
+                HorizontalDivider(
                     Modifier.padding(horizontal = 10.dp),
-                    color = colors.primary,
-                    thickness = 1.5.dp
+                    thickness = 1.5.dp,
+                    color = colors.primary
                 )
             }
         }

@@ -125,7 +125,7 @@ private fun saveWindowState() {
         dataDir.resolve("window_state.json").createParentDirectories()
             .writeText(json.encodeToString(WindowStateSerializer(), windowState))
     } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
+//        showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 
@@ -141,7 +141,7 @@ actual fun saveJobList(list: List<Job>) {
     try {
         dataDir.resolve("jobs.json").createParentDirectories().writeText(json.encodeToString(list))
     } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
+//        showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 
@@ -159,7 +159,7 @@ actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
     try {
         dataDir.resolve("colors.json").createParentDirectories().writeText(json.encodeToString(map))
     } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
+//        showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 
@@ -168,7 +168,7 @@ actual fun saveSettings() {
         dataDir.resolve("settings.json").createParentDirectories()
             .writeText(json.encodeToString(Settings))
     } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
+//        showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 

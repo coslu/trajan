@@ -39,7 +39,7 @@ actual fun saveJobList(list: List<Job>) {
     try {
         File(dir, "jobs.json").writeText(json.encodeToString(list))
     } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
+//        showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 
@@ -57,7 +57,7 @@ actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
     try {
         File(dir, "colors.json").writeText(json.encodeToString(map))
     } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
+//        showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 
@@ -65,7 +65,7 @@ actual fun saveSettings() {
     try {
         File(dir, "settings.json").writeText(json.encodeToString(Settings))
     } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
+//        showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 

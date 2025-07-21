@@ -1,12 +1,12 @@
 package com.coslu.jobtracker.components
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuBox
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -17,9 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupProperties
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AutoCompleteTextField(
     value: MutableState<String>,
@@ -50,7 +49,7 @@ fun AutoCompleteTextField(
         DropdownMenu(
             expanded,
             { expanded = false },
-            properties = PopupProperties(focusable = false)
+//            properties = PopupProperties(focusable = false)
         ) {
             list.filter {
                 it.first.startsWith(
@@ -64,10 +63,9 @@ fun AutoCompleteTextField(
                         text = it.first
                         textFileValue = TextFieldValue(text, selection = TextRange(text.length))
                         expanded = false
-                    }
-                ) {
-                    BigProperty(it.first)
-                }
+                    },
+                    text = { BigProperty(it.first) }
+                )
             }
         }
     }

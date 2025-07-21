@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +23,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.coslu.jobtracker.showSnackbar
+//import com.coslu.jobtracker.showSnackbar
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.open_link
 import org.jetbrains.compose.resources.painterResource
@@ -65,7 +65,7 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.button
+                    style = MaterialTheme.typography.labelLarge
                 )
             }
         } else {
@@ -73,8 +73,8 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                 onClick = {
                     try {
                         uriHandler.openUri(url)
-                    } catch (e: Exception) {
-                        showSnackbar("The URL is invalid or cannot be handled by the system.")
+                    } catch (_: Exception) {
+//                        showSnackbar("The URL is invalid or cannot be handled by the system.")
                     }
                 },
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)

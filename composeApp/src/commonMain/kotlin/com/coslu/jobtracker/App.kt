@@ -18,19 +18,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
 import androidx.compose.material.Colors
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -92,7 +90,7 @@ val colors = Colors(
 )
 
 lateinit var jobs: SnapshotStateList<Job> // separate list for lazy column allows delete animations
-private lateinit var snackbarHostState: SnackbarHostState
+//private lateinit var snackbarHostState: SnackbarHostState TODO temporarily removed snackbars
 private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
@@ -102,7 +100,7 @@ private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 @Preview
 fun App() {
     MaterialTheme(
-        colors = colors
+
     ) {
         jobs = remember {
             Job.list.sortedWith(sortingMethod.comparator).toMutableStateList()
@@ -113,8 +111,8 @@ fun App() {
         val showFilters = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
-        snackbarHostState = remember { SnackbarHostState() }
-        Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { contentPadding ->
+//        snackbarHostState = remember { SnackbarHostState() }
+        Scaffold { contentPadding ->
             AnimatedVisibility(
                 !jobs.any { it.visible.targetState },
                 Modifier.padding(contentPadding),
@@ -256,8 +254,8 @@ fun App() {
     }
 }
 
-fun showSnackbar(message: String) =
-    coroutineScope.launch { snackbarHostState.showSnackbar(message) }
+/*fun showSnackbar(message: String) =
+    coroutineScope.launch { snackbarHostState.showSnackbar(message) }*/
 
 fun jumpToItem(index: Int) = coroutineScope.launch { listState.scrollToItem(index) }
 
