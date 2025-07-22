@@ -1,4 +1,4 @@
-package com.coslu.jobtracker.theme
+package com.coslu.jobtracker
 
 import android.os.Build
 import androidx.compose.material3.MaterialTheme

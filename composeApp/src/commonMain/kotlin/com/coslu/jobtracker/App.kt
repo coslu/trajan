@@ -56,7 +56,6 @@ import com.coslu.jobtracker.components.JobProperty
 import com.coslu.jobtracker.components.PopupBubble
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
-import com.coslu.jobtracker.theme.TrajanTheme
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
