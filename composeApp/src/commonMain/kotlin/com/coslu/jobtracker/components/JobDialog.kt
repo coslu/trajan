@@ -7,18 +7,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
@@ -26,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,7 +55,7 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.help
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobDialog(
     onDismissRequest: () -> Unit,
@@ -105,7 +103,6 @@ fun JobDialog(
                                 ) {
                                     Card(
                                         modifier = Modifier.padding(10.dp),
-//                                        elevation = 8.dp,
                                         shape = RoundedCornerShape(
                                             20,
                                             0,
@@ -188,15 +185,14 @@ fun JobDialog(
                         value = status,
                         label = { Text("Application Status") },
                         readOnly = true,
-                        modifier = modifier,
+                        modifier = modifier.menuAnchor(
+                            type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                            enabled = true
+                        ).pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true),
                         onValueChange = {},
                         trailingIcon = {
                             Icon(Icons.Filled.ArrowDropDown, null)
                         }
-                    )
-                    Box(
-                        modifier.height(TextFieldDefaults.MinHeight)
-                            .pointerHoverIcon(PointerIcon.Hand)
                     )
                     ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
                         Job.statuses.forEach {

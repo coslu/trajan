@@ -8,6 +8,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,8 +38,7 @@ fun PopupBubble(
                 shape = if (tailAtTop) RoundedCornerShape(
                     0, 20, 20, 20
                 ) else RoundedCornerShape(20, 20, 20, 0),
-//                elevation = 0.dp,
-//                backgroundColor = backgroundColor,
+                colors = CardDefaults.cardColors().copy(containerColor = backgroundColor),
                 border = BorderStroke(1.dp, colors.onSurface)
             ) {
                 Text(
