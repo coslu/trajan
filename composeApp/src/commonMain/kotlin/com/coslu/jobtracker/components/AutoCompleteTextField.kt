@@ -1,9 +1,9 @@
 package com.coslu.jobtracker.components
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -37,7 +37,7 @@ fun AutoCompleteTextField(
         TextField(
             value = textFileValue,
             label = { Text(label) },
-            modifier = modifier,
+            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true),
             onValueChange = {
                 textFileValue = it
                 if (it.text != text)
@@ -46,10 +46,9 @@ fun AutoCompleteTextField(
             },
             singleLine = true
         )
-        DropdownMenu(
+        ExposedDropdownMenu(
             expanded,
             { expanded = false },
-//            properties = PopupProperties(focusable = false)
         ) {
             list.filter {
                 it.first.startsWith(
