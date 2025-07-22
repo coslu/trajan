@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +18,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.coslu.jobtracker.colors
 import com.coslu.jobtracker.toInt
 
 @Composable
@@ -26,8 +26,8 @@ fun PopupBubble(
     visible: MutableTransitionState<Boolean>,
     text: String,
     tailAtTop: Boolean = false,
-    backgroundColor: Color = colors.surface,
-    textColor: Color = colors.onSurface
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    textColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Popup(
         offset = IntOffset(dpOffset.x.toInt(), dpOffset.y.toInt()),
@@ -39,7 +39,7 @@ fun PopupBubble(
                     0, 20, 20, 20
                 ) else RoundedCornerShape(20, 20, 20, 0),
                 colors = CardDefaults.cardColors().copy(containerColor = backgroundColor),
-                border = BorderStroke(1.dp, colors.onSurface)
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)
             ) {
                 Text(
                     text,

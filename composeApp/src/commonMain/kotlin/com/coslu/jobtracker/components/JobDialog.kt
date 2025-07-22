@@ -28,6 +28,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -49,7 +50,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Job
-import com.coslu.jobtracker.colors
 import com.coslu.jobtracker.toInt
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.help
@@ -83,7 +83,7 @@ fun JobDialog(
                         title,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Start,
-                        color = colors.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                     if (job != null) {
@@ -111,7 +111,7 @@ fun JobDialog(
                                         ),
                                         border = BorderStroke(
                                             1.dp,
-                                            color = colors.onSurface
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                     ) {
                                         Column(Modifier.padding(20.dp)) {
@@ -147,7 +147,7 @@ fun JobDialog(
                                     }
                                 }
                             }
-                            Icon(Icons.Filled.Delete, "Delete Job", tint = colors.primary)
+                            Icon(Icons.Filled.Delete, "Delete Job", tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }

@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,13 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.coslu.jobtracker.PropertyColor
-import com.coslu.jobtracker.colors
 import com.coslu.jobtracker.getPropertyColor
 import com.coslu.jobtracker.setPropertyColor
 import job_tracker.composeapp.generated.resources.Res
@@ -82,7 +83,7 @@ fun JobProperty(
             dpOffset = DpOffset(25.dp, (-35).dp),
             visible = showFullName,
             text = property,
-            backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else colors.surface,
+            backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else MaterialTheme.colorScheme.surface,
             textColor = propertyColor.textColor
         )
         // This uses the BoxWithConstraints scope
@@ -128,7 +129,7 @@ fun BigProperty(
                     .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = propertyColor.textColor
+                color = if (propertyColor.textColor.isSpecified) propertyColor.textColor else MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -150,7 +151,7 @@ fun SmallProperty(property: String, onClick: () -> Unit = {}, onLongClick: () ->
             ) {
                 Text(
                     property.first().toString(),
-                    color = propertyColor.textColor
+                    color = if (propertyColor.textColor.isSpecified) propertyColor.textColor else MaterialTheme.colorScheme.onBackground
                 )
             }
         }

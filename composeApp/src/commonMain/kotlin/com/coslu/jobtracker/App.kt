@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -42,7 +41,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
@@ -56,6 +54,7 @@ import com.coslu.jobtracker.components.JobProperty
 import com.coslu.jobtracker.components.PopupBubble
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
+import com.coslu.jobtracker.theme.TrajanTheme
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
@@ -73,7 +72,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 
-val colors = Colors(
+/*val colors = Colors(
     primary = Color(0xFF546524),
     primaryVariant = Color(0xFFD7EB9B),
     secondary = Color(0xFF5B6147),
@@ -87,9 +86,10 @@ val colors = Colors(
     onSurface = Color(0xFF1B1C15),
     onError = Color(0xFFFFFFFF),
     isLight = true
-)
+)*/
 
 lateinit var jobs: SnapshotStateList<Job> // separate list for lazy column allows delete animations
+
 //private lateinit var snackbarHostState: SnackbarHostState TODO temporarily removed snackbars
 private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
@@ -99,9 +99,7 @@ private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 @Composable
 @Preview
 fun App() {
-    MaterialTheme(
-
-    ) {
+    TrajanTheme {
         jobs = remember {
             Job.list.sortedWith(sortingMethod.comparator).toMutableStateList()
         }
@@ -195,7 +193,7 @@ fun App() {
                                                 Icon(
                                                     painterResource(Res.drawable.notes),
                                                     "Show additional notes",
-                                                    tint = colors.primary
+                                                    tint = MaterialTheme.colorScheme.primary
                                                 )
                                             }
                                         }
@@ -210,7 +208,7 @@ fun App() {
                                         Icon(
                                             Icons.Filled.Edit,
                                             contentDescription = "Edit",
-                                            tint = colors.primary
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
                                 }

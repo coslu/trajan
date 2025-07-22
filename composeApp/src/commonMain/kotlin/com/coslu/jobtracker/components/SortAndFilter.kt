@@ -24,6 +24,7 @@ import androidx.compose.material.ripple
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -45,7 +46,6 @@ import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.Settings.statusFilters
 import com.coslu.jobtracker.Settings.typeFilters
 import com.coslu.jobtracker.SortingMethod
-import com.coslu.jobtracker.colors
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.arrow_right
 import job_tracker.composeapp.generated.resources.date
@@ -104,13 +104,13 @@ fun SortAndFilter() {
                 Icon(
                     painterResource(Res.drawable.sort),
                     null,
-                    tint = colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Text("Sort", Modifier.padding(horizontal = 10.dp), color = colors.primary)
+                Text("Sort", Modifier.padding(horizontal = 10.dp), color = MaterialTheme.colorScheme.primary)
                 HorizontalDivider(
                     Modifier.padding(horizontal = 10.dp),
                     1.5.dp,
-                    colors.primary
+                    MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -215,13 +215,13 @@ fun SortAndFilter() {
                 Icon(
                     painterResource(Res.drawable.filter),
                     null,
-                    tint = colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Text("Filter", Modifier.padding(horizontal = 10.dp), color = colors.primary)
+                Text("Filter", Modifier.padding(horizontal = 10.dp), color = MaterialTheme.colorScheme.primary)
                 HorizontalDivider(
                     Modifier.padding(horizontal = 10.dp),
                     thickness = 1.5.dp,
-                    color = colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
