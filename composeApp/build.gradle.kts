@@ -27,6 +27,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.ui.util.android)
         }
         commonMain.dependencies {
             implementation(libs.org.jetbrains.kotlin.plugin.serialization.gradle.plugin)

@@ -106,7 +106,11 @@ fun SortAndFilter() {
                     null,
                     tint = MaterialTheme.colorScheme.primary
                 )
-                Text("Sort", Modifier.padding(horizontal = 10.dp), color = MaterialTheme.colorScheme.primary)
+                Text(
+                    "Sort",
+                    Modifier.padding(horizontal = 10.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
                 HorizontalDivider(
                     Modifier.padding(horizontal = 10.dp),
                     1.5.dp,
@@ -217,7 +221,11 @@ fun SortAndFilter() {
                     null,
                     tint = MaterialTheme.colorScheme.primary
                 )
-                Text("Filter", Modifier.padding(horizontal = 10.dp), color = MaterialTheme.colorScheme.primary)
+                Text(
+                    "Filter",
+                    Modifier.padding(horizontal = 10.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
                 HorizontalDivider(
                     Modifier.padding(horizontal = 10.dp),
                     thickness = 1.5.dp,

@@ -22,11 +22,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -90,7 +92,7 @@ import kotlin.time.Instant
 
 lateinit var jobs: SnapshotStateList<Job> // separate list for lazy column allows delete animations
 
-//private lateinit var snackbarHostState: SnackbarHostState TODO temporarily removed snackbars
+private lateinit var snackbarHostState: SnackbarHostState
 private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
@@ -109,8 +111,8 @@ fun App() {
         val showFilters = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
-//        snackbarHostState = remember { SnackbarHostState() }
-        Scaffold { contentPadding ->
+        snackbarHostState = remember { SnackbarHostState() }
+        Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { contentPadding ->
             AnimatedVisibility(
                 !jobs.any { it.visible.targetState },
                 Modifier.padding(contentPadding),
@@ -213,7 +215,7 @@ fun App() {
                                     }
                                 }
                             }
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
                 }
@@ -252,8 +254,8 @@ fun App() {
     }
 }
 
-/*fun showSnackbar(message: String) =
-    coroutineScope.launch { snackbarHostState.showSnackbar(message) }*/
+fun showSnackbar(message: String) =
+    coroutineScope.launch { snackbarHostState.showSnackbar(message) }
 
 fun jumpToItem(index: Int) = coroutineScope.launch { listState.scrollToItem(index) }
 

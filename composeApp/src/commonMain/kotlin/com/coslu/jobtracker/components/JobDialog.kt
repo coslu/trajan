@@ -147,7 +147,11 @@ fun JobDialog(
                                     }
                                 }
                             }
-                            Icon(Icons.Filled.Delete, "Delete Job", tint = MaterialTheme.colorScheme.primary)
+                            Icon(
+                                Icons.Filled.Delete,
+                                "Delete Job",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 }

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import com.coslu.jobtracker.showSnackbar
+import com.coslu.jobtracker.showSnackbar
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.open_link
 import org.jetbrains.compose.resources.painterResource
@@ -74,7 +74,7 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                     try {
                         uriHandler.openUri(url)
                     } catch (_: Exception) {
-//                        showSnackbar("The URL is invalid or cannot be handled by the system.")
+                        showSnackbar("The URL is invalid or cannot be handled by the system.")
                     }
                 },
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
