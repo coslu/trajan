@@ -5,7 +5,6 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -225,22 +224,27 @@ fun JobDialog(
                 item {
                     val showActualizeDateHelp = remember { MutableTransitionState(false) }
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(actualizeDate, { actualizeDate = it })
+                        Checkbox(
+                            checked = actualizeDate,
+                            onCheckedChange = { actualizeDate = it },
+                            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                        )
                         Text("Actualize Date", Modifier.padding(end = 5.dp))
-                        Icon(
-                            painterResource(Res.drawable.help),
-                            "Help",
+                        IconButton(
+                            onClick = { showActualizeDateHelp.targetState = true },
                             modifier = Modifier.size(16.dp).pointerHoverIcon(PointerIcon.Hand)
-                                .clickable {
-                                    showActualizeDateHelp.targetState = true
-                                },
-                            tint = LocalContentColor.current.copy(alpha = 0.5f)
-                        )
-                        PopupBubble(
-                            dpOffset = DpOffset(180.dp, (-45).dp),
-                            visible = showActualizeDateHelp,
-                            text = "When checked, sets the date of this job\nto today upon saving changes."
-                        )
+                        ) {
+                            Icon(
+                                painterResource(Res.drawable.help),
+                                "Help",
+                                tint = LocalContentColor.current.copy(alpha = 0.5f)
+                            )
+                            PopupBubble(
+                                dpOffset = DpOffset(22.dp, (-60).dp),
+                                visible = showActualizeDateHelp,
+                                text = "When checked, sets the date of this job\nto today upon saving changes."
+                            )
+                        }
                     }
                 }
             }

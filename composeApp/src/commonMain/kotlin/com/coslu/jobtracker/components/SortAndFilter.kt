@@ -83,7 +83,8 @@ fun FilterControl(item: String, filterMap: MutableMap<String, Boolean>) {
                 )
             }.minimumInteractiveComponentSize()
                 .hoverable(interactionSource)
-                .indication(interactionSource, ripple(bounded = false, radius = 24.dp)),
+                .indication(interactionSource, ripple(bounded = false, radius = 20.dp))
+                .pointerHoverIcon(PointerIcon.Hand),
             onCheckedChange = null
         )
         BigProperty(item.ifBlank { "-" })
@@ -249,11 +250,12 @@ fun SortAndFilter() {
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
                 Checkbox(
-                    typeFilters.all { it.value },
+                    checked = typeFilters.all { it.value },
                     onCheckedChange = { checked ->
                         typeFilters.keys.forEach { typeFilters[it] = checked }
                         applyFilters()
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Text("Type")
             }
@@ -279,11 +281,12 @@ fun SortAndFilter() {
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
                 Checkbox(
-                    locationFilters.all { it.value },
+                    checked = locationFilters.all { it.value },
                     onCheckedChange = { checked ->
                         locationFilters.keys.forEach { locationFilters[it] = checked }
                         applyFilters()
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Text("Location")
             }
@@ -309,11 +312,12 @@ fun SortAndFilter() {
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
                 Checkbox(
-                    statusFilters.all { it.value },
+                    checked = statusFilters.all { it.value },
                     onCheckedChange = { checked ->
                         statusFilters.keys.forEach { statusFilters[it] = checked }
                         applyFilters()
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Text("Status")
             }
