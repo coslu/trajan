@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -230,20 +231,42 @@ fun JobDialog(
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                         )
                         Text("Actualize Date", Modifier.padding(end = 5.dp))
-                        IconButton(
-                            onClick = { showActualizeDateHelp.targetState = true },
-                            modifier = Modifier.size(16.dp).pointerHoverIcon(PointerIcon.Hand)
-                        ) {
-                            Icon(
-                                painterResource(Res.drawable.help),
-                                "Help",
-                                tint = LocalContentColor.current.copy(alpha = 0.5f)
-                            )
-                            PopupBubble(
-                                dpOffset = DpOffset(22.dp, (-60).dp),
-                                visible = showActualizeDateHelp,
-                                text = "When checked, sets the date of this job\nto today upon saving changes."
-                            )
+                        BoxWithConstraints {
+                            IconButton(
+                                onClick = { showActualizeDateHelp.targetState = true },
+                                modifier = Modifier.size(16.dp).pointerHoverIcon(PointerIcon.Hand)
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.help),
+                                    "Help",
+                                    tint = LocalContentColor.current.copy(alpha = 0.5f)
+                                )
+                                PopupBubble(
+                                    modifier = Modifier.width(300.dp),
+                                    alignment = Alignment.BottomStart,
+                                    dpOffset = DpOffset(
+                                        20.dp,
+                                        if (maxWidth > 290.dp) (-5).dp else (-25).dp
+                                    ),
+                                    visible = showActualizeDateHelp,
+                                    text = "When checked, sets the date of this job to today upon saving changes.",
+                                    tail = maxWidth > 290.dp
+                                )
+                                /*if (maxWidth > 300.dp) {
+                                    PopupBubble(
+                                        modifier = Modifier.width(290.dp),
+                                        dpOffset = DpOffset(22.dp, (-60).dp),
+                                        visible = showActualizeDateHelp,
+                                        text = "When checked, sets the date of this job to today upon saving changes.",
+                                    )
+                                } else {
+                                    PopupBubble(
+                                        dpOffset = DpOffset(22.dp, (-100).dp),
+                                        visible = showActualizeDateHelp,
+                                        text = "When checked, sets the date of this job to today upon saving changes.",
+                                    )
+                                }*/
+                            }
                         }
                     }
                 }

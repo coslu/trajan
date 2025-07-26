@@ -186,10 +186,9 @@ fun App() {
                                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                             ) {
                                                 PopupBubble(
-                                                    DpOffset(34.dp, 20.dp),
-                                                    showNotes,
-                                                    it.notes,
-                                                    true
+                                                    dpOffset = DpOffset(34.dp, 20.dp),
+                                                    visible = showNotes,
+                                                    text = it.notes,
                                                 )
                                                 Icon(
                                                     painterResource(Res.drawable.notes),

@@ -46,7 +46,6 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.transparent
 import org.jetbrains.compose.resources.painterResource
 
-@Suppress("UnusedBoxWithConstraintsScope")
 @Composable
 fun JobProperty(
     property: String,
@@ -81,13 +80,12 @@ fun JobProperty(
         }
         val propertyColor = getPropertyColor(property)
         PopupBubble(
-            dpOffset = DpOffset(25.dp, (-35).dp),
+            dpOffset = DpOffset(25.dp, 30.dp),
             visible = showFullName,
             text = property,
             backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else MaterialTheme.colorScheme.surface,
-            textColor = propertyColor.textColor
+            textColor = propertyColor.textColor,
         )
-        // This uses the BoxWithConstraints scope
         if (maxWidth < 120.dp) {
             SmallProperty(
                 property,
