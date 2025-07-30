@@ -3,6 +3,7 @@ package com.coslu.jobtracker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.json.Json
@@ -14,6 +15,7 @@ private val json = Json { prettyPrint = true }
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         dir = filesDir
         setContent {
             App()

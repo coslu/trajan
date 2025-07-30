@@ -237,11 +237,11 @@ fun App() {
                     }
                 }
             }
-            SideSheet(showFilters) {
+            SideSheet(showFilters, Modifier.padding(contentPadding)) {
                 SortAndFilter()
             }
             val showDeleteDialog = remember { MutableTransitionState(false) }
-            SideSheet(showJobDialog, true, showDeleteDialog) {
+            SideSheet(showJobDialog, Modifier.padding(contentPadding), true, showDeleteDialog) {
                 JobDialog(
                     onDismissRequest = { showJobDialog.targetState = false },
                     selectedJob,

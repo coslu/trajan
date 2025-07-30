@@ -53,12 +53,12 @@ fun AutoCompleteTextField(
                         ignoreCase = true
                     ) && item.first.isNotEmpty()
                 }.take(3)
-                expanded = filteredList.isNotEmpty()
+                expanded = true
             },
             singleLine = true
         )
         ExposedDropdownMenu(
-            expanded,
+            expanded && filteredList.isNotEmpty(),
             { expanded = false },
         ) {
             filteredList.forEach {
