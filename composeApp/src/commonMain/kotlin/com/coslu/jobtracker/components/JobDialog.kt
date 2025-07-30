@@ -289,21 +289,21 @@ fun JobDialog(
                             onClick = {
                                 if (job != null) {
                                     job.edit(
-                                        name,
-                                        url,
-                                        type.value,
-                                        location.value,
-                                        status,
-                                        notes,
+                                        name.trim(),
+                                        url.trim(),
+                                        type.value.trim(),
+                                        location.value.trim(),
+                                        status.trim(),
+                                        notes.trim(),
                                         actualizeDate
                                     )
                                 } else {
                                     Job(
-                                        name,
-                                        url,
-                                        type.value,
-                                        location.value,
-                                        status,
+                                        name.trim(),
+                                        url.trim(),
+                                        type.value.trim(),
+                                        location.value.trim(),
+                                        status.trim(),
                                         notes
                                     ).add()
                                 }
