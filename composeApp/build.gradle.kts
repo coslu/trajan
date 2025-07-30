@@ -1,8 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-private val trajanVersionCode = 4
-private val trajanVersionName = "1.2.0"
+private val trajanVersionCode = 5
+private val trajanVersionName = "1.3.0"
 
 plugins {
     kotlin("plugin.serialization") version "2.2.0"
