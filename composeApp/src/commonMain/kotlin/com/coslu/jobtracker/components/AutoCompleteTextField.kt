@@ -30,9 +30,15 @@ fun AutoCompleteTextField(
     var text by remember { value }
     var textFileValue by remember { mutableStateOf(TextFieldValue(text)) }
     val list = autoCompleteMap.toList().sortedByDescending { it.second }
+    var filteredList = list.filter {
+        it.first.startsWith(
+            textFileValue.text,
+            ignoreCase = true
+        ) && it.first.isNotEmpty()
+    }.take(3)
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
+        onExpandedChange = { expanded = it },
     ) {
         TextField(
             value = textFileValue,
@@ -40,9 +46,14 @@ fun AutoCompleteTextField(
             modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true),
             onValueChange = {
                 textFileValue = it
-                if (it.text != text)
-                    expanded = true
                 text = it.text
+                filteredList = list.filter { item ->
+                    item.first.startsWith(
+                        textFileValue.text,
+                        ignoreCase = true
+                    ) && item.first.isNotEmpty()
+                }.take(3)
+                expanded = filteredList.isNotEmpty()
             },
             singleLine = true
         )
@@ -50,12 +61,7 @@ fun AutoCompleteTextField(
             expanded,
             { expanded = false },
         ) {
-            list.filter {
-                it.first.startsWith(
-                    textFileValue.text,
-                    ignoreCase = true
-                ) && it.first.isNotEmpty()
-            }.take(3).forEach {
+            filteredList.forEach {
                 DropdownMenuItem(
                     modifier = Modifier.padding(5.dp),
                     onClick = {
