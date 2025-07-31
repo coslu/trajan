@@ -30,9 +30,17 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 
-@Suppress("UnusedBoxWithConstraintsScope")
 @Composable
-fun SideSheet(
+expect fun SideSheet(
+    showSideSheet: MutableTransitionState<Boolean>,
+    modifier: Modifier = Modifier,
+    arrangeToEnd: Boolean = false,
+    showDialog: MutableTransitionState<Boolean>? = null,
+    content: @Composable () -> Unit
+)
+
+@Composable
+fun CommonSideSheet(
     showSideSheet: MutableTransitionState<Boolean>,
     modifier: Modifier = Modifier,
     arrangeToEnd: Boolean = false,
