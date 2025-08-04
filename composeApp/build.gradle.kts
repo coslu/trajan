@@ -1,11 +1,11 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-private val trajanVersionCode = 5
-private val trajanVersionName = "1.3.0"
+private val trajanVersionCode = 6
+private val trajanVersionName = "1.3.1"
 
 plugins {
-    kotlin("plugin.serialization") version "2.2.0"
+    alias(libs.plugins.serialization)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
@@ -30,7 +30,6 @@ kotlin {
             implementation(libs.androidx.ui.util.android)
         }
         commonMain.dependencies {
-            implementation(libs.org.jetbrains.kotlin.plugin.serialization.gradle.plugin)
             implementation(libs.kotlinx.serialization.json)
             implementation(compose.runtime)
             implementation(compose.foundation)

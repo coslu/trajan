@@ -67,26 +67,8 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
-
-
-/*val colors = Colors(
-    primary = Color(0xFF546524),
-    primaryVariant = Color(0xFFD7EB9B),
-    secondary = Color(0xFF5B6147),
-    secondaryVariant = Color(0xFF5B6147),
-    background = Color(0xFFF6FBF3),
-    surface = Color(0xFFFBFAEE),
-    error = Color(0xFFBA1A1A),
-    onPrimary = Color(0xFFFFFFFF),
-    onSecondary = Color(0xFFFFFFFF),
-    onBackground = Color(0xFF181D19),
-    onSurface = Color(0xFF1B1C15),
-    onError = Color(0xFFFFFFFF),
-    isLight = true
-)*/
 
 lateinit var jobs: SnapshotStateList<Job> // separate list for lazy column allows delete animations
 
@@ -97,7 +79,6 @@ private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
 @OptIn(ExperimentalTime::class)
 @Composable
-@Preview
 fun App() {
     TrajanTheme {
         jobs = remember {
