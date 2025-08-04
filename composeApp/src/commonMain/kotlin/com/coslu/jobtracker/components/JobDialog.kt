@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
@@ -52,9 +49,12 @@ import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Job
 import com.coslu.jobtracker.toInt
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.arrow_drop_down
+import job_tracker.composeapp.generated.resources.delete
 import job_tracker.composeapp.generated.resources.help
 import org.jetbrains.compose.resources.painterResource
 
+@Suppress("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobDialog(
@@ -148,7 +148,7 @@ fun JobDialog(
                                 }
                             }
                             Icon(
-                                Icons.Filled.Delete,
+                                painterResource(Res.drawable.delete),
                                 "Delete Job",
                                 tint = MaterialTheme.colorScheme.primary
                             )
@@ -195,7 +195,7 @@ fun JobDialog(
                         ).pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true),
                         onValueChange = {},
                         trailingIcon = {
-                            Icon(Icons.Filled.ArrowDropDown, null)
+                            Icon(painterResource(Res.drawable.arrow_drop_down), null)
                         }
                     )
                     ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {
@@ -252,20 +252,6 @@ fun JobDialog(
                                     text = "When checked, sets the date of this job to today upon saving changes.",
                                     tail = maxWidth > 290.dp
                                 )
-                                /*if (maxWidth > 300.dp) {
-                                    PopupBubble(
-                                        modifier = Modifier.width(290.dp),
-                                        dpOffset = DpOffset(22.dp, (-60).dp),
-                                        visible = showActualizeDateHelp,
-                                        text = "When checked, sets the date of this job to today upon saving changes.",
-                                    )
-                                } else {
-                                    PopupBubble(
-                                        dpOffset = DpOffset(22.dp, (-100).dp),
-                                        visible = showActualizeDateHelp,
-                                        text = "When checked, sets the date of this job to today upon saving changes.",
-                                    )
-                                }*/
                             }
                         }
                     }

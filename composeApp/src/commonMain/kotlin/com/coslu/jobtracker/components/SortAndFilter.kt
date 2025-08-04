@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.ripple
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
@@ -47,6 +45,7 @@ import com.coslu.jobtracker.Settings.statusFilters
 import com.coslu.jobtracker.Settings.typeFilters
 import com.coslu.jobtracker.SortingMethod
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.arrow_drop_down
 import job_tracker.composeapp.generated.resources.arrow_right
 import job_tracker.composeapp.generated.resources.date
 import job_tracker.composeapp.generated.resources.filter
@@ -245,7 +244,7 @@ fun SortAndFilter() {
                     openTypes,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
                     if (it)
-                        Icon(Icons.Filled.ArrowDropDown, null)
+                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
@@ -276,7 +275,7 @@ fun SortAndFilter() {
                     openLocations,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
                     if (it)
-                        Icon(Icons.Filled.ArrowDropDown, null)
+                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
@@ -307,7 +306,7 @@ fun SortAndFilter() {
                     openStatuses,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
                     if (it)
-                        Icon(Icons.Filled.ArrowDropDown, null)
+                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }

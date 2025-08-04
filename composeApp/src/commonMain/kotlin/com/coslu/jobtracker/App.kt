@@ -18,9 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -57,6 +54,8 @@ import com.coslu.jobtracker.components.PopupBubble
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.add
+import job_tracker.composeapp.generated.resources.edit
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
 import job_tracker.composeapp.generated.resources.sort_filter
@@ -206,7 +205,7 @@ fun App() {
                                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                     ) {
                                         Icon(
-                                            Icons.Filled.Edit,
+                                            painterResource(Res.drawable.edit),
                                             contentDescription = "Edit",
                                             tint = MaterialTheme.colorScheme.primary
                                         )
@@ -232,7 +231,7 @@ fun App() {
                         onClick = { selectedJob = null; showJobDialog.targetState = true },
                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                     ) {
-                        Icon(Icons.Filled.Add, null)
+                        Icon(painterResource(Res.drawable.add), null)
                         Text("Add Job", modifier = Modifier.padding(start = 10.dp))
                     }
                 }

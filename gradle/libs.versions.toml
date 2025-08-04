@@ -1,5 +1,5 @@
 [versions]
-agp = "8.11.1"
+agp = "8.12.0"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "35"
@@ -11,9 +11,8 @@ kotlinx-coroutines = "1.10.2"
 kotlinxSerializationJson = "1.9.0"
 orgJetbrainsKotlinPluginSerializationGradlePlugin = "2.2.0"
 kotlinxDatetime = "0.7.1"
-materialIconsCore = "1.7.8"
 material3 = "1.9.0-alpha04"
-uiUtilAndroid = "1.9.0-beta03"
+uiUtilAndroid = "1.9.0-rc01"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -23,7 +22,6 @@ kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-co
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 org-jetbrains-kotlin-plugin-serialization-gradle-plugin = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "orgJetbrainsKotlinPluginSerializationGradlePlugin" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
-androidx-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "materialIconsCore" }
 material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "material3" }
 androidx-ui-util-android = { group = "androidx.compose.ui", name = "ui-util-android", version.ref = "uiUtilAndroid" }
 
