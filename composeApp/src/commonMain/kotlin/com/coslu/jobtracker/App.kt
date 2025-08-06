@@ -20,15 +20,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +47,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
@@ -60,6 +66,8 @@ import job_tracker.composeapp.generated.resources.add
 import job_tracker.composeapp.generated.resources.edit
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
+import job_tracker.composeapp.generated.resources.search
+import job_tracker.composeapp.generated.resources.settings
 import job_tracker.composeapp.generated.resources.sort_filter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -79,6 +87,7 @@ private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
+@Suppress("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalTime::class)
 @Composable
 fun App() {
@@ -211,7 +220,7 @@ fun App() {
                                 modifier = Modifier.padding(horizontal = 5.dp)
                                     .pointerHoverIcon(PointerIcon.Hand),
                             ) {
-                                Icon(Icons.Filled.Settings, null)
+                                Icon(painterResource(Res.drawable.settings), null)
                                 Text("Settings", Modifier.padding(start = 10.dp))
                             }
                             OutlinedButton(
@@ -228,7 +237,7 @@ fun App() {
                                 modifier = Modifier.padding(horizontal = 5.dp)
                                     .pointerHoverIcon(PointerIcon.Hand),
                             ) {
-                                Icon(Icons.Filled.Settings, "Settings")
+                                Icon(painterResource(Res.drawable.settings), "Settings")
                             }
                             IconButton(
                                 onClick = { showFilters.targetState = true },
@@ -246,10 +255,10 @@ fun App() {
                             value = searchString,
                             onValueChange = { searchString = it },
                             singleLine = true,
-                            leadingIcon = { Icon(Icons.Filled.Search, null) },
+                            leadingIcon = { Icon(painterResource(Res.drawable.search), null) },
                             placeholder = { Text("Search in jobs") },
                             shape = RoundedCornerShape(50),
-                            colors = TextFieldDefaults.textFieldColors(
+                            colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent,
                                 errorIndicatorColor = Color.Transparent,
