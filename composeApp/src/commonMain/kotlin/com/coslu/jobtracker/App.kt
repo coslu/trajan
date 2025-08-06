@@ -20,8 +20,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,11 +30,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,7 +49,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
@@ -88,7 +89,7 @@ private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
 @Suppress("UnusedBoxWithConstraintsScope")
-@OptIn(ExperimentalTime::class)
+@OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
     TrajanTheme {
@@ -247,23 +248,30 @@ fun App() {
                                 Icon(painterResource(Res.drawable.sort_filter), "Sort and Filter")
                             }
                         }
-                        var searchString by remember { mutableStateOf("") }
-                        TextField(
-                            modifier = Modifier.width(
-                                if (maxWidth * 0.5f > 600.dp) 600.dp else maxWidth * 0.5f
-                            ).padding(vertical = 2.dp, horizontal = 5.dp),
-                            value = searchString,
-                            onValueChange = { searchString = it },
-                            singleLine = true,
-                            leadingIcon = { Icon(painterResource(Res.drawable.search), null) },
-                            placeholder = { Text("Search in jobs") },
-                            shape = RoundedCornerShape(50),
-                            colors = TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent,
-                                errorIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            )
+                        val searchBarState = rememberSearchBarState()
+                        val textFieldState = rememberTextFieldState()
+                        val inputField =
+                            @Composable {
+                                SearchBarDefaults.InputField(
+                                    modifier = Modifier.width(
+                                        if (maxWidth * 0.5f > 600.dp) 600.dp else maxWidth * 0.5f
+                                    ).height(56.dp),
+                                    searchBarState = searchBarState,
+                                    textFieldState = textFieldState,
+                                    onSearch = {},
+                                    placeholder = { Text("Search in jobs") },
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(Res.drawable.search),
+                                            null
+                                        )
+                                    },
+                                )
+                            }
+                        SearchBar(
+                            modifier = Modifier.padding(5.dp),
+                            state = searchBarState,
+                            inputField = inputField
                         )
                         if (maxWidth >= 1040.dp) {
                             Button(
