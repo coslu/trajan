@@ -1,16 +1,18 @@
 [versions]
-agp = "8.8.2"
-android-compileSdk = "35"
+agp = "8.12.0"
+android-compileSdk = "36"
 android-minSdk = "24"
-android-targetSdk = "34"
+android-targetSdk = "35"
 androidx-activityCompose = "1.10.1"
-androidx-lifecycle = "2.8.3"
-compose-multiplatform = "1.7.0"
-kotlin = "2.0.21"
-kotlinx-coroutines = "1.9.0"
-kotlinxSerializationJson = "1.7.3"
-orgJetbrainsKotlinPluginSerializationGradlePlugin = "2.1.0-RC2"
-kotlinxDatetime = "0.6.2"
+androidx-lifecycle = "2.9.1"
+compose-multiplatform = "1.8.2"
+kotlin = "2.2.0"
+kotlinx-coroutines = "1.10.2"
+kotlinxSerializationJson = "1.9.0"
+serializationPlugin = "2.2.0"
+kotlinxDatetime = "0.7.1"
+material3 = "1.9.0-alpha04"
+uiUtilAndroid = "1.9.0-rc01"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -18,8 +20,9 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-org-jetbrains-kotlin-plugin-serialization-gradle-plugin = { group = "org.jetbrains.kotlin.plugin.serialization", name = "org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "orgJetbrainsKotlinPluginSerializationGradlePlugin" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "material3" }
+androidx-ui-util-android = { group = "androidx.compose.ui", name = "ui-util-android", version.ref = "uiUtilAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -27,3 +30,4 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationPlugin" }

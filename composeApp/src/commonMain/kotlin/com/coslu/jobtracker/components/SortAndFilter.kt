@@ -18,15 +18,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.minimumInteractiveComponentSize
 import androidx.compose.material.ripple
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,8 +44,8 @@ import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.Settings.statusFilters
 import com.coslu.jobtracker.Settings.typeFilters
 import com.coslu.jobtracker.SortingMethod
-import com.coslu.jobtracker.colors
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.arrow_drop_down
 import job_tracker.composeapp.generated.resources.arrow_right
 import job_tracker.composeapp.generated.resources.date
 import job_tracker.composeapp.generated.resources.filter
@@ -83,7 +82,8 @@ fun FilterControl(item: String, filterMap: MutableMap<String, Boolean>) {
                 )
             }.minimumInteractiveComponentSize()
                 .hoverable(interactionSource)
-                .indication(interactionSource, ripple(bounded = false, radius = 24.dp)),
+                .indication(interactionSource, ripple(bounded = false, radius = 20.dp))
+                .pointerHoverIcon(PointerIcon.Hand),
             onCheckedChange = null
         )
         BigProperty(item.ifBlank { "-" })
@@ -104,13 +104,17 @@ fun SortAndFilter() {
                 Icon(
                     painterResource(Res.drawable.sort),
                     null,
-                    tint = colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Text("Sort", Modifier.padding(horizontal = 10.dp), color = colors.primary)
-                Divider(
+                Text(
+                    "Sort",
                     Modifier.padding(horizontal = 10.dp),
-                    color = colors.primary,
-                    thickness = 1.5.dp
+                    color = MaterialTheme.colorScheme.primary
+                )
+                HorizontalDivider(
+                    Modifier.padding(horizontal = 10.dp),
+                    1.5.dp,
+                    MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -135,7 +139,7 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Date,
-                    { sortingMethod = SortingMethod.Date(sortingMethod.descending) }
+                    { sortingMethod = SortingMethod.Date(true) }
                 )
                 Icon(
                     painterResource(Res.drawable.date),
@@ -149,7 +153,7 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Name,
-                    { sortingMethod = SortingMethod.Name(sortingMethod.descending) }
+                    { sortingMethod = SortingMethod.Name(false) }
                 )
                 Icon(
                     painterResource(Res.drawable.name),
@@ -163,7 +167,7 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Type,
-                    { sortingMethod = SortingMethod.Type(sortingMethod.descending) }
+                    { sortingMethod = SortingMethod.Type(false) }
                 )
                 Icon(
                     painterResource(Res.drawable.type),
@@ -179,7 +183,7 @@ fun SortAndFilter() {
                     sortingMethod is SortingMethod.Location,
                     {
                         sortingMethod =
-                            SortingMethod.Location(sortingMethod.descending)
+                            SortingMethod.Location(false)
                     }
                 )
                 Icon(
@@ -196,7 +200,7 @@ fun SortAndFilter() {
                     sortingMethod is SortingMethod.Status,
                     {
                         sortingMethod =
-                            SortingMethod.Status(sortingMethod.descending)
+                            SortingMethod.Status(false)
                     }
                 )
                 Icon(
@@ -215,13 +219,17 @@ fun SortAndFilter() {
                 Icon(
                     painterResource(Res.drawable.filter),
                     null,
-                    tint = colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Text("Filter", Modifier.padding(horizontal = 10.dp), color = colors.primary)
-                Divider(
+                Text(
+                    "Filter",
                     Modifier.padding(horizontal = 10.dp),
-                    color = colors.primary,
-                    thickness = 1.5.dp
+                    color = MaterialTheme.colorScheme.primary
+                )
+                HorizontalDivider(
+                    Modifier.padding(horizontal = 10.dp),
+                    thickness = 1.5.dp,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -235,17 +243,18 @@ fun SortAndFilter() {
                 AnimatedContent(
                     openTypes,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
-                    if (openTypes)
-                        Icon(Icons.Filled.ArrowDropDown, null)
+                    if (it)
+                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
                 Checkbox(
-                    typeFilters.all { it.value },
+                    checked = typeFilters.all { it.value },
                     onCheckedChange = { checked ->
                         typeFilters.keys.forEach { typeFilters[it] = checked }
                         applyFilters()
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Text("Type")
             }
@@ -265,17 +274,18 @@ fun SortAndFilter() {
                 AnimatedContent(
                     openLocations,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
-                    if (openLocations)
-                        Icon(Icons.Filled.ArrowDropDown, null)
+                    if (it)
+                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
                 Checkbox(
-                    locationFilters.all { it.value },
+                    checked = locationFilters.all { it.value },
                     onCheckedChange = { checked ->
                         locationFilters.keys.forEach { locationFilters[it] = checked }
                         applyFilters()
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Text("Location")
             }
@@ -295,17 +305,18 @@ fun SortAndFilter() {
                 AnimatedContent(
                     openStatuses,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
-                    if (openStatuses)
-                        Icon(Icons.Filled.ArrowDropDown, null)
+                    if (it)
+                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
                     else
                         Icon(painterResource(Res.drawable.arrow_right), null)
                 }
                 Checkbox(
-                    statusFilters.all { it.value },
+                    checked = statusFilters.all { it.value },
                     onCheckedChange = { checked ->
                         statusFilters.keys.forEach { statusFilters[it] = checked }
                         applyFilters()
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Text("Status")
             }

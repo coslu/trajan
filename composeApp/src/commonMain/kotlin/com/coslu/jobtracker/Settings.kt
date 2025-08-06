@@ -77,9 +77,31 @@ private class SettingsSerializer : KSerializer<Settings> {
                             else -> Date(true)
                         }
                     }
-                    1 -> Settings.typeFilters.putAll(decodeSerializableElement(descriptor, 1, filterSerializer))
-                    2 -> Settings.locationFilters.putAll(decodeSerializableElement(descriptor, 2, filterSerializer))
-                    3 -> Settings.statusFilters.putAll(decodeSerializableElement(descriptor, 3, filterSerializer))
+
+                    1 -> Settings.typeFilters.putAll(
+                        decodeSerializableElement(
+                            descriptor,
+                            1,
+                            filterSerializer
+                        )
+                    )
+
+                    2 -> Settings.locationFilters.putAll(
+                        decodeSerializableElement(
+                            descriptor,
+                            2,
+                            filterSerializer
+                        )
+                    )
+
+                    3 -> Settings.statusFilters.putAll(
+                        decodeSerializableElement(
+                            descriptor,
+                            3,
+                            filterSerializer
+                        )
+                    )
+
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }

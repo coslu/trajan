@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.coslu.jobtracker
 
 import androidx.compose.animation.core.MutableTransitionState
@@ -5,7 +7,6 @@ import com.coslu.jobtracker.Settings.applyFilters
 import com.coslu.jobtracker.Settings.locationFilters
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.Settings.typeFilters
-import kotlinx.datetime.Clock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -17,6 +18,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Serializable(with = JobSerializer::class)
 class Job(
@@ -102,7 +105,8 @@ class Job(
         type: String,
         location: String,
         status: String,
-        notes: String
+        notes: String,
+        actualizeDate: Boolean
     ) {
         removePropertiesFromDictionary()
         this.name = name
@@ -111,7 +115,8 @@ class Job(
         this.location = location
         this.status = status
         this.notes = notes
-        date = Clock.System.now().toEpochMilliseconds()
+        if (actualizeDate)
+            date = Clock.System.now().toEpochMilliseconds()
         saveJobList(list)
         addPropertiesToDictionary()
         // we do the following to update lazy column

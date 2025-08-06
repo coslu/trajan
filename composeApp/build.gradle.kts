@@ -1,10 +1,11 @@
-import org.gradle.internal.extensions.core.extra
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+private val trajanVersionCode = 6
+private val trajanVersionName = "1.3.1"
+
 plugins {
-    kotlin("plugin.serialization") version "2.0.21"
+    alias(libs.plugins.serialization)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
@@ -13,7 +14,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -27,9 +27,9 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.ui.util.android)
         }
         commonMain.dependencies {
-            implementation(libs.org.jetbrains.kotlin.plugin.serialization.gradle.plugin)
             implementation(libs.kotlinx.serialization.json)
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -40,6 +40,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.material3)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -56,8 +57,8 @@ android {
         applicationId = "com.coslu.jobtracker"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = rootProject.extra["versionCode"] as Int
-        versionName = rootProject.extra["versionName"] as String
+        versionCode = trajanVersionCode
+        versionName = trajanVersionName
     }
     packaging {
         resources {
@@ -86,13 +87,16 @@ dependencies {
 }
 
 compose.desktop {
+    configurations.all {
+        exclude(group = "androidx.compose.ui", module = "ui-util")
+    }
     application {
         mainClass = "com.coslu.jobtracker.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Trajan"
-            packageVersion = rootProject.extra["versionName"] as String
+            packageVersion = trajanVersionName
             description = "Tracking Assistant for Job Applications"
             vendor = "Coslu"
             licenseFile.set(project.file("../LICENSE"))

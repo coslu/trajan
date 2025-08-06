@@ -6,7 +6,6 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,28 +20,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Colors
-import androidx.compose.material.Divider
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,77 +42,61 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.components.JobDialog
 import com.coslu.jobtracker.components.JobName
 import com.coslu.jobtracker.components.JobProperty
+import com.coslu.jobtracker.components.PopupBubble
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.add
+import job_tracker.composeapp.generated.resources.edit
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
 import job_tracker.composeapp.generated.resources.sort_filter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
-
-val colors = Colors(
-    primary = Color(0xFF546524),
-    primaryVariant = Color(0xFFD7EB9B),
-    secondary = Color(0xFF5B6147),
-    secondaryVariant = Color(0xFF5B6147),
-    background = Color(0xFFF6FBF3),
-    surface = Color(0xFFFBFAEE),
-    error = Color(0xFFBA1A1A),
-    onPrimary = Color(0xFFFFFFFF),
-    onSecondary = Color(0xFFFFFFFF),
-    onBackground = Color(0xFF181D19),
-    onSurface = Color(0xFF1B1C15),
-    onError = Color(0xFFFFFFFF),
-    isLight = true
-)
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 lateinit var jobs: SnapshotStateList<Job> // separate list for lazy column allows delete animations
+
 private lateinit var snackbarHostState: SnackbarHostState
 private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
+@OptIn(ExperimentalTime::class)
 @Composable
-@Preview
 fun App() {
-    MaterialTheme(
-        colors = colors
-    ) {
+    TrajanTheme {
         jobs = remember {
             Job.list.sortedWith(sortingMethod.comparator).toMutableStateList()
         }
-        remember { fetchSettings(); Settings.applyFilters() }
+        LaunchedEffect(Unit) { fetchSettings(); Settings.applyFilters() }
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         val showJobDialog = remember { MutableTransitionState(false) }
         val showFilters = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
         snackbarHostState = remember { SnackbarHostState() }
-        Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) {
+        Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { contentPadding ->
             AnimatedVisibility(
                 !jobs.any { it.visible.targetState },
+                Modifier.padding(contentPadding),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
@@ -147,7 +119,7 @@ fun App() {
                 }
             }
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -172,7 +144,7 @@ fun App() {
                                             .toLocalDateTime(TimeZone.currentSystemDefault())
                                             .format(
                                                 LocalDateTime.Format {
-                                                    dayOfMonth()
+                                                    day()
                                                     char('.')
                                                     monthNumber()
                                                     char('.')
@@ -195,45 +167,15 @@ fun App() {
                                                 },
                                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                             ) {
-                                                Popup(
-                                                    onDismissRequest = {
-                                                        showNotes.targetState = false
-                                                    },
-                                                    offset = IntOffset(
-                                                        0,
-                                                        28.dp.toInt()
-                                                    )
-                                                ) {
-                                                    AnimatedVisibility(
-                                                        showNotes,
-                                                        enter = fadeIn(),
-                                                        exit = fadeOut()
-                                                    ) {
-                                                        Card(
-                                                            Modifier.padding(10.dp),
-                                                            elevation = 8.dp,
-                                                            shape = RoundedCornerShape(
-                                                                0,
-                                                                20,
-                                                                20,
-                                                                20
-                                                            ),
-                                                            border = BorderStroke(
-                                                                1.dp,
-                                                                color = colors.onSurface
-                                                            )
-                                                        ) {
-                                                            Text(
-                                                                it.notes,
-                                                                Modifier.padding(10.dp)
-                                                            )
-                                                        }
-                                                    }
-                                                }
+                                                PopupBubble(
+                                                    dpOffset = DpOffset(34.dp, 20.dp),
+                                                    visible = showNotes,
+                                                    text = it.notes,
+                                                )
                                                 Icon(
                                                     painterResource(Res.drawable.notes),
                                                     "Show additional notes",
-                                                    tint = colors.primary
+                                                    tint = MaterialTheme.colorScheme.primary
                                                 )
                                             }
                                         }
@@ -246,14 +188,14 @@ fun App() {
                                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                     ) {
                                         Icon(
-                                            Icons.Filled.Edit,
+                                            painterResource(Res.drawable.edit),
                                             contentDescription = "Edit",
-                                            tint = colors.primary
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
                                 }
                             }
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
                 }
@@ -320,7 +262,7 @@ fun App() {
                                 modifier = Modifier.padding(horizontal = 5.dp)
                                     .pointerHoverIcon(PointerIcon.Hand),
                             ) {
-                                Icon(Icons.Filled.Add, null)
+                                Icon(painterResource(Res.drawable.add), null)
                                 Text("Add Job", Modifier.padding(start = 10.dp))
                             }
                         } else {
@@ -329,17 +271,17 @@ fun App() {
                                 modifier = Modifier.padding(horizontal = 5.dp)
                                     .pointerHoverIcon(PointerIcon.Hand),
                             ) {
-                                Icon(Icons.Filled.Add, "Add Job")
+                                Icon(painterResource(Res.drawable.add), "Add Job")
                             }
                         }
                     }
                 }
             }
-            SideSheet(showFilters) {
+            SideSheet(showFilters, Modifier.padding(contentPadding)) {
                 SortAndFilter()
             }
             val showDeleteDialog = remember { MutableTransitionState(false) }
-            SideSheet(showJobDialog, true, showDeleteDialog) {
+            SideSheet(showJobDialog, Modifier.padding(contentPadding), true, showDeleteDialog) {
                 JobDialog(
                     onDismissRequest = { showJobDialog.targetState = false },
                     selectedJob,

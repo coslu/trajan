@@ -9,12 +9,12 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-private val textOnLight = colors.onBackground
+private val textOnLight = Color(0xFF1B1C15)
 private val textOnDark = Color(0xFFFFFFFF)
 
 @Serializable(with = PropertyColorSerializer::class)
 enum class PropertyColor(val color: Color, val textColor: Color) {
-    Transparent(Color(0), textOnLight),
+    Transparent(Color(0), Color.Unspecified),
     BlueGray(Color(0xFF89A8B2), textOnDark),
     LightBlue(Color(0xFFA2D2DF), textOnLight),
     DarkBlue(Color(0xFF295F98), textOnDark),

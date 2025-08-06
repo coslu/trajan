@@ -16,11 +16,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,24 +27,38 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.arrow_back
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun SideSheet(
+expect fun SideSheet(
     showSideSheet: MutableTransitionState<Boolean>,
+    modifier: Modifier = Modifier,
+    arrangeToEnd: Boolean = false,
+    showDialog: MutableTransitionState<Boolean>? = null,
+    content: @Composable () -> Unit
+)
+
+@Suppress("UnusedBoxWithConstraintsScope")
+@Composable
+fun CommonSideSheet(
+    showSideSheet: MutableTransitionState<Boolean>,
+    modifier: Modifier = Modifier,
     arrangeToEnd: Boolean = false,
     showDialog: MutableTransitionState<Boolean>? = null,
     content: @Composable () -> Unit
 ) {
     AnimatedVisibility(showSideSheet, enter = fadeIn(), exit = fadeOut()) {
         Box(
-            Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.6f))
+            modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.6f))
                 .clickable(interactionSource = null, indication = null) {
                     showSideSheet.targetState = false
                 }
         )
     }
     Row(
-        Modifier.fillMaxSize(),
+        modifier.fillMaxSize(),
         horizontalArrangement = if (arrangeToEnd) Arrangement.End else Arrangement.Start
     ) {
         AnimatedVisibility(
@@ -54,8 +67,10 @@ fun SideSheet(
             exit = slideOutHorizontally { if (arrangeToEnd) it else -it }) {
             BoxWithConstraints {
                 Card(
-                    Modifier.fillMaxHeight()
-                        .width(if (maxWidth * 0.8f > 600.dp) 600.dp else maxWidth * 0.8f)
+                    modifier = Modifier.fillMaxHeight()
+                        .width(if (maxWidth * 0.8f > 600.dp) 600.dp else maxWidth * 0.8f),
+                    shape = if (arrangeToEnd) RoundedCornerShape(12.dp, 0.dp, 0.dp, 12.dp)
+                    else RoundedCornerShape(0.dp, 12.dp, 12.dp, 0.dp)
                 ) {
                     Column {
                         Row {
@@ -63,7 +78,7 @@ fun SideSheet(
                                 onClick = { showSideSheet.targetState = false },
                                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                             ) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                                Icon(painterResource(Res.drawable.arrow_back), "Back")
                             }
                         }
                         content()
