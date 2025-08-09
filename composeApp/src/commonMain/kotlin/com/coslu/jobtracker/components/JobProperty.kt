@@ -46,6 +46,7 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.transparent
 import org.jetbrains.compose.resources.painterResource
 
+@Suppress("UnusedBoxWithConstraintsScope")
 @Composable
 fun JobProperty(
     property: String,

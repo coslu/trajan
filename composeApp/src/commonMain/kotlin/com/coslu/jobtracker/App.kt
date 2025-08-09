@@ -9,33 +9,24 @@ import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,6 +47,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.coslu.jobtracker.Settings.sortingMethod
+import com.coslu.jobtracker.components.BottomBar
+import com.coslu.jobtracker.components.BottomBarAction
 import com.coslu.jobtracker.components.JobDialog
 import com.coslu.jobtracker.components.JobName
 import com.coslu.jobtracker.components.JobProperty
@@ -67,7 +60,6 @@ import job_tracker.composeapp.generated.resources.add
 import job_tracker.composeapp.generated.resources.edit
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
-import job_tracker.composeapp.generated.resources.search
 import job_tracker.composeapp.generated.resources.settings
 import job_tracker.composeapp.generated.resources.sort_filter
 import kotlinx.coroutines.CoroutineScope
@@ -209,90 +201,19 @@ fun App() {
                         }
                     }
                 }
-                BoxWithConstraints {
-                    val maxWidth = maxWidth
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        if (maxWidth >= 1040.dp) {
-                            OutlinedButton(
-                                onClick = { showFilters.targetState = true },
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                                    .pointerHoverIcon(PointerIcon.Hand),
-                            ) {
-                                Icon(painterResource(Res.drawable.settings), null)
-                                Text("Settings", Modifier.padding(start = 10.dp))
-                            }
-                            OutlinedButton(
-                                onClick = { showFilters.targetState = true },
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                                    .pointerHoverIcon(PointerIcon.Hand),
-                            ) {
-                                Icon(painterResource(Res.drawable.sort_filter), null)
-                                Text("Sort & Filter", Modifier.padding(start = 10.dp))
-                            }
-                        } else {
-                            IconButton(
-                                onClick = { showFilters.targetState = true },
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                                    .pointerHoverIcon(PointerIcon.Hand),
-                            ) {
-                                Icon(painterResource(Res.drawable.settings), "Settings")
-                            }
-                            IconButton(
-                                onClick = { showFilters.targetState = true },
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                                    .pointerHoverIcon(PointerIcon.Hand),
-                            ) {
-                                Icon(painterResource(Res.drawable.sort_filter), "Sort and Filter")
-                            }
-                        }
-                        val searchBarState = rememberSearchBarState()
-                        val textFieldState = rememberTextFieldState()
-                        val inputField =
-                            @Composable {
-                                SearchBarDefaults.InputField(
-                                    modifier = Modifier.width(
-                                        if (maxWidth * 0.5f > 600.dp) 600.dp else maxWidth * 0.5f
-                                    ).height(56.dp),
-                                    searchBarState = searchBarState,
-                                    textFieldState = textFieldState,
-                                    onSearch = {},
-                                    placeholder = { Text("Search in jobs") },
-                                    leadingIcon = {
-                                        Icon(
-                                            painterResource(Res.drawable.search),
-                                            null
-                                        )
-                                    },
-                                )
-                            }
-                        SearchBar(
-                            modifier = Modifier.padding(5.dp),
-                            state = searchBarState,
-                            inputField = inputField
-                        )
-                        if (maxWidth >= 1040.dp) {
-                            Button(
-                                onClick = { selectedJob = null; showJobDialog.targetState = true },
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                                    .pointerHoverIcon(PointerIcon.Hand),
-                            ) {
-                                Icon(painterResource(Res.drawable.add), null)
-                                Text("Add Job", Modifier.padding(start = 10.dp))
-                            }
-                        } else {
-                            FloatingActionButton(
-                                onClick = { selectedJob = null; showJobDialog.targetState = true },
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                                    .pointerHoverIcon(PointerIcon.Hand),
-                            ) {
-                                Icon(painterResource(Res.drawable.add), "Add Job")
-                            }
-                        }
-                    }
-                }
+                BottomBar(
+                    actions = arrayOf(
+                        BottomBarAction("Settings", Res.drawable.settings, {}),
+                        BottomBarAction(
+                            "Sort & Filter",
+                            Res.drawable.sort_filter,
+                            { showFilters.targetState = true }),
+                        BottomBarAction(
+                            "Add Job",
+                            Res.drawable.add,
+                            { selectedJob = null; showJobDialog.targetState = true })
+                    )
+                )
             }
             SideSheet(showFilters, Modifier.padding(contentPadding)) {
                 SortAndFilter()
@@ -327,6 +248,4 @@ fun setPropertyColor(property: String, color: PropertyColor) {
 }
 
 @Composable
-fun Dp.toInt(): Int {
-    return LocalDensity.current.run { roundToPx() }
-}
+fun Dp.toInt() = LocalDensity.current.run { roundToPx() }
