@@ -40,11 +40,21 @@ object Settings {
     val statusFilters = mutableStateMapOf<String, Boolean>().apply {
         statuses.forEach { put(it, true) }
     }
+    val searchString = mutableStateOf("")
+    var searchInTypes = true
+    var searchInLocations = true
+    var searchInNotes = true
 
     fun applyFilters() = jobs.run {
         clear()
         addAll(list.filter { typeFilters[it.type]!! && locationFilters[it.location]!! && statusFilters[it.status]!! })
         sortWith(sortingMethod.comparator)
+        jobs.removeAll {
+            !(it.name.contains(searchString.value)
+                    || searchInTypes && it.type.contains(searchString.value)
+                    || searchInLocations && it.location.contains(searchString.value)
+                    || searchInNotes && it.notes.contains(searchString.value))
+        }
         saveSettings()
     }
 }

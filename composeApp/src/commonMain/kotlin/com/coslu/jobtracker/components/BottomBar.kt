@@ -23,7 +23,6 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,10 +33,9 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.coslu.jobtracker.Settings
-import com.coslu.jobtracker.jobs
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.clear
 import job_tracker.composeapp.generated.resources.search
-import job_tracker.composeapp.generated.resources.transparent
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -98,7 +96,7 @@ private fun SmallBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchBar(maxWidth: Dp) {
-    var searchString by remember { mutableStateOf("") }
+    var searchString by remember { Settings.searchString }
     TextField(
         modifier = Modifier.width(
             if (maxWidth * 0.5f > 600.dp) 600.dp else maxWidth * 0.5f
@@ -107,7 +105,6 @@ private fun SearchBar(maxWidth: Dp) {
         onValueChange = { value ->
             searchString = value
             Settings.applyFilters()
-            jobs.removeAll { !it.name.startsWith(value) }
         },
         singleLine = true,
         leadingIcon = { Icon(painterResource(Res.drawable.search), null) },
@@ -126,7 +123,7 @@ private fun SearchBar(maxWidth: Dp) {
                         },
                         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                     ) {
-                        Icon(painterResource(Res.drawable.transparent), "Clear")
+                        Icon(painterResource(Res.drawable.clear), "Clear")
                     }
                 }
             }
