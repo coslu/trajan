@@ -19,12 +19,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import job_tracker.composeapp.generated.resources.Res
@@ -74,9 +71,9 @@ fun CommonSideSheet(
                 ) {
                     Column {
                         Row {
-                            IconButton(
-                                onClick = { showSideSheet.targetState = false },
-                                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                            TooltipButton(
+                                description = "Back",
+                                onClick = { showSideSheet.targetState = false }
                             ) {
                                 Icon(painterResource(Res.drawable.arrow_back), "Back")
                             }

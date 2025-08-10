@@ -23,7 +23,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -88,7 +87,8 @@ fun JobDialog(
                     )
                     if (job != null) {
                         showDeleteDialog as MutableTransitionState<Boolean>
-                        IconButton(
+                        TooltipButton(
+                            description = "Delete",
                             onClick = { showDeleteDialog.targetState = true },
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                         ) {
@@ -149,7 +149,7 @@ fun JobDialog(
                             }
                             Icon(
                                 painterResource(Res.drawable.delete),
-                                "Delete Job",
+                                "Delete",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -232,9 +232,12 @@ fun JobDialog(
                         )
                         Text("Actualize Date", Modifier.padding(end = 5.dp))
                         BoxWithConstraints {
-                            IconButton(
-                                onClick = { showActualizeDateHelp.targetState = true },
-                                modifier = Modifier.size(16.dp).pointerHoverIcon(PointerIcon.Hand)
+                            TooltipButton(
+                                description = "Help",
+                                onClick = {
+                                    showActualizeDateHelp.targetState = true
+                                },
+                                modifier = Modifier.size(16.dp)
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.help),

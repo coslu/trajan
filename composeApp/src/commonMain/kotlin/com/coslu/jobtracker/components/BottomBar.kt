@@ -11,8 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -70,24 +70,30 @@ private fun BigBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SmallBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
     actions.forEachIndexed { index, action ->
         if (index == actions.size - 1) {
             // Last action is to the right of search bar with filled button
             SearchBar(maxWidth)
-            FloatingActionButton(
-                onClick = action.onClick,
-                modifier = Modifier.padding(horizontal = 5.dp).pointerHoverIcon(PointerIcon.Hand)
+            TooltipBox(
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(5.dp),
+                tooltip = { PlainTooltip { Text(action.description) } },
+                state = rememberTooltipState()
             ) {
-                Icon(painterResource(action.drawableRes), action.description) //TODO
+                FloatingActionButton(
+                    onClick = action.onClick,
+                    modifier = Modifier.padding(5.dp).pointerHoverIcon(PointerIcon.Hand),
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)
+                ) {
+                    Icon(painterResource(action.drawableRes), action.description)
+                }
             }
         } else {
-            IconButton(
-                onClick = action.onClick,
-                modifier = Modifier.padding(horizontal = 5.dp).pointerHoverIcon(PointerIcon.Hand)
-            ) {
-                Icon(painterResource(action.drawableRes), action.description) //TODO
+            TooltipButton(action.description, action.onClick) {
+                Icon(painterResource(action.drawableRes), action.description)
             }
         }
     }
@@ -110,21 +116,14 @@ private fun SearchBar(maxWidth: Dp) {
         leadingIcon = { Icon(painterResource(Res.drawable.search), null) },
         trailingIcon = {
             if (searchString.isNotEmpty()) {
-                TooltipBox(
-                    positionProvider =
-                        TooltipDefaults.rememberTooltipPositionProvider(5.dp),
-                    tooltip = { PlainTooltip { Text("Clear") } },
-                    state = rememberTooltipState()
-                ) {
-                    IconButton(
-                        onClick = {
-                            searchString = ""
-                            Settings.applyFilters()
-                        },
-                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
-                    ) {
-                        Icon(painterResource(Res.drawable.clear), "Clear")
+                TooltipButton(
+                    description = "Clear",
+                    onClick = {
+                        searchString = ""
+                        Settings.applyFilters()
                     }
+                ) {
+                    Icon(painterResource(Res.drawable.clear), "Clear")
                 }
             }
         },

@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,8 +39,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -55,6 +52,7 @@ import com.coslu.jobtracker.components.JobProperty
 import com.coslu.jobtracker.components.PopupBubble
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
+import com.coslu.jobtracker.components.TooltipButton
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.add
 import job_tracker.composeapp.generated.resources.edit
@@ -162,12 +160,11 @@ fun App() {
                                         JobProperty(it.location, Modifier.weight(1f, false))
                                         JobProperty(it.status, Modifier.weight(1f, false))
                                         if (it.notes.isNotEmpty()) {
-                                            IconButton(
+                                            TooltipButton(
+                                                description = "Show notes",
                                                 onClick = {
-                                                    showNotes.targetState =
-                                                        !showNotes.currentState
+                                                    showNotes.targetState = !showNotes.currentState
                                                 },
-                                                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                             ) {
                                                 PopupBubble(
                                                     dpOffset = DpOffset(34.dp, 20.dp),
@@ -176,24 +173,20 @@ fun App() {
                                                 )
                                                 Icon(
                                                     painterResource(Res.drawable.notes),
-                                                    "Show additional notes",
+                                                    "Show notes",
                                                     tint = MaterialTheme.colorScheme.primary
                                                 )
                                             }
                                         }
                                     }
-                                    IconButton(
+                                    TooltipButton(
+                                        description = "Edit",
                                         onClick = {
                                             selectedJob = it
                                             showJobDialog.targetState = true
-                                        },
-                                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                                        }
                                     ) {
-                                        Icon(
-                                            painterResource(Res.drawable.edit),
-                                            contentDescription = "Edit",
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
+                                        Icon(painterResource(Res.drawable.edit), "Edit")
                                     }
                                 }
                             }
@@ -203,15 +196,13 @@ fun App() {
                 }
                 BottomBar(
                     actions = arrayOf(
-                        BottomBarAction("Settings", Res.drawable.settings, {}),
-                        BottomBarAction(
-                            "Sort & Filter",
-                            Res.drawable.sort_filter,
-                            { showFilters.targetState = true }),
-                        BottomBarAction(
-                            "Add Job",
-                            Res.drawable.add,
-                            { selectedJob = null; showJobDialog.targetState = true })
+                        BottomBarAction("Settings", Res.drawable.settings) {},
+                        BottomBarAction("Sort & Filter", Res.drawable.sort_filter) {
+                            showFilters.targetState = true
+                        },
+                        BottomBarAction("Add Job", Res.drawable.add) {
+                            selectedJob = null; showJobDialog.targetState = true
+                        }
                     )
                 )
             }
