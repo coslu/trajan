@@ -45,8 +45,8 @@ import com.coslu.jobtracker.Settings.statusFilters
 import com.coslu.jobtracker.Settings.typeFilters
 import com.coslu.jobtracker.SortingMethod
 import job_tracker.composeapp.generated.resources.Res
-import job_tracker.composeapp.generated.resources.arrow_drop_down
-import job_tracker.composeapp.generated.resources.arrow_right
+import job_tracker.composeapp.generated.resources.arrow_dropdown_closed
+import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.date
 import job_tracker.composeapp.generated.resources.filter
 import job_tracker.composeapp.generated.resources.location
@@ -244,9 +244,9 @@ fun SortAndFilter() {
                     openTypes,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
                     if (it)
-                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
+                        Icon(painterResource(Res.drawable.arrow_dropdown_open), null)
                     else
-                        Icon(painterResource(Res.drawable.arrow_right), null)
+                        Icon(painterResource(Res.drawable.arrow_dropdown_closed), null)
                 }
                 Checkbox(
                     checked = typeFilters.all { it.value },
@@ -275,9 +275,9 @@ fun SortAndFilter() {
                     openLocations,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
                     if (it)
-                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
+                        Icon(painterResource(Res.drawable.arrow_dropdown_open), null)
                     else
-                        Icon(painterResource(Res.drawable.arrow_right), null)
+                        Icon(painterResource(Res.drawable.arrow_dropdown_closed), null)
                 }
                 Checkbox(
                     checked = locationFilters.all { it.value },
@@ -306,9 +306,9 @@ fun SortAndFilter() {
                     openStatuses,
                     transitionSpec = { fadeIn().togetherWith(fadeOut()) }) {
                     if (it)
-                        Icon(painterResource(Res.drawable.arrow_drop_down), null)
+                        Icon(painterResource(Res.drawable.arrow_dropdown_open), null)
                     else
-                        Icon(painterResource(Res.drawable.arrow_right), null)
+                        Icon(painterResource(Res.drawable.arrow_dropdown_closed), null)
                 }
                 Checkbox(
                     checked = statusFilters.all { it.value },

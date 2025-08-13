@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.components.BottomBar
 import com.coslu.jobtracker.components.BottomBarAction
@@ -50,6 +51,7 @@ import com.coslu.jobtracker.components.JobDialog
 import com.coslu.jobtracker.components.JobName
 import com.coslu.jobtracker.components.JobProperty
 import com.coslu.jobtracker.components.PopupBubble
+import com.coslu.jobtracker.components.SettingsNavHost
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
 import com.coslu.jobtracker.components.TooltipButton
@@ -90,6 +92,7 @@ fun App() {
         propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
         val showJobDialog = remember { MutableTransitionState(false) }
         val showFilters = remember { MutableTransitionState(false) }
+        val showSettings = remember { MutableTransitionState(false) }
         var selectedJob by remember { mutableStateOf<Job?>(null) }
         coroutineScope = rememberCoroutineScope()
         snackbarHostState = remember { SnackbarHostState() }
@@ -196,15 +199,26 @@ fun App() {
                 }
                 BottomBar(
                     actions = arrayOf(
-                        BottomBarAction("Settings", Res.drawable.settings) {},
+                        BottomBarAction("Settings", Res.drawable.settings) {
+                            showSettings.targetState = true
+                        },
                         BottomBarAction("Sort & Filter", Res.drawable.sort_filter) {
                             showFilters.targetState = true
                         },
                         BottomBarAction("Add Job", Res.drawable.add) {
-                            selectedJob = null; showJobDialog.targetState = true
+                            selectedJob = null
+                            showJobDialog.targetState = true
                         }
                     )
                 )
+            }
+            val settingsNavController = rememberNavController()
+            SideSheet(
+                showSideSheet = showSettings,
+                modifier = Modifier.padding(contentPadding),
+                navController = settingsNavController
+            ) {
+                SettingsNavHost(settingsNavController)
             }
             SideSheet(showFilters, Modifier.padding(contentPadding)) {
                 SortAndFilter()

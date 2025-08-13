@@ -48,7 +48,7 @@ import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Job
 import com.coslu.jobtracker.toInt
 import job_tracker.composeapp.generated.resources.Res
-import job_tracker.composeapp.generated.resources.arrow_drop_down
+import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.delete
 import job_tracker.composeapp.generated.resources.help
 import org.jetbrains.compose.resources.painterResource
@@ -195,7 +195,7 @@ fun JobDialog(
                         ).pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true),
                         onValueChange = {},
                         trailingIcon = {
-                            Icon(painterResource(Res.drawable.arrow_drop_down), null)
+                            Icon(painterResource(Res.drawable.arrow_dropdown_open), null)
                         }
                     )
                     ExposedDropdownMenu(expandStatusMenu, { expandStatusMenu = false }) {

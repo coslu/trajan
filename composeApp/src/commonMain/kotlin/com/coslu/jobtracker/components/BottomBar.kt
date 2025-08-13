@@ -127,7 +127,7 @@ private fun SearchBar(maxWidth: Dp) {
                 }
             }
         },
-        placeholder = { Text("Search in jobs") },
+        placeholder = { Text("Search") },
         shape = RoundedCornerShape(50),
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,

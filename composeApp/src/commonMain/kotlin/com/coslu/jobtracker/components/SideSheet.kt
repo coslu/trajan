@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.navigation.NavController
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.arrow_back
 import org.jetbrains.compose.resources.painterResource
@@ -34,6 +35,7 @@ expect fun SideSheet(
     modifier: Modifier = Modifier,
     arrangeToEnd: Boolean = false,
     showDialog: MutableTransitionState<Boolean>? = null,
+    navController: NavController? = null,
     content: @Composable () -> Unit
 )
 
@@ -44,6 +46,7 @@ fun CommonSideSheet(
     modifier: Modifier = Modifier,
     arrangeToEnd: Boolean = false,
     showDialog: MutableTransitionState<Boolean>? = null,
+    navController: NavController? = null,
     content: @Composable () -> Unit
 ) {
     AnimatedVisibility(showSideSheet, enter = fadeIn(), exit = fadeOut()) {
@@ -73,7 +76,12 @@ fun CommonSideSheet(
                         Row {
                             TooltipButton(
                                 description = "Back",
-                                onClick = { showSideSheet.targetState = false }
+                                onClick = {
+                                    if (navController?.previousBackStackEntry != null)
+                                        navController.popBackStack()
+                                    else
+                                        showSideSheet.targetState = false
+                                }
                             ) {
                                 Icon(painterResource(Res.drawable.arrow_back), "Back")
                             }
