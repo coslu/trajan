@@ -41,19 +41,21 @@ object Settings {
         statuses.forEach { put(it, true) }
     }
     val searchString = mutableStateOf("")
-    var searchInTypes = true
-    var searchInLocations = true
-    var searchInNotes = true
+    val searchInTypes = mutableStateOf(true)
+    val searchInLocations = mutableStateOf(true)
+    val searchInNotes = mutableStateOf(true)
 
     fun applyFilters() = jobs.run {
         clear()
         addAll(list.filter { typeFilters[it.type]!! && locationFilters[it.location]!! && statusFilters[it.status]!! })
         sortWith(sortingMethod.comparator)
-        jobs.removeAll {
-            !(it.name.contains(searchString.value)
-                    || searchInTypes && it.type.contains(searchString.value)
-                    || searchInLocations && it.location.contains(searchString.value)
-                    || searchInNotes && it.notes.contains(searchString.value))
+        searchString.value.split(" ").forEach { searchWord ->
+            jobs.removeAll {
+                !(it.name.contains(searchWord, true)
+                        || searchInTypes.value && it.type.contains(searchWord, true)
+                        || searchInLocations.value && it.location.contains(searchWord, true)
+                        || searchInNotes.value && it.notes.contains(searchWord, true))
+            }
         }
         saveSettings()
     }
@@ -69,6 +71,9 @@ private class SettingsSerializer : KSerializer<Settings> {
             element("typeFilters", mapSerialDescriptor<String, Boolean>())
             element("locationFilters", mapSerialDescriptor<String, Boolean>())
             element("statusFilters", mapSerialDescriptor<String, Boolean>())
+            element<Boolean>("searchInTypes")
+            element<Boolean>("searchInLocations")
+            element<Boolean>("searchInNotes")
         }
 
     override fun deserialize(decoder: Decoder): Settings {
@@ -112,6 +117,10 @@ private class SettingsSerializer : KSerializer<Settings> {
                         )
                     )
 
+                    4 -> Settings.searchInTypes.value = decodeBooleanElement(descriptor, 4)
+                    5 -> Settings.searchInLocations.value = decodeBooleanElement(descriptor, 5)
+                    6 -> Settings.searchInNotes.value = decodeBooleanElement(descriptor, 6)
+
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }
@@ -125,6 +134,9 @@ private class SettingsSerializer : KSerializer<Settings> {
             encodeSerializableElement(descriptor, 1, filterSerializer, value.typeFilters)
             encodeSerializableElement(descriptor, 2, filterSerializer, value.locationFilters)
             encodeSerializableElement(descriptor, 3, filterSerializer, value.statusFilters)
+            encodeBooleanElement(descriptor, 4, value.searchInTypes.value)
+            encodeBooleanElement(descriptor, 5, value.searchInLocations.value)
+            encodeBooleanElement(descriptor, 6, value.searchInNotes.value)
         }
     }
 }

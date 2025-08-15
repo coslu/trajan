@@ -23,7 +23,6 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,7 +101,7 @@ private fun SmallBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchBar(maxWidth: Dp) {
-    var searchString by remember { Settings.searchString }
+    var searchString by Settings.searchString
     TextField(
         modifier = Modifier.width(
             if (maxWidth * 0.5f > 600.dp) 600.dp else maxWidth * 0.5f

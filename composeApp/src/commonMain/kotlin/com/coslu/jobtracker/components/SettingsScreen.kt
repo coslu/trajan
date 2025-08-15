@@ -4,23 +4,27 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.coslu.jobtracker.Settings
+import com.coslu.jobtracker.saveSettings
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.arrow_enter_right
 import job_tracker.composeapp.generated.resources.search
@@ -38,7 +42,6 @@ fun SettingsNavHost(navController: NavHostController) {
                 Text(
                     "Settings",
                     modifier = Modifier.padding(20.dp),
-                    textAlign = TextAlign.Start,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
@@ -52,7 +55,6 @@ fun SettingsNavHost(navController: NavHostController) {
                             Text(it.categoryName, Modifier.padding(start = 10.dp).weight(1f))
                             Icon(painterResource(Res.drawable.arrow_enter_right), null)
                         }
-                        HorizontalDivider()
                     }
                 }
             }
@@ -66,18 +68,52 @@ fun SettingsNavHost(navController: NavHostController) {
 }
 
 @Composable
+fun SwitchSetting(text: String, setting: MutableState<Boolean>) {
+    Row(
+        Modifier.padding(horizontal = 20.dp).height(64.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text, Modifier.weight(1f))
+        Switch(
+            checked = setting.value,
+            onCheckedChange = { setting.value = it; saveSettings() },
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+        )
+    }
+}
+
+@Composable
+fun TitleText(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        modifier = modifier.padding(20.dp),
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
 fun SearchView() {
-    Text("Search View")
+    LazyColumn {
+        item { TitleText("Search Settings") }
+        item { SwitchSetting("Search in types", Settings.searchInTypes) }
+        item { SwitchSetting("Search in locations", Settings.searchInLocations) }
+        item { SwitchSetting("Search in notes", Settings.searchInNotes) }
+    }
 }
 
 @Composable
 fun ThemeView() {
-    Text("Theme View")
+    LazyColumn {
+        item { TitleText("Theme Settings") }
+    }
 }
 
 @Composable
 fun SynchronizationView() {
-    Text("Synchronization View")
+    LazyColumn {
+        item { TitleText("Synchronization Settings") }
+    }
 }
 
 @Serializable
