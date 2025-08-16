@@ -1,24 +1,45 @@
 package com.coslu.jobtracker.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,6 +47,7 @@ import androidx.navigation.compose.composable
 import com.coslu.jobtracker.Settings
 import com.coslu.jobtracker.saveSettings
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
 import job_tracker.composeapp.generated.resources.search
 import job_tracker.composeapp.generated.resources.synchronization
@@ -39,12 +61,7 @@ fun SettingsNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Menu) {
         composable<Menu> {
             Column {
-                Text(
-                    "Settings",
-                    modifier = Modifier.padding(20.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
+                TitleText("Settings", Modifier.padding(20.dp))
                 LazyColumn {
                     items(SettingsCategory.entries) {
                         Row(
@@ -68,12 +85,16 @@ fun SettingsNavHost(navController: NavHostController) {
 }
 
 @Composable
-fun SwitchSetting(text: String, setting: MutableState<Boolean>) {
+fun SwitchSetting(title: String, setting: MutableState<Boolean>, subtitle: String? = null) {
     Row(
-        Modifier.padding(horizontal = 20.dp).height(64.dp),
+        Modifier.heightIn(min = 64.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text, Modifier.weight(1f))
+        Column(Modifier.weight(1f)) {
+            Text(title)
+            if (subtitle != null)
+                Text(subtitle, color = LocalContentColor.current.copy(alpha = 0.6f))
+        }
         Switch(
             checked = setting.value,
             onCheckedChange = { setting.value = it; saveSettings() },
@@ -82,11 +103,84 @@ fun SwitchSetting(text: String, setting: MutableState<Boolean>) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownSetting(
+    text: String,
+    options: List<Settings.Option>,
+    setting: MutableState<Settings.Option>
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var current by setting
+    BoxWithConstraints {
+        Row(
+            Modifier.padding(vertical = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (this@BoxWithConstraints.maxWidth > 500.dp)
+                Text(text, Modifier.weight(1f))
+            ExposedDropdownMenuBox(expanded, { expanded = it }) {
+                TextField(
+                    value = current.name,
+                    onValueChange = {},
+                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true),
+                    readOnly = true,
+                    label = if (this@BoxWithConstraints.maxWidth > 500.dp) null else {
+                        @Composable { Text(text) }
+                    },
+                    leadingIcon = current.icon,
+                    trailingIcon = { Icon(painterResource(Res.drawable.arrow_dropdown_open), null) }
+                )
+                ExposedDropdownMenu(expanded, { expanded = false }) {
+                    options.forEach {
+                        DropdownMenuItem(
+                            text = { Text(it.name) },
+                            onClick = {
+                                current = it
+                                expanded = false
+                            },
+                            leadingIcon = it.icon
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/*@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownSetting() {
+    var expanded by remember { mutableStateOf(false) }
+    var currentTheme by Settings.theme
+    ExposedDropdownMenuBox(expanded, { expanded = it }) {
+        TextField(
+            value = currentTheme.description,
+            onValueChange = {},
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                .pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true),
+            readOnly = true,
+            leadingIcon = { Icon(painterResource(currentTheme.iconDrawable), null) },
+            trailingIcon = { Icon(painterResource(Res.drawable.arrow_dropdown_open), null) }
+        )
+        ExposedDropdownMenu(expanded, { expanded = false }) {
+            Settings.Theme.entries.forEach {
+                DropdownMenuItem(
+                    text = { Text(it.description) },
+                    onClick = { currentTheme = it },
+                    leadingIcon = { Icon(painterResource(it.iconDrawable), null) }
+                )
+            }
+        }
+    }
+}*/
+
 @Composable
 fun TitleText(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
-        modifier = modifier.padding(20.dp),
+        modifier = modifier,
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold
     )
@@ -94,8 +188,8 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun SearchView() {
-    LazyColumn {
-        item { TitleText("Search Settings") }
+    LazyColumn(Modifier.padding(horizontal = 20.dp)) {
+        item { TitleText("Search Settings", Modifier.padding(vertical = 20.dp)) }
         item { SwitchSetting("Search in types", Settings.searchInTypes) }
         item { SwitchSetting("Search in locations", Settings.searchInLocations) }
         item { SwitchSetting("Search in notes", Settings.searchInNotes) }
@@ -104,8 +198,56 @@ fun SearchView() {
 
 @Composable
 fun ThemeView() {
-    LazyColumn {
+    /*LazyColumn {
         item { TitleText("Theme Settings") }
+        item {
+            SwitchSetting(
+                "Use system colors if available",
+                Settings.useSystemColors,
+                "Overrides color setting"
+            )
+        }
+        item {
+            DropdownSetting("Preferred theme:", Settings.Theme.options, Settings.Theme.current)
+        }
+        item { DropdownSetting("Color:",Settings.Color.options, Settings.Color.current) }
+    }*/
+    LazyVerticalGrid(GridCells.Adaptive(140.dp), Modifier.padding(horizontal = 20.dp)) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            TitleText("Theme Settings", Modifier.padding(vertical = 20.dp))
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            DropdownSetting("Preferred theme:", Settings.Theme.options, Settings.Theme.current)
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column {
+                SwitchSetting(
+                    "Use system colors if available",
+                    Settings.useSystemColors,
+                    "Overrides color setting"
+                )
+                Spacer(Modifier.height(20.dp))
+            }
+        }
+        items(Settings.Color.options) {
+            val modifier = if (Settings.Color.current.value == it) Modifier.border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(10)
+            ) else Modifier
+            Box(modifier.padding(20.dp).clickable {
+                Settings.Color.current.value = it
+            }) {
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    it.icon()
+                    Spacer(Modifier.height(5.dp))
+                    Text(it.name, textAlign = TextAlign.Center)
+                }
+            }
+        }
     }
 }
 

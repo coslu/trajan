@@ -10,13 +10,13 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 actual fun TrajanTheme(darkTheme: Boolean, content: @Composable() () -> Unit) {
     val colorScheme = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Settings.useSystemColors.value -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> darkScheme
-        else -> lightScheme
+        darkTheme -> Settings.darkScheme.value
+        else -> Settings.lightScheme.value
     }
 
     MaterialTheme(

@@ -1,7 +1,15 @@
 package com.coslu.jobtracker
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.coslu.jobtracker.Job.Companion.list
 import com.coslu.jobtracker.Job.Companion.statuses
 import com.coslu.jobtracker.SortingMethod.Date
@@ -9,6 +17,10 @@ import com.coslu.jobtracker.SortingMethod.Location
 import com.coslu.jobtracker.SortingMethod.Name
 import com.coslu.jobtracker.SortingMethod.Status
 import com.coslu.jobtracker.SortingMethod.Type
+import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.dark_mode
+import job_tracker.composeapp.generated.resources.light_mode
+import job_tracker.composeapp.generated.resources.system_theme
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -24,6 +36,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import org.jetbrains.compose.resources.painterResource
 
 @Serializable(with = SettingsSerializer::class)
 object Settings {
@@ -44,6 +57,74 @@ object Settings {
     val searchInTypes = mutableStateOf(true)
     val searchInLocations = mutableStateOf(true)
     val searchInNotes = mutableStateOf(true)
+    val useSystemColors = mutableStateOf(true)
+    val lightScheme = mutableStateOf(greenLightScheme)
+    val darkScheme = mutableStateOf(greenDarkScheme)
+//    val theme = mutableStateOf(Theme.SYSTEM)
+
+    /*enum class Theme(val description: String, val iconDrawable: DrawableResource) {
+        SYSTEM("System", Res.drawable.system_theme),
+        LIGHT("Light", Res.drawable.light_mode),
+        DARK("Dark", Res.drawable.dark_mode)
+    }
+
+    enum class Color(val description: String, val iconDrawable: DrawableResource) {
+        BLUE("System", Res.drawable.system_theme),
+        RED("Light", Res.drawable.light_mode),
+        GREEN("Dark", Res.drawable.dark_mode)
+    }*/
+
+    /*sealed class Option {
+        abstract val name: String
+        abstract val icon: @Composable () -> Unit
+    }
+
+    class ThemeOption(override val name: String, override val icon: @Composable (() -> Unit)) : Option()
+    class ColorOption(override val name: String, override val icon: @Composable (() -> Unit)) : Option()
+
+    object Theme {
+        val system = ThemeOption("System", { Icon(painterResource(Res.drawable.system_theme), null) })
+        val light = ThemeOption("Light", { Icon(painterResource(Res.drawable.light_mode), null) })
+        val dark = ThemeOption("Dark", { Icon(painterResource(Res.drawable.dark_mode), null) })
+        val options = listOf(system, light, dark)
+        var current = mutableStateOf(system)
+    }*/
+
+    data class Option(val name: String, val icon: @Composable () -> Unit)
+
+/*    sealed class Option {
+        abstract val name: String
+        abstract val icon: @Composable () -> Unit
+    }
+
+    data class ThemeOption(override val name: String, override val icon: @Composable (() -> Unit)) : Option()
+    data class ColorOption(override val name: String, override val icon: @Composable (() -> Unit), val colorScheme: ColorScheme) : Option()*/
+
+    object Theme {
+        val System = Option("System", { Icon(painterResource(Res.drawable.system_theme), null) })
+        val Light = Option("Light", { Icon(painterResource(Res.drawable.light_mode), null) })
+        val Dark = Option("Dark", { Icon(painterResource(Res.drawable.dark_mode), null) })
+        val options = listOf(System, Light, Dark)
+        var current = mutableStateOf(System)
+    }
+
+    object Color {
+        val Green = Option("Trajan Green", { Box(Modifier.background(greenLightScheme.primary, CircleShape).size(24.dp)) })
+        val Blue = Option("Blue", { Box(Modifier.background(PropertyColor.LightBlue.color, CircleShape).size(24.dp)) })
+        val Purple = Option("Purple", { Box(Modifier.background(PropertyColor.LightPurple.color, CircleShape).size(24.dp)) })
+        val Yellow = Option("Yellow", { Box(Modifier.background(PropertyColor.Yellow.color, CircleShape).size(24.dp)) })
+        val Red = Option("Red", { Box(Modifier.background(PropertyColor.Red.color, CircleShape).size(24.dp)) })
+        val Gray = Option("Gray", { Box(Modifier.background(PropertyColor.DarkGray.color, CircleShape).size(24.dp)) })
+        val options = listOf(Green, Blue, Purple, Yellow, Red, Gray)
+        val current = mutableStateOf(Green)
+
+        /*fun setTheme() {
+            when(current.value) {
+                Blue -> { lightScheme.value = blueLightScheme; darkScheme.value = blueDarkScheme }
+                Purple ->
+            }
+        }*/
+    }
 
     fun applyFilters() = jobs.run {
         clear()
