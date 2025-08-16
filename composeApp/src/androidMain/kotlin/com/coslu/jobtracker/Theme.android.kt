@@ -15,8 +15,8 @@ actual fun TrajanTheme(darkTheme: Boolean, content: @Composable() () -> Unit) {
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> Settings.darkScheme.value
-        else -> Settings.lightScheme.value
+        darkTheme -> Settings.Color.current.value.darkScheme
+        else -> Settings.Color.current.value.lightScheme
     }
 
     MaterialTheme(

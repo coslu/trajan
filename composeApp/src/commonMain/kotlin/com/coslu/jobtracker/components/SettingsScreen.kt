@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
@@ -105,10 +106,10 @@ fun SwitchSetting(title: String, setting: MutableState<Boolean>, subtitle: Strin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownSetting(
+fun <T: Settings.Option>DropdownSetting(
     text: String,
-    options: List<Settings.Option>,
-    setting: MutableState<Settings.Option>
+    options: List<T>,
+    setting: MutableState<T>
 ) {
     var expanded by remember { mutableStateOf(false) }
     var current by setting
@@ -129,7 +130,7 @@ fun DropdownSetting(
                     label = if (this@BoxWithConstraints.maxWidth > 500.dp) null else {
                         @Composable { Text(text) }
                     },
-                    leadingIcon = current.icon,
+                    leadingIcon = { current.Icon() },
                     trailingIcon = { Icon(painterResource(Res.drawable.arrow_dropdown_open), null) }
                 )
                 ExposedDropdownMenu(expanded, { expanded = false }) {
@@ -140,7 +141,7 @@ fun DropdownSetting(
                                 current = it
                                 expanded = false
                             },
-                            leadingIcon = it.icon
+                            leadingIcon = { it.Icon() }
                         )
                     }
                 }
@@ -235,14 +236,12 @@ fun ThemeView() {
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(10)
             ) else Modifier
-            Box(modifier.padding(20.dp).clickable {
-                Settings.Color.current.value = it
-            }) {
+            Box(modifier.clip(RoundedCornerShape(10)).clickable { Settings.Color.current.value = it }) {
                 Column(
-                    Modifier.fillMaxWidth(),
+                    Modifier.padding(20.dp).fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    it.icon()
+                    it.Icon()
                     Spacer(Modifier.height(5.dp))
                     Text(it.name, textAlign = TextAlign.Center)
                 }

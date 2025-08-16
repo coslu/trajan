@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 actual fun TrajanTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
-    val colorScheme = if (darkTheme) Settings.darkScheme.value else Settings.lightScheme.value
+    val colorScheme = if (darkTheme) Settings.Color.current.value.darkScheme else Settings.Color.current.value.lightScheme
     MaterialTheme(colorScheme = colorScheme, content = content)
 }
