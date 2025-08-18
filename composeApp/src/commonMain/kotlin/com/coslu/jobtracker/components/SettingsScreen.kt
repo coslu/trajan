@@ -106,7 +106,7 @@ fun SwitchSetting(title: String, setting: MutableState<Boolean>, subtitle: Strin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T: Settings.Option>DropdownSetting(
+fun <T : Settings.Option> DropdownSetting(
     text: String,
     options: List<T>,
     setting: MutableState<T>
@@ -150,33 +150,6 @@ fun <T: Settings.Option>DropdownSetting(
     }
 }
 
-/*@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DropdownSetting() {
-    var expanded by remember { mutableStateOf(false) }
-    var currentTheme by Settings.theme
-    ExposedDropdownMenuBox(expanded, { expanded = it }) {
-        TextField(
-            value = currentTheme.description,
-            onValueChange = {},
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                .pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true),
-            readOnly = true,
-            leadingIcon = { Icon(painterResource(currentTheme.iconDrawable), null) },
-            trailingIcon = { Icon(painterResource(Res.drawable.arrow_dropdown_open), null) }
-        )
-        ExposedDropdownMenu(expanded, { expanded = false }) {
-            Settings.Theme.entries.forEach {
-                DropdownMenuItem(
-                    text = { Text(it.description) },
-                    onClick = { currentTheme = it },
-                    leadingIcon = { Icon(painterResource(it.iconDrawable), null) }
-                )
-            }
-        }
-    }
-}*/
-
 @Composable
 fun TitleText(text: String, modifier: Modifier = Modifier) {
     Text(
@@ -199,20 +172,6 @@ fun SearchView() {
 
 @Composable
 fun ThemeView() {
-    /*LazyColumn {
-        item { TitleText("Theme Settings") }
-        item {
-            SwitchSetting(
-                "Use system colors if available",
-                Settings.useSystemColors,
-                "Overrides color setting"
-            )
-        }
-        item {
-            DropdownSetting("Preferred theme:", Settings.Theme.options, Settings.Theme.current)
-        }
-        item { DropdownSetting("Color:",Settings.Color.options, Settings.Color.current) }
-    }*/
     LazyVerticalGrid(GridCells.Adaptive(140.dp), Modifier.padding(horizontal = 20.dp)) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             TitleText("Theme Settings", Modifier.padding(vertical = 20.dp))
@@ -224,7 +183,7 @@ fun ThemeView() {
             Column {
                 SwitchSetting(
                     "Use system colors if available",
-                    Settings.useSystemColors,
+                    Settings.Color.useSystemColors,
                     "Overrides color setting"
                 )
                 Spacer(Modifier.height(20.dp))
@@ -236,7 +195,9 @@ fun ThemeView() {
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(10)
             ) else Modifier
-            Box(modifier.clip(RoundedCornerShape(10)).clickable { Settings.Color.current.value = it }) {
+            Box(
+                modifier.clip(RoundedCornerShape(10))
+                    .clickable { Settings.Color.current.value = it }) {
                 Column(
                     Modifier.padding(20.dp).fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -252,8 +213,8 @@ fun ThemeView() {
 
 @Composable
 fun SynchronizationView() {
-    LazyColumn {
-        item { TitleText("Synchronization Settings") }
+    LazyColumn(Modifier.padding(horizontal = 20.dp)) {
+        item { TitleText("Synchronization Settings", Modifier.padding(vertical = 20.dp)) }
     }
 }
 

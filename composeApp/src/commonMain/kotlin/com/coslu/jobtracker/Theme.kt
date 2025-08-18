@@ -1,6 +1,5 @@
 package com.coslu.jobtracker
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -465,7 +464,6 @@ val grayDarkScheme = darkColorScheme(
 
 @Composable
 expect fun TrajanTheme(
-    darkTheme: Boolean = Settings.Theme.current.value == Settings.Theme.System && isSystemInDarkTheme()
-            || Settings.Theme.current.value == Settings.Theme.Dark,
+    darkTheme: Boolean = Settings.Theme.isDark(),
     content: @Composable() () -> Unit
 )

@@ -60,109 +60,63 @@ object Settings {
     val searchInTypes = mutableStateOf(true)
     val searchInLocations = mutableStateOf(true)
     val searchInNotes = mutableStateOf(true)
-    val useSystemColors = mutableStateOf(true)
-//    val lightScheme = mutableStateOf(greenLightScheme)
-//    val darkScheme = mutableStateOf(greenDarkScheme)
-//    val theme = mutableStateOf(Theme.SYSTEM)
-
-    /*enum class Theme(val description: String, val iconDrawable: DrawableResource) {
-        SYSTEM("System", Res.drawable.system_theme),
-        LIGHT("Light", Res.drawable.light_mode),
-        DARK("Dark", Res.drawable.dark_mode)
-    }
-
-    enum class Color(val description: String, val iconDrawable: DrawableResource) {
-        BLUE("System", Res.drawable.system_theme),
-        RED("Light", Res.drawable.light_mode),
-        GREEN("Dark", Res.drawable.dark_mode)
-    }*/
-
-    /*sealed class Option {
-        abstract val name: String
-        abstract val icon: @Composable () -> Unit
-    }
-
-    class ThemeOption(override val name: String, override val icon: @Composable (() -> Unit)) : Option()
-    class ColorOption(override val name: String, override val icon: @Composable (() -> Unit)) : Option()
-
-    object Theme {
-        val system = ThemeOption("System", { Icon(painterResource(Res.drawable.system_theme), null) })
-        val light = ThemeOption("Light", { Icon(painterResource(Res.drawable.light_mode), null) })
-        val dark = ThemeOption("Dark", { Icon(painterResource(Res.drawable.dark_mode), null) })
-        val options = listOf(system, light, dark)
-        var current = mutableStateOf(system)
-    }*/
-
-//    data class Option(val name: String, val icon: @Composable () -> Unit)
 
     sealed class Option {
         abstract val name: String
-        @Composable abstract fun Icon()
-    }
+        abstract val id: String
 
-    data class ThemeOption(override val name: String, val iconDrawable: DrawableResource) : Option() {
-        @Composable override fun Icon() { Icon(painterResource(iconDrawable), null) }
-    }
-
-    data class ColorOption(
-        override val name: String,
-        val lightScheme: ColorScheme,
-        val darkScheme: ColorScheme
-    ) : Option() {
-        @Composable override fun Icon() { Box(Modifier.background(iconColor(), CircleShape).size(24.dp)) }
-        @Composable fun iconColor() = if (Theme.isDark()) darkScheme.primary else lightScheme.primary
+        @Composable
+        abstract fun Icon()
     }
 
     object Theme {
-        val System = ThemeOption("System", Res.drawable.system_theme)
-        val Light = ThemeOption("Light", Res.drawable.light_mode)
-        val Dark = ThemeOption("Dark", Res.drawable.dark_mode)
-        val options = listOf(System, Light, Dark)
-        var current = mutableStateOf(System)
+        class ThemeOption(
+            override val name: String,
+            override val id: String,
+            val iconDrawable: DrawableResource
+        ) :
+            Option() {
+            @Composable
+            override fun Icon() {
+                Icon(painterResource(iconDrawable), null)
+            }
+        }
 
-        @Composable fun isDark() = current.value == System && isSystemInDarkTheme() || current.value == Dark
+        val System = ThemeOption("System", "System", Res.drawable.system_theme)
+        val Light = ThemeOption("Light", "Light", Res.drawable.light_mode)
+        val Dark = ThemeOption("Dark", "Dark", Res.drawable.dark_mode)
+        val options = listOf(System, Light, Dark)
+        val current = mutableStateOf(System)
+
+        @Composable
+        fun isDark() = current.value == System && isSystemInDarkTheme() || current.value == Dark
     }
 
     object Color {
-        val Green = ColorOption(
-            "Trajan Green",
-            greenLightScheme,
-            greenDarkScheme
-        )
-        val Blue = ColorOption(
-            "Blue",
-            blueLightScheme,
-            blueDarkScheme
-        )
-        val Purple = ColorOption(
-            "Purple",
-            purpleLightScheme,
-            purpleDarkScheme
-        )
-        val Yellow = ColorOption(
-            "Yellow",
-            yellowLightScheme,
-            yellowDarkScheme
-        )
-        val Red = ColorOption(
-            "Red",
-            redLightScheme,
-            redDarkScheme
-        )
-        val Gray = ColorOption(
-            "Gray",
-            grayLightScheme,
-            grayDarkScheme
-        )
+        class ColorOption(
+            override val name: String,
+            override val id: String,
+            val lightScheme: ColorScheme,
+            val darkScheme: ColorScheme
+        ) : Option() {
+            @Composable
+            override fun Icon() {
+                Box(Modifier.background(iconColor(), CircleShape).size(24.dp))
+            }
+
+            @Composable
+            fun iconColor() = if (Theme.isDark()) darkScheme.primary else lightScheme.primary
+        }
+
+        val Green = ColorOption("Trajan Green", "Green", greenLightScheme, greenDarkScheme)
+        val Blue = ColorOption("Blue", "Blue", blueLightScheme, blueDarkScheme)
+        val Purple = ColorOption("Purple", "Purple", purpleLightScheme, purpleDarkScheme)
+        val Yellow = ColorOption("Yellow", "Yellow", yellowLightScheme, yellowDarkScheme)
+        val Red = ColorOption("Red", "Red", redLightScheme, redDarkScheme)
+        val Gray = ColorOption("Gray", "Gray", grayLightScheme, grayDarkScheme)
         val options = listOf(Green, Blue, Purple, Yellow, Red, Gray)
         val current = mutableStateOf(Green)
-
-        /*fun setTheme() {
-            when(current.value) {
-                Blue -> { lightScheme.value = blueLightScheme; darkScheme.value = blueDarkScheme }
-                Purple ->
-            }
-        }*/
+        val useSystemColors = mutableStateOf(true)
     }
 
     fun applyFilters() = jobs.run {
@@ -194,6 +148,9 @@ private class SettingsSerializer : KSerializer<Settings> {
             element<Boolean>("searchInTypes")
             element<Boolean>("searchInLocations")
             element<Boolean>("searchInNotes")
+            element<String>("theme")
+            element<Boolean>("useSystemColors")
+            element<String>("color")
         }
 
     override fun deserialize(decoder: Decoder): Settings {
@@ -240,6 +197,18 @@ private class SettingsSerializer : KSerializer<Settings> {
                     4 -> Settings.searchInTypes.value = decodeBooleanElement(descriptor, 4)
                     5 -> Settings.searchInLocations.value = decodeBooleanElement(descriptor, 5)
                     6 -> Settings.searchInNotes.value = decodeBooleanElement(descriptor, 6)
+                    7 -> {
+                        val theme = decodeStringElement(descriptor, 7)
+                        Settings.Theme.current.value =
+                            Settings.Theme.options.first { it.id == theme }
+                    }
+
+                    8 -> Settings.Color.useSystemColors.value = decodeBooleanElement(descriptor, 8)
+                    9 -> {
+                        val color = decodeStringElement(descriptor, 9)
+                        Settings.Color.current.value =
+                            Settings.Color.options.first { it.id == color }
+                    }
 
                     else -> throw SerializationException("Unexpected index $index")
                 }
@@ -257,6 +226,9 @@ private class SettingsSerializer : KSerializer<Settings> {
             encodeBooleanElement(descriptor, 4, value.searchInTypes.value)
             encodeBooleanElement(descriptor, 5, value.searchInLocations.value)
             encodeBooleanElement(descriptor, 6, value.searchInNotes.value)
+            encodeStringElement(descriptor, 7, Settings.Theme.current.value.name)
+            encodeBooleanElement(descriptor, 8, Settings.Color.useSystemColors.value)
+            encodeStringElement(descriptor, 9, Settings.Color.current.value.name)
         }
     }
 }
