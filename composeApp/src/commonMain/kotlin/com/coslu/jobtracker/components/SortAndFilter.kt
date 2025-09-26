@@ -88,7 +88,7 @@ fun FilterControl(item: String, filterMap: MutableMap<String, Boolean>) {
                 .pointerHoverIcon(PointerIcon.Hand),
             onCheckedChange = null
         )
-        BigProperty(Job.localizeStatus(item.ifBlank { "-" }))
+        BigProperty(item.ifBlank { "-" })
     }
 }
 

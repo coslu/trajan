@@ -29,6 +29,9 @@
     <string name="application_status">Başvuru Durumu</string>
     <string name="additional_notes">Ek Notlar</string>
     <string name="help">Yardım</string>
+    <string name="save">Kaydet</string>
+    <string name="edit_job">İşi Düzenle</string>
+    <string name="actualize_date">Tarihi Güncelle</string>
     <string name="actualize_date_description">İşaretlendiğinde, değişiklikler kaydedilirken bu işin tarihi bugüne ayarlanır.</string>
 
     <!--Side Sheet-->

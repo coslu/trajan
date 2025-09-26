@@ -164,7 +164,7 @@ fun App() {
                                     Row(Modifier.weight(1f).padding(start = 40.dp)) {
                                         JobProperty(it.type, Modifier.weight(1f, false))
                                         JobProperty(it.location, Modifier.weight(1f, false))
-                                        JobProperty(Job.localizeStatus(it.status), Modifier.weight(1f, false))
+                                        JobProperty(it.status, Modifier.weight(1f, false))
                                         if (it.notes.isNotEmpty()) {
                                             TooltipButton(
                                                 description = stringResource(Res.string.show_notes),

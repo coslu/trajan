@@ -48,6 +48,7 @@ import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Job
 import com.coslu.jobtracker.toInt
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.actualize_date
 import job_tracker.composeapp.generated.resources.actualize_date_description
 import job_tracker.composeapp.generated.resources.add_job
 import job_tracker.composeapp.generated.resources.additional_notes
@@ -57,10 +58,12 @@ import job_tracker.composeapp.generated.resources.cancel
 import job_tracker.composeapp.generated.resources.company_name
 import job_tracker.composeapp.generated.resources.confirm_delete
 import job_tracker.composeapp.generated.resources.delete
+import job_tracker.composeapp.generated.resources.edit_job
 import job_tracker.composeapp.generated.resources.help
 import job_tracker.composeapp.generated.resources.location
 import job_tracker.composeapp.generated.resources.new_job
 import job_tracker.composeapp.generated.resources.pending_application
+import job_tracker.composeapp.generated.resources.save
 import job_tracker.composeapp.generated.resources.type_of_work
 import job_tracker.composeapp.generated.resources.url_of_job_posting
 import org.jetbrains.compose.resources.painterResource
@@ -81,8 +84,8 @@ fun JobDialog(
     val defaultStatus = stringResource(Res.string.pending_application)
     var status by remember { mutableStateOf(job?.status ?: defaultStatus) }
     var notes by remember { mutableStateOf(job?.notes ?: "") }
-    val buttonText = if (job != null) "Save" else stringResource(Res.string.add_job)
-    val title = if (job != null) "Edit Job" else stringResource(Res.string.new_job)
+    val buttonText = if (job != null) stringResource(Res.string.save) else stringResource(Res.string.add_job)
+    val title = if (job != null) stringResource(Res.string.edit_job) else stringResource(Res.string.new_job)
     var expandStatusMenu by remember { mutableStateOf(false) }
     var actualizeDate by remember { mutableStateOf(false) }
 
@@ -210,7 +213,7 @@ fun JobDialog(
                     onExpandedChange = { expandStatusMenu = !expandStatusMenu },
                 ) {
                     TextField(
-                        value = status,
+                        value = Job.localizeStatus(status),
                         label = { Text(stringResource(Res.string.application_status)) },
                         readOnly = true,
                         modifier = modifier.menuAnchor(
@@ -230,7 +233,7 @@ fun JobDialog(
                                     status = it
                                     expandStatusMenu = false
                                 },
-                                text = { BigProperty(Job.localizeStatus(it)) }
+                                text = { BigProperty(it) }
                             )
                         }
                     }
@@ -254,7 +257,7 @@ fun JobDialog(
                             onCheckedChange = { actualizeDate = it },
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                         )
-                        Text("Actualize Date", Modifier.padding(end = 5.dp))
+                        Text(stringResource(Res.string.actualize_date), Modifier.padding(end = 5.dp))
                         BoxWithConstraints {
                             TooltipButton(
                                 description = stringResource(Res.string.help),

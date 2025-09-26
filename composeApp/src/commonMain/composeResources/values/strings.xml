@@ -29,6 +29,9 @@
     <string name="application_status">Application Status</string>
     <string name="additional_notes">Additional Notes</string>
     <string name="help">Help</string>
+    <string name="save">Save</string>
+    <string name="edit_job">Edit Job</string>
+    <string name="actualize_date">Actualize Date</string>
     <string name="actualize_date_description">When checked, sets the date of this job to today upon saving changes.</string>
 
     <!--Side Sheet-->

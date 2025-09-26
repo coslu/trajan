@@ -39,6 +39,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.coslu.jobtracker.Job
 import com.coslu.jobtracker.PropertyColor
 import com.coslu.jobtracker.getPropertyColor
 import com.coslu.jobtracker.setPropertyColor
@@ -125,7 +126,7 @@ fun BigProperty(
         ) else modifier,
     ) {
         Text(
-            text = property,
+            text = Job.localizeStatus(property),
             modifier = Modifier
                 .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
             maxLines = 1,
@@ -155,7 +156,7 @@ fun SmallProperty(property: String, onClick: () -> Unit = {}, onLongClick: () ->
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = property.first().toString(),
+                text = Job.localizeStatus(property).first().toString(),
                 modifier = Modifier
                     .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
                 maxLines = 1,
