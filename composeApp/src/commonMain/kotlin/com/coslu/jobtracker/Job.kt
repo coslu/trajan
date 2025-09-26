@@ -3,10 +3,16 @@
 package com.coslu.jobtracker
 
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.runtime.Composable
 import com.coslu.jobtracker.Settings.applyFilters
 import com.coslu.jobtracker.Settings.locationFilters
 import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.Settings.typeFilters
+import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.awaiting_response
+import job_tracker.composeapp.generated.resources.meeting_scheduled
+import job_tracker.composeapp.generated.resources.pending_application
+import job_tracker.composeapp.generated.resources.rejected
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -18,6 +24,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -44,6 +51,17 @@ class Job(
             it.addPropertiesToDictionary()
         }
         private var count = 0
+
+        @Composable
+        fun localizeStatus(status: String): String {
+            return when (status) {
+                "Awaiting Response" -> stringResource(Res.string.awaiting_response)
+                "Meeting Scheduled" -> stringResource(Res.string.meeting_scheduled)
+                "Rejected" -> stringResource(Res.string.rejected)
+                "Pending Application" -> stringResource(Res.string.pending_application)
+                else -> status
+            }
+        }
     }
 
     var visible: MutableTransitionState<Boolean> = MutableTransitionState(true)

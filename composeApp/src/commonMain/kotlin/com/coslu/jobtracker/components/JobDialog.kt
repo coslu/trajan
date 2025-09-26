@@ -48,10 +48,23 @@ import androidx.compose.ui.window.Popup
 import com.coslu.jobtracker.Job
 import com.coslu.jobtracker.toInt
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.actualize_date_description
+import job_tracker.composeapp.generated.resources.add_job
+import job_tracker.composeapp.generated.resources.additional_notes
+import job_tracker.composeapp.generated.resources.application_status
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
+import job_tracker.composeapp.generated.resources.cancel
+import job_tracker.composeapp.generated.resources.company_name
+import job_tracker.composeapp.generated.resources.confirm_delete
 import job_tracker.composeapp.generated.resources.delete
 import job_tracker.composeapp.generated.resources.help
+import job_tracker.composeapp.generated.resources.location
+import job_tracker.composeapp.generated.resources.new_job
+import job_tracker.composeapp.generated.resources.pending_application
+import job_tracker.composeapp.generated.resources.type_of_work
+import job_tracker.composeapp.generated.resources.url_of_job_posting
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Suppress("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,10 +78,11 @@ fun JobDialog(
     var url by remember { mutableStateOf(job?.url ?: "") }
     val location = remember { mutableStateOf(job?.location ?: "") }
     val type = remember { mutableStateOf(job?.type ?: "") }
-    var status by remember { mutableStateOf(job?.status ?: "Pending Application") }
+    val defaultStatus = stringResource(Res.string.pending_application)
+    var status by remember { mutableStateOf(job?.status ?: defaultStatus) }
     var notes by remember { mutableStateOf(job?.notes ?: "") }
-    val buttonText = if (job != null) "Save" else "Add Job"
-    val title = if (job != null) "Edit Job" else "New Job"
+    val buttonText = if (job != null) "Save" else stringResource(Res.string.add_job)
+    val title = if (job != null) "Edit Job" else stringResource(Res.string.new_job)
     var expandStatusMenu by remember { mutableStateOf(false) }
     var actualizeDate by remember { mutableStateOf(false) }
 
@@ -88,7 +102,7 @@ fun JobDialog(
                     if (job != null) {
                         showDeleteDialog as MutableTransitionState<Boolean>
                         TooltipButton(
-                            description = "Delete",
+                            description = stringResource(Res.string.delete),
                             onClick = { showDeleteDialog.targetState = true },
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                         ) {
@@ -116,7 +130,7 @@ fun JobDialog(
                                     ) {
                                         Column(Modifier.padding(20.dp)) {
                                             Text(
-                                                "Are you sure you want to delete this job?",
+                                                stringResource(Res.string.confirm_delete),
                                                 Modifier.padding(10.dp)
                                             )
                                             Row(Modifier.width(340.dp)) {
@@ -129,7 +143,7 @@ fun JobDialog(
                                                             PointerIcon.Hand
                                                         )
                                                     ) {
-                                                        Text("Cancel")
+                                                        Text(stringResource(Res.string.cancel))
                                                     }
                                                 }
                                                 TextButton(
@@ -140,7 +154,7 @@ fun JobDialog(
                                                     },
                                                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                                                 ) {
-                                                    Text("Delete")
+                                                    Text(stringResource(Res.string.delete))
                                                 }
                                             }
                                         }
@@ -149,7 +163,7 @@ fun JobDialog(
                             }
                             Icon(
                                 painterResource(Res.drawable.delete),
-                                "Delete",
+                                stringResource(Res.string.delete),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -159,7 +173,7 @@ fun JobDialog(
             item {
                 TextField(
                     value = name,
-                    label = { Text("Company Name") },
+                    label = { Text(stringResource(Res.string.company_name)) },
                     modifier = modifier,
                     onValueChange = { name = it },
                     singleLine = true
@@ -168,17 +182,27 @@ fun JobDialog(
             item {
                 TextField(
                     value = url,
-                    label = { Text("URL of Job Posting") },
+                    label = { Text(stringResource(Res.string.url_of_job_posting)) },
                     modifier = modifier,
                     onValueChange = { url = it },
                     singleLine = true
                 )
             }
             item {
-                AutoCompleteTextField(type, modifier, Job.types, "Type of Work")
+                AutoCompleteTextField(
+                    type,
+                    modifier,
+                    Job.types,
+                    stringResource(Res.string.type_of_work)
+                )
             }
             item {
-                AutoCompleteTextField(location, modifier, Job.locations, "Location")
+                AutoCompleteTextField(
+                    location,
+                    modifier,
+                    Job.locations,
+                    stringResource(Res.string.location)
+                )
             }
             item {
                 ExposedDropdownMenuBox(
@@ -187,7 +211,7 @@ fun JobDialog(
                 ) {
                     TextField(
                         value = status,
-                        label = { Text("Application Status") },
+                        label = { Text(stringResource(Res.string.application_status)) },
                         readOnly = true,
                         modifier = modifier.menuAnchor(
                             type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
@@ -206,7 +230,7 @@ fun JobDialog(
                                     status = it
                                     expandStatusMenu = false
                                 },
-                                text = { BigProperty(it) }
+                                text = { BigProperty(Job.localizeStatus(it)) }
                             )
                         }
                     }
@@ -215,7 +239,7 @@ fun JobDialog(
             item {
                 TextField(
                     value = notes,
-                    label = { Text("Additional Notes") },
+                    label = { Text(stringResource(Res.string.additional_notes)) },
                     modifier = modifier.heightIn(min = TextFieldDefaults.MinHeight * 1.6f),
                     onValueChange = { notes = it },
                     singleLine = false,
@@ -233,7 +257,7 @@ fun JobDialog(
                         Text("Actualize Date", Modifier.padding(end = 5.dp))
                         BoxWithConstraints {
                             TooltipButton(
-                                description = "Help",
+                                description = stringResource(Res.string.help),
                                 onClick = {
                                     showActualizeDateHelp.targetState = true
                                 },
@@ -241,7 +265,7 @@ fun JobDialog(
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.help),
-                                    "Help",
+                                    stringResource(Res.string.help),
                                     tint = LocalContentColor.current.copy(alpha = 0.5f)
                                 )
                                 PopupBubble(
@@ -252,7 +276,7 @@ fun JobDialog(
                                         if (maxWidth > 290.dp) (-5).dp else (-25).dp
                                     ),
                                     visible = showActualizeDateHelp,
-                                    text = "When checked, sets the date of this job to today upon saving changes.",
+                                    text = stringResource(Res.string.actualize_date_description),
                                     tail = maxWidth > 290.dp
                                 )
                             }
@@ -267,7 +291,7 @@ fun JobDialog(
                             onClick = onDismissRequest,
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                         ) {
-                            Text("Cancel")
+                            Text(stringResource(Res.string.cancel))
                         }
                     }
                     Row(

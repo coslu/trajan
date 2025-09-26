@@ -48,6 +48,7 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.arrow_dropdown_closed
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.date
+import job_tracker.composeapp.generated.resources.descending
 import job_tracker.composeapp.generated.resources.filter
 import job_tracker.composeapp.generated.resources.location
 import job_tracker.composeapp.generated.resources.name
@@ -55,6 +56,7 @@ import job_tracker.composeapp.generated.resources.sort
 import job_tracker.composeapp.generated.resources.status
 import job_tracker.composeapp.generated.resources.type
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FilterControl(item: String, filterMap: MutableMap<String, Boolean>) {
@@ -86,7 +88,7 @@ fun FilterControl(item: String, filterMap: MutableMap<String, Boolean>) {
                 .pointerHoverIcon(PointerIcon.Hand),
             onCheckedChange = null
         )
-        BigProperty(item.ifBlank { "-" })
+        BigProperty(Job.localizeStatus(item.ifBlank { "-" }))
     }
 }
 
@@ -107,7 +109,7 @@ fun SortAndFilter() {
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    "Sort",
+                    stringResource(Res.string.sort),
                     Modifier.padding(horizontal = 10.dp),
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -132,7 +134,7 @@ fun SortAndFilter() {
                         }
                     }
                 )
-                Text("Descending")
+                Text(stringResource(Res.string.descending))
             }
         }
         item {
@@ -146,7 +148,7 @@ fun SortAndFilter() {
                     null,
                     Modifier.padding(end = 10.dp)
                 )
-                Text("Date")
+                Text(stringResource(Res.string.date))
             }
         }
         item {
@@ -160,7 +162,7 @@ fun SortAndFilter() {
                     null,
                     Modifier.padding(end = 10.dp)
                 )
-                Text("Name")
+                Text(stringResource(Res.string.name))
             }
         }
         item {
@@ -174,7 +176,7 @@ fun SortAndFilter() {
                     null,
                     Modifier.padding(end = 10.dp),
                 )
-                Text("Type")
+                Text(stringResource(Res.string.type))
             }
         }
         item {
@@ -191,7 +193,7 @@ fun SortAndFilter() {
                     null,
                     Modifier.padding(end = 10.dp)
                 )
-                Text("Location")
+                Text(stringResource(Res.string.location))
             }
         }
         item {
@@ -208,7 +210,7 @@ fun SortAndFilter() {
                     null,
                     Modifier.padding(end = 10.dp)
                 )
-                Text("Status")
+                Text(stringResource(Res.string.status))
             }
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -222,7 +224,7 @@ fun SortAndFilter() {
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    "Filter",
+                    stringResource(Res.string.filter),
                     Modifier.padding(horizontal = 10.dp),
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -256,7 +258,7 @@ fun SortAndFilter() {
                     },
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
-                Text("Type")
+                Text(stringResource(Res.string.type))
             }
         }
         items(Job.types.keys.toList().sorted()) { item ->
@@ -287,7 +289,7 @@ fun SortAndFilter() {
                     },
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
-                Text("Location")
+                Text(stringResource(Res.string.location))
             }
         }
         items(Job.locations.keys.toList().sorted()) { item ->
@@ -318,7 +320,7 @@ fun SortAndFilter() {
                     },
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
-                Text("Status")
+                Text(stringResource(Res.string.status))
             }
         }
         items(Job.statuses) { item ->

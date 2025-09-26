@@ -57,10 +57,12 @@ import com.coslu.jobtracker.components.SortAndFilter
 import com.coslu.jobtracker.components.TooltipButton
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.add
+import job_tracker.composeapp.generated.resources.add_job
 import job_tracker.composeapp.generated.resources.edit
 import job_tracker.composeapp.generated.resources.logo
 import job_tracker.composeapp.generated.resources.notes
 import job_tracker.composeapp.generated.resources.settings
+import job_tracker.composeapp.generated.resources.show_notes
 import job_tracker.composeapp.generated.resources.sort_filter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -70,6 +72,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -161,10 +164,10 @@ fun App() {
                                     Row(Modifier.weight(1f).padding(start = 40.dp)) {
                                         JobProperty(it.type, Modifier.weight(1f, false))
                                         JobProperty(it.location, Modifier.weight(1f, false))
-                                        JobProperty(it.status, Modifier.weight(1f, false))
+                                        JobProperty(Job.localizeStatus(it.status), Modifier.weight(1f, false))
                                         if (it.notes.isNotEmpty()) {
                                             TooltipButton(
-                                                description = "Show notes",
+                                                description = stringResource(Res.string.show_notes),
                                                 onClick = {
                                                     showNotes.targetState = !showNotes.currentState
                                                 },
@@ -176,20 +179,23 @@ fun App() {
                                                 )
                                                 Icon(
                                                     painterResource(Res.drawable.notes),
-                                                    "Show notes",
+                                                    stringResource(Res.string.show_notes),
                                                     tint = MaterialTheme.colorScheme.primary
                                                 )
                                             }
                                         }
                                     }
                                     TooltipButton(
-                                        description = "Edit",
+                                        description = stringResource(Res.string.edit),
                                         onClick = {
                                             selectedJob = it
                                             showJobDialog.targetState = true
                                         }
                                     ) {
-                                        Icon(painterResource(Res.drawable.edit), "Edit")
+                                        Icon(
+                                            painterResource(Res.drawable.edit),
+                                            stringResource(Res.string.show_notes)
+                                        )
                                     }
                                 }
                             }
@@ -199,13 +205,19 @@ fun App() {
                 }
                 BottomBar(
                     actions = arrayOf(
-                        BottomBarAction("Settings", Res.drawable.settings) {
+                        BottomBarAction(
+                            stringResource(Res.string.settings),
+                            Res.drawable.settings
+                        ) {
                             showSettings.targetState = true
                         },
-                        BottomBarAction("Sort & Filter", Res.drawable.sort_filter) {
+                        BottomBarAction(
+                            stringResource(Res.string.sort_filter),
+                            Res.drawable.sort_filter
+                        ) {
                             showFilters.targetState = true
                         },
-                        BottomBarAction("Add Job", Res.drawable.add) {
+                        BottomBarAction(stringResource(Res.string.add_job), Res.drawable.add) {
                             selectedJob = null
                             showJobDialog.targetState = true
                         }

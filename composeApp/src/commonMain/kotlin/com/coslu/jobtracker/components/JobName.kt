@@ -25,8 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.coslu.jobtracker.showSnackbar
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.go_to_job
+import job_tracker.composeapp.generated.resources.invalid_url
 import job_tracker.composeapp.generated.resources.open_link
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun JobName(text: String, url: String, modifier: Modifier) {
@@ -45,7 +48,7 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                     placeholderVerticalAlign = PlaceholderVerticalAlign.Center
                 )
             ) {
-                Icon(painterResource(Res.drawable.open_link), "Go to Job")
+                Icon(painterResource(Res.drawable.open_link), stringResource(Res.string.go_to_job))
             })
     )
     Row(modifier = modifier) {
@@ -69,12 +72,13 @@ fun JobName(text: String, url: String, modifier: Modifier) {
                 )
             }
         } else {
+            val errorString = stringResource(Res.string.invalid_url)
             TextButton(
                 onClick = {
                     try {
                         uriHandler.openUri(url)
                     } catch (_: Exception) {
-                        showSnackbar("The URL is invalid or cannot be handled by the system.")
+                        showSnackbar(errorString)
                     }
                 },
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)

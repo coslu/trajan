@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Trajan</string>
+
+    <!--App-->
+    <string name="show_notes">Notları göster</string>
+    <string name="edit">Düzenle</string>
+    <string name="add_job">İş Ekle</string>
+    <string name="sort_filter">Sırala &amp; Filtrele</string>
+
+    <!--Job-->
+    <string name="awaiting_response">Yanıt Bekleniyor</string>
+    <string name="meeting_scheduled">Toplantı Planlandı</string>
+    <string name="pending_application">Bekleyen Başvuru</string>
+    <string name="rejected">Reddedildi</string>
+
+    <!--Job Name-->
+    <string name="go_to_job">İşe git</string>
+    <string name="invalid_url">URL geçersiz veya sistem tarafından işlenemiyor.</string>
+
+    <!--Job Dialog-->
+    <string name="new_job">Yeni İş</string>
+    <string name="delete">Sil</string>
+    <string name="confirm_delete">Bu işi silmek istediğinizden emin misiniz?</string>
+    <string name="cancel">İptal</string>
+    <string name="company_name">Şirket İsmi</string>
+    <string name="url_of_job_posting">İş İlanının URL'si</string>
+    <string name="type_of_work">İş Tipi</string>
+    <string name="location">Konum</string>
+    <string name="application_status">Başvuru Durumu</string>
+    <string name="additional_notes">Ek Notlar</string>
+    <string name="help">Yardım</string>
+    <string name="actualize_date_description">İşaretlendiğinde, değişiklikler kaydedilirken bu işin tarihi bugüne ayarlanır.</string>
+
+    <!--Side Sheet-->
+    <string name="back">Geri</string>
+
+    <!--Sort & Filter-->
+    <string name="sort">Sırala</string>
+    <string name="descending">Azalan sırada</string>
+    <string name="date">Tarih</string>
+    <string name="name">İsim</string>
+    <string name="type">Tip</string>
+    <string name="status">Durum</string>
+    <string name="filter">Filtrele</string>
+
+    <!--Settings-->
+    <string name="settings">Ayarlar</string>
+    <string name="search">Arama</string>
+    <string name="theme">Tema</string>
+    <string name="synchronization">Senkronizasyon</string>
+    <string name="search_settings">Arama Ayarları</string>
+    <string name="search_in_types">Tiplerde ara</string>
+    <string name="search_in_locations">Konumlarda ara</string>
+    <string name="search_in_notes">Notlarda ara</string>
+    <string name="theme_settings">Tema Ayarları</string>
+    <string name="preferred_theme">Tercih edilen tema:</string>
+    <string name="use_system_colors">Use system colors if available</string>
+    <string name="use_system_colors_subtitle">Overrides color setting</string>
+    <string name="synchronization_settings">Senkronizasyon Ayarları</string>
+</resources>

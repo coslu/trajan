@@ -51,18 +51,28 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
 import job_tracker.composeapp.generated.resources.search
+import job_tracker.composeapp.generated.resources.search_in_locations
+import job_tracker.composeapp.generated.resources.search_in_notes
+import job_tracker.composeapp.generated.resources.search_in_types
+import job_tracker.composeapp.generated.resources.search_settings
+import job_tracker.composeapp.generated.resources.settings
 import job_tracker.composeapp.generated.resources.synchronization
+import job_tracker.composeapp.generated.resources.synchronization_settings
 import job_tracker.composeapp.generated.resources.theme
+import job_tracker.composeapp.generated.resources.theme_settings
+import job_tracker.composeapp.generated.resources.use_system_colors
+import job_tracker.composeapp.generated.resources.use_system_colors_subtitle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SettingsNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Menu) {
         composable<Menu> {
             Column {
-                TitleText("Settings", Modifier.padding(20.dp))
+                TitleText(stringResource(Res.string.settings), Modifier.padding(20.dp))
                 LazyColumn {
                     items(SettingsCategory.entries) {
                         Row(
@@ -70,7 +80,7 @@ fun SettingsNavHost(navController: NavHostController) {
                                 .clickable { navController.navigate(it.name) }.padding(20.dp)
                         ) {
                             Icon(painterResource(it.drawableRes), null)
-                            Text(it.categoryName, Modifier.padding(start = 10.dp).weight(1f))
+                            Text(it.categoryName(), Modifier.padding(start = 10.dp).weight(1f))
                             Icon(painterResource(Res.drawable.arrow_enter_right), null)
                         }
                     }
@@ -163,10 +173,20 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun SearchView() {
     LazyColumn(Modifier.padding(horizontal = 20.dp)) {
-        item { TitleText("Search Settings", Modifier.padding(vertical = 20.dp)) }
-        item { SwitchSetting("Search in types", Settings.searchInTypes) }
-        item { SwitchSetting("Search in locations", Settings.searchInLocations) }
-        item { SwitchSetting("Search in notes", Settings.searchInNotes) }
+        item {
+            TitleText(
+                stringResource(Res.string.search_settings),
+                Modifier.padding(vertical = 20.dp)
+            )
+        }
+        item { SwitchSetting(stringResource(Res.string.search_in_types), Settings.searchInTypes) }
+        item {
+            SwitchSetting(
+                stringResource(Res.string.search_in_locations),
+                Settings.searchInLocations
+            )
+        }
+        item { SwitchSetting(stringResource(Res.string.search_in_notes), Settings.searchInNotes) }
     }
 }
 
@@ -174,7 +194,7 @@ fun SearchView() {
 fun ThemeView() {
     LazyVerticalGrid(GridCells.Adaptive(140.dp), Modifier.padding(horizontal = 20.dp)) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            TitleText("Theme Settings", Modifier.padding(vertical = 20.dp))
+            TitleText(stringResource(Res.string.theme_settings), Modifier.padding(vertical = 20.dp))
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
             DropdownSetting("Preferred theme:", Settings.Theme.options, Settings.Theme.current)
@@ -182,9 +202,9 @@ fun ThemeView() {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Column {
                 SwitchSetting(
-                    "Use system colors if available",
+                    stringResource(Res.string.use_system_colors),
                     Settings.Color.useSystemColors,
-                    "Overrides color setting"
+                    stringResource(Res.string.use_system_colors_subtitle)
                 )
                 Spacer(Modifier.height(20.dp))
             }
@@ -214,7 +234,12 @@ fun ThemeView() {
 @Composable
 fun SynchronizationView() {
     LazyColumn(Modifier.padding(horizontal = 20.dp)) {
-        item { TitleText("Synchronization Settings", Modifier.padding(vertical = 20.dp)) }
+        item {
+            TitleText(
+                stringResource(Res.string.synchronization_settings),
+                Modifier.padding(vertical = 20.dp)
+            )
+        }
     }
 }
 
@@ -222,11 +247,14 @@ fun SynchronizationView() {
 object Menu
 
 private enum class SettingsCategory(
-    val categoryName: String,
+    val categoryName: @Composable () -> String,
     val drawableRes: DrawableResource,
     val content: @Composable () -> Unit
 ) {
-    SEARCH("Search", Res.drawable.search, { SearchView() }),
-    THEME("Theme", Res.drawable.theme, { ThemeView() }),
-    SYNCHRONIZATION("Synchronization", Res.drawable.synchronization, { SynchronizationView() })
+    SEARCH({ stringResource(Res.string.search) }, Res.drawable.search, { SearchView() }),
+    THEME({ stringResource(Res.string.theme) }, Res.drawable.theme, { ThemeView() }),
+    SYNCHRONIZATION(
+        { stringResource(Res.string.synchronization) },
+        Res.drawable.synchronization,
+        { SynchronizationView() })
 }

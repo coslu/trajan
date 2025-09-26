@@ -33,10 +33,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.coslu.jobtracker.Settings
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.add_job
 import job_tracker.composeapp.generated.resources.clear
 import job_tracker.composeapp.generated.resources.search
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 data class BottomBarAction(
     val description: String,
@@ -55,7 +57,7 @@ private fun BigBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
                 modifier = Modifier.padding(horizontal = 5.dp).pointerHoverIcon(PointerIcon.Hand)
             ) {
                 Icon(painterResource(action.drawableRes), null)
-                Text("Add Job", Modifier.padding(start = 10.dp))
+                Text(stringResource(Res.string.add_job), Modifier.padding(start = 10.dp))
             }
         } else {
             OutlinedButton(
@@ -116,17 +118,17 @@ private fun SearchBar(maxWidth: Dp) {
         trailingIcon = {
             if (searchString.isNotEmpty()) {
                 TooltipButton(
-                    description = "Clear",
+                    description = stringResource(Res.string.clear),
                     onClick = {
                         searchString = ""
                         Settings.applyFilters()
                     }
                 ) {
-                    Icon(painterResource(Res.drawable.clear), "Clear")
+                    Icon(painterResource(Res.drawable.clear), stringResource(Res.string.clear))
                 }
             }
         },
-        placeholder = { Text("Search") },
+        placeholder = { Text(stringResource(Res.string.search)) },
         shape = RoundedCornerShape(50),
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,

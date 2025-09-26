@@ -27,7 +27,9 @@ import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.arrow_back
+import job_tracker.composeapp.generated.resources.back
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 expect fun SideSheet(
@@ -75,7 +77,7 @@ fun CommonSideSheet(
                     Column {
                         Row {
                             TooltipButton(
-                                description = "Back",
+                                description = stringResource(Res.string.back),
                                 onClick = {
                                     if (navController?.previousBackStackEntry != null)
                                         navController.popBackStack()
@@ -83,7 +85,10 @@ fun CommonSideSheet(
                                         showSideSheet.targetState = false
                                 }
                             ) {
-                                Icon(painterResource(Res.drawable.arrow_back), "Back")
+                                Icon(
+                                    painterResource(Res.drawable.arrow_back),
+                                    stringResource(Res.string.back)
+                                )
                             }
                         }
                         content()
