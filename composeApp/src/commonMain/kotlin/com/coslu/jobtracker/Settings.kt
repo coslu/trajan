@@ -40,6 +40,7 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import java.util.Locale
 
 @Serializable(with = SettingsSerializer::class)
 object Settings {
@@ -66,7 +67,7 @@ object Settings {
         abstract val id: String
 
         @Composable
-        abstract fun Icon()
+        open fun Icon(): Unit? = null
     }
 
     object Theme {
@@ -117,6 +118,15 @@ object Settings {
         val options = listOf(Green, Blue, Purple, Yellow, Red, Gray)
         val current = mutableStateOf(Green)
         val useSystemColors = mutableStateOf(true)
+    }
+
+    object Language {
+        class LanguageOption(override val name: String, override val id: String, val locale: Locale) : Option()
+
+        val English = LanguageOption("English", "English", Locale.ENGLISH)
+        val Turkish = LanguageOption("Türkçe", "Turkish", Locale.forLanguageTag("tr-TR"))
+        val options = listOf(English, Turkish)
+        val current = mutableStateOf(English)
     }
 
     fun applyFilters() = jobs.run {

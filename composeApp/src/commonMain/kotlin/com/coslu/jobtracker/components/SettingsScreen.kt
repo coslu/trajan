@@ -48,8 +48,10 @@ import androidx.navigation.compose.composable
 import com.coslu.jobtracker.Settings
 import com.coslu.jobtracker.saveSettings
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
+import job_tracker.composeapp.generated.resources.language
 import job_tracker.composeapp.generated.resources.search
 import job_tracker.composeapp.generated.resources.search_in_locations
 import job_tracker.composeapp.generated.resources.search_in_notes
@@ -72,7 +74,7 @@ fun SettingsNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Menu) {
         composable<Menu> {
             Column {
-                TitleText(stringResource(Res.string.settings), Modifier.padding(20.dp))
+                TitleText(stringResource(Res.string.settings), Modifier.padding(horizontal = 20.dp))
                 LazyColumn {
                     items(SettingsCategory.entries) {
                         Row(
@@ -164,19 +166,19 @@ fun <T : Settings.Option> DropdownSetting(
 fun TitleText(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
-        modifier = modifier,
+        modifier = modifier.padding(vertical = 20.dp),
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold
     )
 }
 
 @Composable
-fun SearchView() {
-    LazyColumn(Modifier.padding(horizontal = 20.dp)) {
+fun SearchView(modifier: Modifier) {
+    LazyColumn(modifier) {
         item {
             TitleText(
                 stringResource(Res.string.search_settings),
-                Modifier.padding(vertical = 20.dp)
+//                Modifier.padding(vertical = 20.dp)
             )
         }
         item { SwitchSetting(stringResource(Res.string.search_in_types), Settings.searchInTypes) }
@@ -191,10 +193,10 @@ fun SearchView() {
 }
 
 @Composable
-fun ThemeView() {
-    LazyVerticalGrid(GridCells.Adaptive(140.dp), Modifier.padding(horizontal = 20.dp)) {
+fun ThemeView(modifier: Modifier) {
+    LazyVerticalGrid(GridCells.Adaptive(140.dp), modifier) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            TitleText(stringResource(Res.string.theme_settings), Modifier.padding(vertical = 20.dp))
+            TitleText(stringResource(Res.string.theme_settings) /*Modifier.padding(vertical = 20.dp)*/)
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
             DropdownSetting("Preferred theme:", Settings.Theme.options, Settings.Theme.current)
@@ -232,12 +234,30 @@ fun ThemeView() {
 }
 
 @Composable
-fun SynchronizationView() {
-    LazyColumn(Modifier.padding(horizontal = 20.dp)) {
+fun SynchronizationView(modifier: Modifier) {
+    LazyColumn(modifier) {
         item {
             TitleText(
                 stringResource(Res.string.synchronization_settings),
-                Modifier.padding(vertical = 20.dp)
+//                Modifier.padding(vertical = 20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun LanguageView(modifier: Modifier) {
+    LazyColumn(modifier) {
+        item {
+            TitleText(
+                stringResource(Res.string.synchronization_settings)
+            )
+        }
+        item {
+            DropdownSetting(
+                stringResource(Res.string.app_language),
+                Settings.Language.options,
+                Settings.Language.current
             )
         }
     }
@@ -246,15 +266,24 @@ fun SynchronizationView() {
 @Serializable
 object Menu
 
+private val contentModifier = Modifier.padding(horizontal = 20.dp)
+
 private enum class SettingsCategory(
     val categoryName: @Composable () -> String,
     val drawableRes: DrawableResource,
     val content: @Composable () -> Unit
 ) {
-    SEARCH({ stringResource(Res.string.search) }, Res.drawable.search, { SearchView() }),
-    THEME({ stringResource(Res.string.theme) }, Res.drawable.theme, { ThemeView() }),
+    SEARCH(
+        { stringResource(Res.string.search) },
+        Res.drawable.search,
+        { SearchView(contentModifier) }),
+    THEME({ stringResource(Res.string.theme) }, Res.drawable.theme, { ThemeView(contentModifier) }),
     SYNCHRONIZATION(
         { stringResource(Res.string.synchronization) },
         Res.drawable.synchronization,
-        { SynchronizationView() })
+        { SynchronizationView(contentModifier) }),
+    LANGUAGE(
+        { stringResource(Res.string.language) },
+        Res.drawable.language,
+        { LanguageView(contentModifier) })
 }
