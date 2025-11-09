@@ -151,6 +151,7 @@ fun <T : Settings.Option> DropdownSetting(
                             text = { Text(it.name) },
                             onClick = {
                                 current = it
+                                saveSettings()
                                 expanded = false
                             },
                             leadingIcon = { it.Icon() }
@@ -219,7 +220,7 @@ fun ThemeView(modifier: Modifier) {
             ) else Modifier
             Box(
                 modifier.clip(RoundedCornerShape(10))
-                    .clickable { Settings.Color.current.value = it }) {
+                    .clickable { Settings.Color.current.value = it; saveSettings() }) {
                 Column(
                     Modifier.padding(20.dp).fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally

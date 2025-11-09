@@ -161,6 +161,7 @@ private class SettingsSerializer : KSerializer<Settings> {
             element<String>("theme")
             element<Boolean>("useSystemColors")
             element<String>("color")
+            element<String>("language")
         }
 
     override fun deserialize(decoder: Decoder): Settings {
@@ -219,6 +220,12 @@ private class SettingsSerializer : KSerializer<Settings> {
                         Settings.Color.current.value =
                             Settings.Color.options.first { it.id == color }
                     }
+                    10 -> {
+                        Settings.Language.current.value = when (decodeStringElement(descriptor, 10)) {
+                            "Turkish" -> Settings.Language.Turkish
+                            else -> Settings.Language.English
+                        }
+                    }
 
                     else -> throw SerializationException("Unexpected index $index")
                 }
@@ -239,6 +246,7 @@ private class SettingsSerializer : KSerializer<Settings> {
             encodeStringElement(descriptor, 7, Settings.Theme.current.value.name)
             encodeBooleanElement(descriptor, 8, Settings.Color.useSystemColors.value)
             encodeStringElement(descriptor, 9, Settings.Color.current.value.name)
+            encodeStringElement(descriptor, 10, Settings.Language.current.value.id)
         }
     }
 }
