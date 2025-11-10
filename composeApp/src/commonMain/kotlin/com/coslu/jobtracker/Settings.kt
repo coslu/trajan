@@ -221,10 +221,9 @@ private class SettingsSerializer : KSerializer<Settings> {
                             Settings.Color.options.first { it.id == color }
                     }
                     10 -> {
-                        Settings.Language.current.value = when (decodeStringElement(descriptor, 10)) {
-                            "Turkish" -> Settings.Language.Turkish
-                            else -> Settings.Language.English
-                        }
+                        val language = decodeStringElement(descriptor, 10)
+                        Settings.Language.current.value =
+                            Settings.Language.options.first { it.id == language }
                     }
 
                     else -> throw SerializationException("Unexpected index $index")
@@ -243,9 +242,9 @@ private class SettingsSerializer : KSerializer<Settings> {
             encodeBooleanElement(descriptor, 4, value.searchInTypes.value)
             encodeBooleanElement(descriptor, 5, value.searchInLocations.value)
             encodeBooleanElement(descriptor, 6, value.searchInNotes.value)
-            encodeStringElement(descriptor, 7, Settings.Theme.current.value.name)
+            encodeStringElement(descriptor, 7, Settings.Theme.current.value.id)
             encodeBooleanElement(descriptor, 8, Settings.Color.useSystemColors.value)
-            encodeStringElement(descriptor, 9, Settings.Color.current.value.name)
+            encodeStringElement(descriptor, 9, Settings.Color.current.value.id)
             encodeStringElement(descriptor, 10, Settings.Language.current.value.id)
         }
     }
