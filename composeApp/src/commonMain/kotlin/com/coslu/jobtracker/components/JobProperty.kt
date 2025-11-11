@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.ripple
@@ -33,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,10 +64,11 @@ fun JobProperty(
                                 showColorPicker = false
                             },
                             modifier = Modifier.padding(5.dp)
-                                .background(it.color, shape = CircleShape).size(40.dp)
+                                .background(it.getBackgroundColor(), shape = CircleShape)
+                                .size(40.dp)
                                 .pointerHoverIcon(PointerIcon.Hand)
                         ) {
-                            if (it.color.alpha == 0f)
+                            if (it == PropertyColor.Transparent)
                                 Icon(
                                     painterResource(Res.drawable.transparent),
                                     null,
@@ -85,8 +84,8 @@ fun JobProperty(
             dpOffset = DpOffset(25.dp, 30.dp),
             visible = showFullName,
             text = property,
-            backgroundColor = if (propertyColor != PropertyColor.Transparent) propertyColor.color else MaterialTheme.colorScheme.surface,
-            textColor = propertyColor.textColor,
+            backgroundColor = propertyColor.getBackgroundColor(false),
+            textColor = propertyColor.getTextColor(),
         )
         if (maxWidth < 120.dp) {
             SmallProperty(
@@ -116,7 +115,7 @@ fun BigProperty(
     val interactionSource = remember { MutableInteractionSource() }
     val shape = RoundedCornerShape(30)
     val modifier = Modifier.minimumInteractiveComponentSize().padding(5.dp)
-        .background(propertyColor.color, shape = shape).clip(shape)
+        .background(color = propertyColor.getBackgroundColor(), shape = shape).clip(shape)
     Box(
         modifier = if (clickable) modifier.combinedClickable(
             onClick = onClick,
@@ -131,7 +130,7 @@ fun BigProperty(
                 .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = if (propertyColor.textColor.isSpecified) propertyColor.textColor else MaterialTheme.colorScheme.onBackground
+            color = propertyColor.getTextColor()
         )
     }
 }
@@ -146,7 +145,7 @@ fun SmallProperty(property: String, onClick: () -> Unit = {}, onLongClick: () ->
         val shape = RoundedCornerShape(50)
         Box(
             modifier = Modifier.minimumInteractiveComponentSize().padding(5.dp).size(40.dp)
-                .background(propertyColor.color, shape = shape).clip(shape)
+                .background(color = propertyColor.getBackgroundColor(), shape = shape).clip(shape)
                 .combinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick,
@@ -161,7 +160,7 @@ fun SmallProperty(property: String, onClick: () -> Unit = {}, onLongClick: () ->
                     .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = if (propertyColor.textColor.isSpecified) propertyColor.textColor else MaterialTheme.colorScheme.onBackground
+                color = propertyColor.getTextColor()
             )
         }
     }

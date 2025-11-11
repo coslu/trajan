@@ -1,6 +1,9 @@
 package com.coslu.jobtracker
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -13,7 +16,7 @@ private val textOnLight = Color(0xFF1B1C15)
 private val textOnDark = Color(0xFFFFFFFF)
 
 @Serializable(with = PropertyColorSerializer::class)
-enum class PropertyColor(val color: Color, val textColor: Color) {
+enum class PropertyColor(private val color: Color, private val textColor: Color) {
     Transparent(Color(0), Color.Unspecified),
     BlueGray(Color(0xFF89A8B2), textOnDark),
     LightBlue(Color(0xFFA2D2DF), textOnLight),
@@ -31,7 +34,20 @@ enum class PropertyColor(val color: Color, val textColor: Color) {
     Maroon(Color(0xFFC37B89), textOnDark),
     Red(Color(0xFFD35D6E), textOnDark),
     LightGray(Color(0xFFD1D1D1), textOnLight),
-    DarkGray(Color(0xFF797A7E), textOnDark)
+    DarkGray(Color(0xFF797A7E), textOnDark);
+
+    @Composable
+    fun getBackgroundColor(isTransparentAllowed: Boolean = true): Color =
+        if (this == Transparent)
+            if (isTransparentAllowed) color else MaterialTheme.colorScheme.surface
+        else if (Settings.Theme.isDark())
+            color.copy(alpha = 0.8f).compositeOver(Color.Black)
+        else
+            color
+
+    @Composable
+    fun getTextColor(): Color =
+        if (this != Transparent) textColor else MaterialTheme.colorScheme.onBackground
 }
 
 private class PropertyColorSerializer : KSerializer<PropertyColor> {
