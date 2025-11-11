@@ -1,23 +1,14 @@
 package com.coslu.jobtracker.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -36,11 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -61,9 +50,6 @@ import job_tracker.composeapp.generated.resources.settings
 import job_tracker.composeapp.generated.resources.synchronization
 import job_tracker.composeapp.generated.resources.synchronization_settings
 import job_tracker.composeapp.generated.resources.theme
-import job_tracker.composeapp.generated.resources.theme_settings
-import job_tracker.composeapp.generated.resources.use_system_colors
-import job_tracker.composeapp.generated.resources.use_system_colors_subtitle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -142,7 +128,7 @@ fun <T : Settings.Option> DropdownSetting(
                     label = if (this@BoxWithConstraints.maxWidth > 500.dp) null else {
                         @Composable { Text(text) }
                     },
-                    leadingIcon = { current.Icon() },
+                    leadingIcon = current.icon,
                     trailingIcon = { Icon(painterResource(Res.drawable.arrow_dropdown_open), null) }
                 )
                 ExposedDropdownMenu(expanded, { expanded = false }) {
@@ -154,7 +140,7 @@ fun <T : Settings.Option> DropdownSetting(
                                 saveSettings()
                                 expanded = false
                             },
-                            leadingIcon = { it.Icon() }
+                            leadingIcon = it.icon
                         )
                     }
                 }
@@ -179,7 +165,6 @@ fun SearchView(modifier: Modifier) {
         item {
             TitleText(
                 stringResource(Res.string.search_settings),
-//                Modifier.padding(vertical = 20.dp)
             )
         }
         item { SwitchSetting(stringResource(Res.string.search_in_types), Settings.searchInTypes) }
@@ -194,45 +179,7 @@ fun SearchView(modifier: Modifier) {
 }
 
 @Composable
-fun ThemeView(modifier: Modifier) {
-    LazyVerticalGrid(GridCells.Adaptive(140.dp), modifier) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            TitleText(stringResource(Res.string.theme_settings) /*Modifier.padding(vertical = 20.dp)*/)
-        }
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            DropdownSetting("Preferred theme:", Settings.Theme.options, Settings.Theme.current)
-        }
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            Column {
-                SwitchSetting(
-                    stringResource(Res.string.use_system_colors),
-                    Settings.Color.useSystemColors,
-                    stringResource(Res.string.use_system_colors_subtitle)
-                )
-                Spacer(Modifier.height(20.dp))
-            }
-        }
-        items(Settings.Color.options) {
-            val modifier = if (Settings.Color.current.value == it) Modifier.border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(10)
-            ) else Modifier
-            Box(
-                modifier.clip(RoundedCornerShape(10))
-                    .clickable { Settings.Color.current.value = it; saveSettings() }) {
-                Column(
-                    Modifier.padding(20.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    it.Icon()
-                    Spacer(Modifier.height(5.dp))
-                    Text(it.name, textAlign = TextAlign.Center)
-                }
-            }
-        }
-    }
-}
+expect fun ThemeView(modifier: Modifier)
 
 @Composable
 fun SynchronizationView(modifier: Modifier) {
@@ -240,7 +187,6 @@ fun SynchronizationView(modifier: Modifier) {
         item {
             TitleText(
                 stringResource(Res.string.synchronization_settings),
-//                Modifier.padding(vertical = 20.dp)
             )
         }
     }

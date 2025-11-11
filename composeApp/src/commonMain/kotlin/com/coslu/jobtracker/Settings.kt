@@ -66,8 +66,7 @@ object Settings {
         abstract val name: String
         abstract val id: String
 
-        @Composable
-        open fun Icon(): Unit? = null
+        open val icon: @Composable (() -> Unit)? = null
     }
 
     object Theme {
@@ -77,8 +76,7 @@ object Settings {
             val iconDrawable: DrawableResource
         ) :
             Option() {
-            @Composable
-            override fun Icon() {
+            override val icon = @Composable {
                 Icon(painterResource(iconDrawable), null)
             }
         }
@@ -100,8 +98,7 @@ object Settings {
             val lightScheme: ColorScheme,
             val darkScheme: ColorScheme
         ) : Option() {
-            @Composable
-            override fun Icon() {
+            override val icon = @Composable {
                 Box(Modifier.background(iconColor(), CircleShape).size(24.dp))
             }
 
@@ -121,7 +118,11 @@ object Settings {
     }
 
     object Language {
-        class LanguageOption(override val name: String, override val id: String, val locale: Locale) : Option()
+        class LanguageOption(
+            override val name: String,
+            override val id: String,
+            val locale: Locale
+        ) : Option()
 
         val English = LanguageOption("English", "English", Locale.ENGLISH)
         val Turkish = LanguageOption("Türkçe", "Turkish", Locale.forLanguageTag("tr-TR"))
@@ -220,6 +221,7 @@ private class SettingsSerializer : KSerializer<Settings> {
                         Settings.Color.current.value =
                             Settings.Color.options.first { it.id == color }
                     }
+
                     10 -> {
                         val language = decodeStringElement(descriptor, 10)
                         Settings.Language.current.value =
