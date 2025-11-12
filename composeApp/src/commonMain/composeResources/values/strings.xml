@@ -60,11 +60,11 @@
     <string name="search_in_locations">Search in locations</string>
     <string name="search_in_notes">Search in notes</string>
     <string name="theme_settings">Theme Settings</string>
-    <string name="preferred_theme">Preferred Theme:</string>
-    <string name="preferred_color">Preferred Color:</string>
+    <string name="preferred_theme">Preferred theme</string>
+    <string name="preferred_color">Preferred color</string>
     <string name="use_system_colors">Use dynamic color</string>
     <string name="use_system_colors_subtitle">Takes colors from your wallpaper</string>
     <string name="synchronization_settings">Synchronization Settings</string>
     <string name="language_settings">Language Settings</string>
-    <string name="app_language">App Language</string>
+    <string name="app_language">App language</string>
 </resources>

@@ -132,7 +132,8 @@ fun SortAndFilter() {
                             is SortingMethod.Location -> SortingMethod.Location(it)
                             is SortingMethod.Status -> SortingMethod.Status(it)
                         }
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Text(stringResource(Res.string.descending))
             }
@@ -141,7 +142,8 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Date,
-                    { sortingMethod = SortingMethod.Date(true) }
+                    { sortingMethod = SortingMethod.Date(true) },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Icon(
                     painterResource(Res.drawable.date),
@@ -155,7 +157,8 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Name,
-                    { sortingMethod = SortingMethod.Name(false) }
+                    { sortingMethod = SortingMethod.Name(false) },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Icon(
                     painterResource(Res.drawable.name),
@@ -169,7 +172,8 @@ fun SortAndFilter() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     sortingMethod is SortingMethod.Type,
-                    { sortingMethod = SortingMethod.Type(false) }
+                    { sortingMethod = SortingMethod.Type(false) },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Icon(
                     painterResource(Res.drawable.type),
@@ -186,7 +190,8 @@ fun SortAndFilter() {
                     {
                         sortingMethod =
                             SortingMethod.Location(false)
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Icon(
                     painterResource(Res.drawable.location),
@@ -203,7 +208,8 @@ fun SortAndFilter() {
                     {
                         sortingMethod =
                             SortingMethod.Status(false)
-                    }
+                    },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                 )
                 Icon(
                     painterResource(Res.drawable.status),

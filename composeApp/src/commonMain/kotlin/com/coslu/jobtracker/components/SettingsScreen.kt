@@ -41,6 +41,7 @@ import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
 import job_tracker.composeapp.generated.resources.language
+import job_tracker.composeapp.generated.resources.language_settings
 import job_tracker.composeapp.generated.resources.search
 import job_tracker.composeapp.generated.resources.search_in_locations
 import job_tracker.composeapp.generated.resources.search_in_notes
@@ -197,7 +198,7 @@ fun LanguageView(modifier: Modifier) {
     LazyColumn(modifier) {
         item {
             TitleText(
-                stringResource(Res.string.synchronization_settings)
+                stringResource(Res.string.language_settings)
             )
         }
         item {

@@ -24,7 +24,7 @@
     <string name="cancel">İptal</string>
     <string name="company_name">Şirket İsmi</string>
     <string name="url_of_job_posting">İş İlanının URL'si</string>
-    <string name="type_of_work">İş Tipi</string>
+    <string name="type_of_work">İş Türü</string>
     <string name="location">Konum</string>
     <string name="application_status">Başvuru Durumu</string>
     <string name="additional_notes">Ek Notlar</string>
@@ -42,22 +42,29 @@
     <string name="descending">Azalan sırada</string>
     <string name="date">Tarih</string>
     <string name="name">İsim</string>
-    <string name="type">Tip</string>
+    <string name="type">Tür</string>
     <string name="status">Durum</string>
     <string name="filter">Filtrele</string>
+
+    <!--Bottom Bar-->
+    <string name="clear">Temizle</string>
 
     <!--Settings-->
     <string name="settings">Ayarlar</string>
     <string name="search">Arama</string>
     <string name="theme">Tema</string>
     <string name="synchronization">Senkronizasyon</string>
+    <string name="language">Dil</string>
     <string name="search_settings">Arama Ayarları</string>
-    <string name="search_in_types">Tiplerde ara</string>
+    <string name="search_in_types">Türlerde ara</string>
     <string name="search_in_locations">Konumlarda ara</string>
     <string name="search_in_notes">Notlarda ara</string>
     <string name="theme_settings">Tema Ayarları</string>
-    <string name="preferred_theme">Tercih edilen tema:</string>
-    <string name="use_system_colors">Use system colors if available</string>
-    <string name="use_system_colors_subtitle">Overrides color setting</string>
+    <string name="preferred_theme">Tercih edilen tema</string>
+    <string name="preferred_color">Tercih edilen renk</string>
+    <string name="use_system_colors">Dinamik renk kullan</string>
+    <string name="use_system_colors_subtitle">Renkleri duvar kağıdınızdan alır</string>
     <string name="synchronization_settings">Senkronizasyon Ayarları</string>
+    <string name="language_settings">Dil Ayarları</string>
+    <string name="app_language">Uygulama dili</string>
 </resources>
