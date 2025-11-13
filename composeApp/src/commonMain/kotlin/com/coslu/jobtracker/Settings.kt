@@ -61,6 +61,8 @@ object Settings {
     val searchInTypes = mutableStateOf(true)
     val searchInLocations = mutableStateOf(true)
     val searchInNotes = mutableStateOf(true)
+    val exportJobs = mutableStateOf(true)
+    val exportSettings = mutableStateOf(true)
 
     sealed class Option {
         abstract val name: String
@@ -163,6 +165,8 @@ private class SettingsSerializer : KSerializer<Settings> {
             element<Boolean>("useSystemColors")
             element<String>("color")
             element<String>("language")
+            element<Boolean>("exportJobs")
+            element<Boolean>("exportSettings")
         }
 
     override fun deserialize(decoder: Decoder): Settings {
@@ -227,6 +231,8 @@ private class SettingsSerializer : KSerializer<Settings> {
                         Settings.Language.current.value =
                             Settings.Language.options.first { it.id == language }
                     }
+                    11 -> Settings.exportJobs.value = decodeBooleanElement(descriptor, 11)
+                    12 -> Settings.exportSettings.value = decodeBooleanElement(descriptor, 12)
 
                     else -> throw SerializationException("Unexpected index $index")
                 }
@@ -248,6 +254,8 @@ private class SettingsSerializer : KSerializer<Settings> {
             encodeBooleanElement(descriptor, 8, Settings.Color.useSystemColors.value)
             encodeStringElement(descriptor, 9, Settings.Color.current.value.id)
             encodeStringElement(descriptor, 10, Settings.Language.current.value.id)
+            encodeBooleanElement(descriptor, 11, Settings.exportJobs.value)
+            encodeBooleanElement(descriptor, 12, Settings.exportSettings.value)
         }
     }
 }

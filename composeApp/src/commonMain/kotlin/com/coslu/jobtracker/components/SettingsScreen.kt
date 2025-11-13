@@ -16,6 +16,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -40,6 +41,12 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
+import job_tracker.composeapp.generated.resources.export
+import job_tracker.composeapp.generated.resources.export_jobs
+import job_tracker.composeapp.generated.resources.export_settings
+import job_tracker.composeapp.generated.resources.export_to_file
+import job_tracker.composeapp.generated.resources.import
+import job_tracker.composeapp.generated.resources.import_from_file
 import job_tracker.composeapp.generated.resources.language
 import job_tracker.composeapp.generated.resources.language_settings
 import job_tracker.composeapp.generated.resources.search
@@ -189,6 +196,24 @@ fun SynchronizationView(modifier: Modifier) {
             TitleText(
                 stringResource(Res.string.synchronization_settings),
             )
+        }
+        item {
+            SwitchSetting(stringResource(Res.string.export_jobs), Settings.exportJobs)
+        }
+        item {
+            SwitchSetting(stringResource(Res.string.export_settings), Settings.exportSettings)
+        }
+        item {
+            OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).pointerHoverIcon(PointerIcon.Hand)) {
+                Icon(painterResource(Res.drawable.export), null)
+                Text(stringResource(Res.string.export_to_file), Modifier.padding(start = 10.dp))
+            }
+        }
+        item {
+            OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).pointerHoverIcon(PointerIcon.Hand)) {
+                Icon(painterResource(Res.drawable.import), null)
+                Text(stringResource(Res.string.import_from_file), Modifier.padding(start = 10.dp))
+            }
         }
     }
 }

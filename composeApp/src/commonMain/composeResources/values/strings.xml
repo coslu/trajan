@@ -55,16 +55,24 @@
     <string name="theme">Theme</string>
     <string name="synchronization">Synchronization</string>
     <string name="language">Language</string>
+
     <string name="search_settings">Search Settings</string>
     <string name="search_in_types">Search in types</string>
     <string name="search_in_locations">Search in locations</string>
     <string name="search_in_notes">Search in notes</string>
+
     <string name="theme_settings">Theme Settings</string>
     <string name="preferred_theme">Preferred theme</string>
     <string name="preferred_color">Preferred color</string>
     <string name="use_system_colors">Use dynamic color</string>
     <string name="use_system_colors_subtitle">Takes colors from your wallpaper</string>
-    <string name="synchronization_settings">Synchronization Settings</string>
+
     <string name="language_settings">Language Settings</string>
     <string name="app_language">App language</string>
+
+    <string name="synchronization_settings">Synchronization Settings</string>
+    <string name="export_jobs">Export jobs</string>
+    <string name="export_settings">Export settings</string>
+    <string name="export_to_file">Export to file</string>
+    <string name="import_from_file">Import from file</string>
 </resources>

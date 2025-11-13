@@ -53,18 +53,26 @@
     <string name="settings">Ayarlar</string>
     <string name="search">Arama</string>
     <string name="theme">Tema</string>
-    <string name="synchronization">Senkronizasyon</string>
+    <string name="synchronization">Eşitleme</string>
     <string name="language">Dil</string>
+
     <string name="search_settings">Arama Ayarları</string>
     <string name="search_in_types">Türlerde ara</string>
     <string name="search_in_locations">Konumlarda ara</string>
     <string name="search_in_notes">Notlarda ara</string>
+
     <string name="theme_settings">Tema Ayarları</string>
     <string name="preferred_theme">Tercih edilen tema</string>
     <string name="preferred_color">Tercih edilen renk</string>
     <string name="use_system_colors">Dinamik renk kullan</string>
     <string name="use_system_colors_subtitle">Renkleri duvar kağıdınızdan alır</string>
-    <string name="synchronization_settings">Senkronizasyon Ayarları</string>
+
     <string name="language_settings">Dil Ayarları</string>
     <string name="app_language">Uygulama dili</string>
+
+    <string name="synchronization_settings">Eşitleme Ayarları</string>
+    <string name="export_jobs">İşleri dışa aktar</string>
+    <string name="export_settings">Ayarları dışa aktar</string>
+    <string name="export_to_file">Dosyaya dışa aktar</string>
+    <string name="import_from_file">Dosyadan içe aktar</string>
 </resources>
