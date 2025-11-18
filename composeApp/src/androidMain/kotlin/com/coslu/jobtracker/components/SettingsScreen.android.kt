@@ -106,3 +106,7 @@ actual fun ThemeView(modifier: Modifier) {
         }
     }
 }
+
+actual fun exportToFile(path: String, filesToZip: List<String>, errorMessage: String) {
+
+}

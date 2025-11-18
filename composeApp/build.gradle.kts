@@ -41,6 +41,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.material3)
             implementation(libs.navigation.compose)
+            implementation(libs.filekit.dialogs.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

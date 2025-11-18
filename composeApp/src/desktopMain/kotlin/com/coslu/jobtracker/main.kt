@@ -1,6 +1,9 @@
 package com.coslu.jobtracker
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.toAwtImage
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -22,6 +25,8 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.painterResource
+import java.awt.Image
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.readText
@@ -29,7 +34,9 @@ import kotlin.io.path.writeText
 
 private val json = Json { prettyPrint = true }
 private val homeDir = Path(System.getProperty("user.home"))
-private val dataDir =
+
+lateinit var iconImage: Image
+val dataDir: Path =
     if (System.getProperty("os.name").lowercase().startsWith("windows"))
         homeDir.resolve("AppData/Roaming/Trajan")
     else
@@ -40,6 +47,8 @@ private var position = windowState.position
 private var size = windowState.size
 
 fun main() = application {
+    val painter = painterResource(Res.drawable.icon_linux)
+    iconImage = painter.toAwtImage(LocalDensity.current, LocalLayoutDirection.current)
     LaunchedEffect(windowState.position, windowState.size) {
         if (windowState.placement != WindowPlacement.Maximized) {
             position = windowState.position
@@ -50,7 +59,7 @@ fun main() = application {
         state = windowState,
         onCloseRequest = { saveWindowState(); exitApplication() },
         title = "Trajan",
-        icon = painterResource(Res.drawable.icon_linux)
+        icon = painter
     ) {
         App()
     }

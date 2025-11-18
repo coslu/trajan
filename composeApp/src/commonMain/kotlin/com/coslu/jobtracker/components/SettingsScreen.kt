@@ -37,6 +37,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.coslu.jobtracker.Settings
 import com.coslu.jobtracker.saveSettings
+import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
+import io.github.vinceglb.filekit.path
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
@@ -58,10 +60,17 @@ import job_tracker.composeapp.generated.resources.settings
 import job_tracker.composeapp.generated.resources.synchronization
 import job_tracker.composeapp.generated.resources.synchronization_settings
 import job_tracker.composeapp.generated.resources.theme
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun SettingsNavHost(navController: NavHostController) {
@@ -189,6 +198,7 @@ fun SearchView(modifier: Modifier) {
 @Composable
 expect fun ThemeView(modifier: Modifier)
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun SynchronizationView(modifier: Modifier) {
     LazyColumn(modifier) {
@@ -204,19 +214,48 @@ fun SynchronizationView(modifier: Modifier) {
             SwitchSetting(stringResource(Res.string.export_settings), Settings.exportSettings)
         }
         item {
-            OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).pointerHoverIcon(PointerIcon.Hand)) {
+            val launcher = rememberFileSaverLauncher {
+                val filesToZip = mutableListOf<String>().apply {
+                    if (Settings.exportJobs.value)
+                        addAll(listOf("jobs.json", "colors.json"))
+                    if (Settings.exportSettings.value)
+                        add("settings.json")
+                }
+                if (it != null)
+                    exportToFile(it.path, filesToZip, "Error exporting file")
+            }
+            OutlinedButton(
+                onClick = {
+                    val defaultName = "Trajan-" + Clock.System.now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault()).format(
+                            LocalDateTime.Format {
+                                year(); char('-'); monthNumber(); char('-'); day()
+                                char('-'); hour(); char('-'); minute(); char('-'); second()
+                            }
+                        )
+                    launcher.launch(defaultName, "zip")
+                },
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+                    .pointerHoverIcon(PointerIcon.Hand)
+            ) {
                 Icon(painterResource(Res.drawable.export), null)
                 Text(stringResource(Res.string.export_to_file), Modifier.padding(start = 10.dp))
             }
         }
         item {
-            OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth().padding(top = 10.dp).pointerHoverIcon(PointerIcon.Hand)) {
+            OutlinedButton(
+                onClick = {},
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+                    .pointerHoverIcon(PointerIcon.Hand)
+            ) {
                 Icon(painterResource(Res.drawable.import), null)
                 Text(stringResource(Res.string.import_from_file), Modifier.padding(start = 10.dp))
             }
         }
     }
 }
+
+expect fun exportToFile(path: String, filesToZip: List<String>, errorMessage: String)
 
 @Composable
 fun LanguageView(modifier: Modifier) {
