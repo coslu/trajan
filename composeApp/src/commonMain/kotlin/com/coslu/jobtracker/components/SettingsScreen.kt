@@ -215,14 +215,22 @@ fun SynchronizationView(modifier: Modifier) {
         }
         item {
             val launcher = rememberFileSaverLauncher {
-                val filesToZip = mutableListOf<String>().apply {
-                    if (Settings.exportJobs.value)
-                        addAll(listOf("jobs.json", "colors.json"))
-                    if (Settings.exportSettings.value)
-                        add("settings.json")
-                }
-                if (it != null)
+                if (it != null) {
+                    val filesToZip = mutableListOf<String>().apply {
+                        if (Settings.exportJobs.value)
+                            addAll(listOf("jobs.json", "colors.json"))
+                        if (Settings.exportSettings.value)
+                            add("settings.json")
+                    }
+/*                    println("**********************")
+                    println(it.name)
+                    println(it.path)
+                    println(it.parent()?.name)
+                    println(it.absolutePath())
+                    println(it.resolve("resolved"))
+                    println("**********************")*/
                     exportToFile(it.path, filesToZip, "Error exporting file")
+                }
             }
             OutlinedButton(
                 onClick = {

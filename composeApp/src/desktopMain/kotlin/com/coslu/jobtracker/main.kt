@@ -1,9 +1,6 @@
 package com.coslu.jobtracker
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.toAwtImage
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -11,6 +8,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import io.github.vinceglb.filekit.FileKit
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.icon_linux
 import kotlinx.serialization.KSerializer
@@ -25,43 +23,33 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.painterResource
-import java.awt.Image
-import java.nio.file.Path
-import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 private val json = Json { prettyPrint = true }
-private val homeDir = Path(System.getProperty("user.home"))
-
-lateinit var iconImage: Image
-val dataDir: Path =
-    if (System.getProperty("os.name").lowercase().startsWith("windows"))
-        homeDir.resolve("AppData/Roaming/Trajan")
-    else
-        homeDir.resolve(".local/share/Trajan")
 
 private var windowState = fetchWindowState()
 private var position = windowState.position
 private var size = windowState.size
 
-fun main() = application {
-    val painter = painterResource(Res.drawable.icon_linux)
-    iconImage = painter.toAwtImage(LocalDensity.current, LocalLayoutDirection.current)
-    LaunchedEffect(windowState.position, windowState.size) {
-        if (windowState.placement != WindowPlacement.Maximized) {
-            position = windowState.position
-            size = windowState.size
+fun main() {
+    FileKit.init("Trajan")
+    application {
+        LaunchedEffect(windowState.position, windowState.size) {
+            if (windowState.placement != WindowPlacement.Maximized) {
+                position = windowState.position
+                size = windowState.size
+            }
         }
-    }
-    Window(
-        state = windowState,
-        onCloseRequest = { saveWindowState(); exitApplication() },
-        title = "Trajan",
-        icon = painter
-    ) {
-        App()
+        Window(
+            state = windowState,
+            onCloseRequest = { saveWindowState(); exitApplication() },
+            title = "Trajan",
+            icon = painterResource(Res.drawable.icon_linux)
+        ) {
+            App()
+        }
     }
 }
 
@@ -135,54 +123,5 @@ private fun saveWindowState() {
             .writeText(json.encodeToString(WindowStateSerializer(), windowState))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
-    }
-}
-
-actual fun fetchJobList(): List<Job> {
-    return try {
-        json.decodeFromString<MutableList<Job>>(dataDir.resolve("jobs.json").readText())
-    } catch (_: Exception) {
-        listOf()
-    }
-}
-
-actual fun saveJobList(list: List<Job>) {
-    try {
-        dataDir.resolve("jobs.json").createParentDirectories().writeText(json.encodeToString(list))
-    } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
-    }
-}
-
-actual fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
-    return try {
-        json.decodeFromString<List<Pair<String, PropertyColor>>>(
-            dataDir.resolve("colors.json").readText()
-        )
-    } catch (_: Exception) {
-        defaultStatusColors
-    }
-}
-
-actual fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
-    try {
-        dataDir.resolve("colors.json").createParentDirectories().writeText(json.encodeToString(map))
-    } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
-    }
-}
-
-actual fun saveSettings() {
-    try {
-        dataDir.resolve("settings.json").createParentDirectories()
-            .writeText(json.encodeToString(Settings))
-    } catch (e: Exception) {
-        showSnackbar("Error when saving file: '${e.message}'")
-    }
-}
-
-actual fun fetchSettings() {
-    runCatching {
-        json.decodeFromString<Settings>(dataDir.resolve("settings.json").readText())
     }
 }

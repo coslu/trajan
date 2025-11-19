@@ -259,7 +259,3 @@ private class SettingsSerializer : KSerializer<Settings> {
         }
     }
 }
-
-expect fun saveSettings()
-
-expect fun fetchSettings()

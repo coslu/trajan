@@ -1,6 +1,7 @@
 package com.coslu.jobtracker.components
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,7 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coslu.jobtracker.Settings
+import com.coslu.jobtracker.dataDir
 import com.coslu.jobtracker.saveSettings
+import com.coslu.jobtracker.showSnackbar
+import io.github.vinceglb.filekit.AndroidFile
+import io.github.vinceglb.filekit.PlatformFile
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.preferred_color
 import job_tracker.composeapp.generated.resources.preferred_theme
@@ -35,6 +40,10 @@ import job_tracker.composeapp.generated.resources.theme_settings
 import job_tracker.composeapp.generated.resources.use_system_colors
 import job_tracker.composeapp.generated.resources.use_system_colors_subtitle
 import org.jetbrains.compose.resources.stringResource
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+import kotlin.io.path.inputStream
+import kotlin.io.path.name
 
 @Composable
 actual fun ThemeView(modifier: Modifier) {
@@ -108,5 +117,17 @@ actual fun ThemeView(modifier: Modifier) {
 }
 
 actual fun exportToFile(path: String, filesToZip: List<String>, errorMessage: String) {
-
+    try {
+        ZipOutputStream((PlatformFile(path).androidFile as AndroidFile.FileWrapper).file.outputStream()).use { zipOutputStream ->
+            filesToZip.forEach { fileName ->
+                val path = dataDir.resolve(fileName)
+                zipOutputStream.putNextEntry(ZipEntry(path.name))
+                path.inputStream().use { it.copyTo(zipOutputStream) }
+                zipOutputStream.closeEntry()
+            }
+        }
+    } catch (ex: Exception) {
+        Log.e("Export", ex.message, ex)
+        showSnackbar(errorMessage)
+    }
 }

@@ -191,11 +191,3 @@ private class JobSerializer : KSerializer<Job> {
         }
     }
 }
-
-expect fun fetchJobList(): List<Job>
-
-expect fun saveJobList(list: List<Job>)
-
-expect fun fetchPropertyColors(): List<Pair<String, PropertyColor>>
-
-expect fun savePropertyColors(map: List<Pair<String, PropertyColor>>)
