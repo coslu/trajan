@@ -222,13 +222,6 @@ fun SynchronizationView(modifier: Modifier) {
                         if (Settings.exportSettings.value)
                             add("settings.json")
                     }
-/*                    println("**********************")
-                    println(it.name)
-                    println(it.path)
-                    println(it.parent()?.name)
-                    println(it.absolutePath())
-                    println(it.resolve("resolved"))
-                    println("**********************")*/
                     exportToFile(it.path, filesToZip, "Error exporting file")
                 }
             }

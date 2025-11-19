@@ -84,7 +84,7 @@ actual fun exportToFile(path: String, filesToZip: List<String>, errorMessage: St
                 zipOutputStream.closeEntry()
             }
         }
-    } catch (_: Exception) {
-        showSnackbar(errorMessage)
+    } catch (e: Exception) {
+        showSnackbar("$errorMessage: $e")
     }
 }
