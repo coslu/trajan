@@ -57,9 +57,6 @@ import com.coslu.jobtracker.components.SettingsNavHost
 import com.coslu.jobtracker.components.SideSheet
 import com.coslu.jobtracker.components.SortAndFilter
 import com.coslu.jobtracker.components.TooltipButton
-import io.github.vinceglb.filekit.FileKit
-import io.github.vinceglb.filekit.filesDir
-import io.github.vinceglb.filekit.path
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.add
 import job_tracker.composeapp.generated.resources.add_job
@@ -79,7 +76,6 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import java.util.Locale
-import kotlin.io.path.Path
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -94,7 +90,6 @@ private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 @OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    dataDir = Path(FileKit.filesDir.path)
     var currentLanguage by Settings.Language.current
     CompositionLocalProvider(staticCompositionLocalOf { currentLanguage.locale } provides currentLanguage.locale) {
         Locale.setDefault(currentLanguage.locale)

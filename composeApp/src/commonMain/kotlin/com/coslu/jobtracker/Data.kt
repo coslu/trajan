@@ -1,12 +1,17 @@
 package com.coslu.jobtracker
 
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.filesDir
+import io.github.vinceglb.filekit.path
 import kotlinx.serialization.json.Json
-import java.nio.file.Path
+import java.util.zip.ZipOutputStream
+import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-lateinit var dataDir: Path
+val dataDir get() = Path(FileKit.filesDir.path)
 
 private val json = Json { prettyPrint = true }
 
@@ -58,3 +63,5 @@ fun saveSettings() {
         showSnackbar("Error when saving file: '${e.message}'")
     }
 }
+
+expect fun PlatformFile.openZipOutputStream(): ZipOutputStream

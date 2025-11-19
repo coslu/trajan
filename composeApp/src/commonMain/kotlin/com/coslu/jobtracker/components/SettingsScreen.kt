@@ -36,9 +36,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.coslu.jobtracker.Settings
+import com.coslu.jobtracker.dataDir
+import com.coslu.jobtracker.openZipOutputStream
 import com.coslu.jobtracker.saveSettings
+import com.coslu.jobtracker.showSnackbar
+import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
-import io.github.vinceglb.filekit.path
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
@@ -69,6 +72,9 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import java.util.zip.ZipEntry
+import kotlin.io.path.inputStream
+import kotlin.io.path.name
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -177,8 +183,8 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SearchView(modifier: Modifier) {
-    LazyColumn(modifier) {
+private fun SearchView() {
+    LazyColumn(contentModifier) {
         item {
             TitleText(
                 stringResource(Res.string.search_settings),
@@ -200,8 +206,8 @@ expect fun ThemeView(modifier: Modifier)
 
 @OptIn(ExperimentalTime::class)
 @Composable
-fun SynchronizationView(modifier: Modifier) {
-    LazyColumn(modifier) {
+private fun SynchronizationView() {
+    LazyColumn(contentModifier) {
         item {
             TitleText(
                 stringResource(Res.string.synchronization_settings),
@@ -214,17 +220,7 @@ fun SynchronizationView(modifier: Modifier) {
             SwitchSetting(stringResource(Res.string.export_settings), Settings.exportSettings)
         }
         item {
-            val launcher = rememberFileSaverLauncher {
-                if (it != null) {
-                    val filesToZip = mutableListOf<String>().apply {
-                        if (Settings.exportJobs.value)
-                            addAll(listOf("jobs.json", "colors.json"))
-                        if (Settings.exportSettings.value)
-                            add("settings.json")
-                    }
-                    exportToFile(it.path, filesToZip, "Error exporting file")
-                }
-            }
+            val launcher = rememberFileSaverLauncher { exportToFile(it) }
             OutlinedButton(
                 onClick = {
                     val defaultName = "Trajan-" + Clock.System.now()
@@ -256,11 +252,32 @@ fun SynchronizationView(modifier: Modifier) {
     }
 }
 
-expect fun exportToFile(path: String, filesToZip: List<String>, errorMessage: String)
+private fun exportToFile(platformFile: PlatformFile?) {
+    if (platformFile != null) {
+        val filesToZip = mutableListOf<String>().apply {
+            if (Settings.exportJobs.value)
+                addAll(listOf("jobs.json", "colors.json"))
+            if (Settings.exportSettings.value)
+                add("settings.json")
+        }
+        try {
+            platformFile.openZipOutputStream().use { zipOutputStream ->
+                filesToZip.forEach { fileName ->
+                    val path = dataDir.resolve(fileName)
+                    zipOutputStream.putNextEntry(ZipEntry(path.name))
+                    path.inputStream().use { it.copyTo(zipOutputStream) }
+                    zipOutputStream.closeEntry()
+                }
+            }
+        } catch (e: Exception) {
+            showSnackbar("Error exporting file: $e")
+        }
+    }
+}
 
 @Composable
-fun LanguageView(modifier: Modifier) {
-    LazyColumn(modifier) {
+private fun LanguageView() {
+    LazyColumn(contentModifier) {
         item {
             TitleText(
                 stringResource(Res.string.language_settings)
@@ -289,14 +306,14 @@ private enum class SettingsCategory(
     SEARCH(
         { stringResource(Res.string.search) },
         Res.drawable.search,
-        { SearchView(contentModifier) }),
+        { SearchView() }),
     THEME({ stringResource(Res.string.theme) }, Res.drawable.theme, { ThemeView(contentModifier) }),
     SYNCHRONIZATION(
         { stringResource(Res.string.synchronization) },
         Res.drawable.synchronization,
-        { SynchronizationView(contentModifier) }),
+        { SynchronizationView() }),
     LANGUAGE(
         { stringResource(Res.string.language) },
         Res.drawable.language,
-        { LanguageView(contentModifier) })
+        { LanguageView() })
 }
