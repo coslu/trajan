@@ -68,9 +68,10 @@ import job_tracker.composeapp.generated.resources.type_of_work
 import job_tracker.composeapp.generated.resources.url_of_job_posting
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.uuid.ExperimentalUuidApi
 
 @Suppress("UnusedBoxWithConstraintsScope")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 fun JobDialog(
     onDismissRequest: () -> Unit,
@@ -84,8 +85,10 @@ fun JobDialog(
     val defaultStatus = stringResource(Res.string.pending_application)
     var status by remember { mutableStateOf(job?.status ?: defaultStatus) }
     var notes by remember { mutableStateOf(job?.notes ?: "") }
-    val buttonText = if (job != null) stringResource(Res.string.save) else stringResource(Res.string.add_job)
-    val title = if (job != null) stringResource(Res.string.edit_job) else stringResource(Res.string.new_job)
+    val buttonText =
+        if (job != null) stringResource(Res.string.save) else stringResource(Res.string.add_job)
+    val title =
+        if (job != null) stringResource(Res.string.edit_job) else stringResource(Res.string.new_job)
     var expandStatusMenu by remember { mutableStateOf(false) }
     var actualizeDate by remember { mutableStateOf(false) }
 
@@ -257,7 +260,10 @@ fun JobDialog(
                             onCheckedChange = { actualizeDate = it },
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
                         )
-                        Text(stringResource(Res.string.actualize_date), Modifier.padding(end = 5.dp))
+                        Text(
+                            stringResource(Res.string.actualize_date),
+                            Modifier.padding(end = 5.dp)
+                        )
                         BoxWithConstraints {
                             TooltipButton(
                                 description = stringResource(Res.string.help),
@@ -305,22 +311,22 @@ fun JobDialog(
                             onClick = {
                                 if (job != null) {
                                     job.edit(
-                                        name.trim(),
-                                        url.trim(),
-                                        type.value.trim(),
-                                        location.value.trim(),
-                                        status.trim(),
-                                        notes.trim(),
-                                        actualizeDate
+                                        name = name.trim(),
+                                        url = url.trim(),
+                                        type = type.value.trim(),
+                                        location = location.value.trim(),
+                                        status = status.trim(),
+                                        notes = notes.trim(),
+                                        actualizeDate = actualizeDate
                                     )
                                 } else {
                                     Job(
-                                        name.trim(),
-                                        url.trim(),
-                                        type.value.trim(),
-                                        location.value.trim(),
-                                        status.trim(),
-                                        notes
+                                        name = name.trim(),
+                                        url = url.trim(),
+                                        type = type.value.trim(),
+                                        location = location.value.trim(),
+                                        status = status.trim(),
+                                        notes = notes
                                     ).add()
                                 }
                                 onDismissRequest()

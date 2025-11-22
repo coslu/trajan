@@ -7,6 +7,7 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.context
 import io.github.vinceglb.filekit.path
 import java.io.File
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 actual fun PlatformFile.openZipOutputStream() =
@@ -14,6 +15,16 @@ actual fun PlatformFile.openZipOutputStream() =
         is AndroidFile.FileWrapper -> ZipOutputStream(File(path).outputStream())
         is AndroidFile.UriWrapper -> ZipOutputStream(
             FileKit.context.contentResolver.openOutputStream(
+                path.toUri()
+            )
+        )
+    }
+
+actual fun PlatformFile.openZipInputStream() =
+    when (androidFile) {
+        is AndroidFile.FileWrapper -> ZipInputStream(File(path).inputStream())
+        is AndroidFile.UriWrapper -> ZipInputStream(
+            FileKit.context.contentResolver.openInputStream(
                 path.toUri()
             )
         )

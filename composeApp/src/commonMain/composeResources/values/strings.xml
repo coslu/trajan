@@ -75,4 +75,5 @@
     <string name="export_settings">Export settings</string>
     <string name="export_to_file">Export to file</string>
     <string name="import_from_file">Import from file</string>
+    <string name="error_import">Could not import: Selected file was not recognized as a Trajan export.</string>
 </resources>

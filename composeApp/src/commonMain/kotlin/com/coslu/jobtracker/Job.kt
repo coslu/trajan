@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class, ExperimentalUuidApi::class)
 
 package com.coslu.jobtracker
 
@@ -27,9 +27,12 @@ import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Serializable(with = JobSerializer::class)
 class Job(
+    var id: Uuid = Uuid.random(),
     var name: String = "",
     var url: String = "",
     var type: String = "",
@@ -50,7 +53,6 @@ class Job(
         val list = fetchJobList().toMutableList().onEach {
             it.addPropertiesToDictionary()
         }
-        private var count = 0
 
         @Composable
         fun localizeStatus(status: String): String {
@@ -62,10 +64,15 @@ class Job(
                 else -> status
             }
         }
+
+        fun clear() {
+            list.clear()
+            types.clear()
+            locations.clear()
+        }
     }
 
     var visible: MutableTransitionState<Boolean> = MutableTransitionState(true)
-    private val id = count++
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -77,10 +84,10 @@ class Job(
     }
 
     override fun hashCode(): Int {
-        return id
+        return id.hashCode()
     }
 
-    private fun addPropertiesToDictionary() {
+    fun addPropertiesToDictionary() {
         locations[location] = locations.getOrDefault(location, 0) + 1
         locationFilters.getOrPut(location) { true }
         types[type] = types.getOrDefault(type, 0) + 1
@@ -103,7 +110,7 @@ class Job(
     fun add() {
         visible = MutableTransitionState(false).apply { targetState = true }
         list.add(0, this)
-        saveJobList(list)
+        saveJobList()
         addPropertiesToDictionary()
         applyFilters()
         if (jobs.contains(this))
@@ -112,7 +119,7 @@ class Job(
 
     fun remove() {
         list.remove(this)
-        saveJobList(list)
+        saveJobList()
         removePropertiesFromDictionary()
         visible.targetState = false
     }
@@ -135,7 +142,7 @@ class Job(
         this.notes = notes
         if (actualizeDate)
             date = Clock.System.now().toEpochMilliseconds()
-        saveJobList(list)
+        saveJobList()
         addPropertiesToDictionary()
         // we do the following to update lazy column
         val index = jobs.indexOf(this)
@@ -147,9 +154,8 @@ class Job(
 }
 
 private class JobSerializer : KSerializer<Job> {
-    private val now = Clock.System.now().toEpochMilliseconds()
-
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("com.coslu.job") {
+        element<String>("id")
         element<String>("name")
         element<String>("url")
         element<String>("type")
@@ -160,18 +166,19 @@ private class JobSerializer : KSerializer<Job> {
     }
 
     override fun deserialize(decoder: Decoder): Job {
-        val job = Job(date = now)
+        val job = Job()
         decoder.decodeStructure(descriptor) {
             loop@ while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     DECODE_DONE -> break@loop
-                    0 -> job.name = decodeStringElement(descriptor, 0)
-                    1 -> job.url = decodeStringElement(descriptor, 1)
-                    2 -> job.type = decodeStringElement(descriptor, 2)
-                    3 -> job.location = decodeStringElement(descriptor, 3)
-                    4 -> job.status = decodeStringElement(descriptor, 4)
-                    5 -> job.notes = decodeStringElement(descriptor, 5)
-                    6 -> job.date = decodeLongElement(descriptor, 6)
+                    0 -> job.id = Uuid.parse(decodeStringElement(descriptor, 0))
+                    1 -> job.name = decodeStringElement(descriptor, 0)
+                    2 -> job.url = decodeStringElement(descriptor, 1)
+                    3 -> job.type = decodeStringElement(descriptor, 2)
+                    4 -> job.location = decodeStringElement(descriptor, 3)
+                    5 -> job.status = decodeStringElement(descriptor, 4)
+                    6 -> job.notes = decodeStringElement(descriptor, 5)
+                    7 -> job.date = decodeLongElement(descriptor, 6)
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }
@@ -181,13 +188,14 @@ private class JobSerializer : KSerializer<Job> {
 
     override fun serialize(encoder: Encoder, value: Job) {
         encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, value.name)
-            encodeStringElement(descriptor, 1, value.url)
-            encodeStringElement(descriptor, 2, value.type)
-            encodeStringElement(descriptor, 3, value.location)
-            encodeStringElement(descriptor, 4, value.status)
-            encodeStringElement(descriptor, 5, value.notes)
-            encodeLongElement(descriptor, 6, value.date)
+            encodeStringElement(descriptor, 0, value.id.toString())
+            encodeStringElement(descriptor, 1, value.name)
+            encodeStringElement(descriptor, 2, value.url)
+            encodeStringElement(descriptor, 3, value.type)
+            encodeStringElement(descriptor, 4, value.location)
+            encodeStringElement(descriptor, 5, value.status)
+            encodeStringElement(descriptor, 6, value.notes)
+            encodeLongElement(descriptor, 7, value.date)
         }
     }
 }

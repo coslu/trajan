@@ -271,8 +271,13 @@ fun getPropertyColor(
     return propertyColors[property] ?: default
 }
 
-fun setPropertyColor(property: String, color: PropertyColor) {
-    propertyColors[property] = color
+fun setPropertyColor(property: String, color: PropertyColor, override: Boolean = true) {
+    if (color == PropertyColor.Transparent)
+        propertyColors.remove(property)
+    else if (override || !propertyColors.contains(property))
+        propertyColors[property] = color
+    else
+        return
     savePropertyColors(propertyColors.toList())
 }
 

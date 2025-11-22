@@ -35,17 +35,26 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.coslu.jobtracker.Job
 import com.coslu.jobtracker.Settings
 import com.coslu.jobtracker.dataDir
+import com.coslu.jobtracker.fetchJobList
+import com.coslu.jobtracker.fetchPropertyColors
+import com.coslu.jobtracker.fetchSettings
+import com.coslu.jobtracker.openZipInputStream
 import com.coslu.jobtracker.openZipOutputStream
+import com.coslu.jobtracker.saveJobList
 import com.coslu.jobtracker.saveSettings
+import com.coslu.jobtracker.setPropertyColor
 import com.coslu.jobtracker.showSnackbar
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
+import job_tracker.composeapp.generated.resources.error_import
 import job_tracker.composeapp.generated.resources.export
 import job_tracker.composeapp.generated.resources.export_jobs
 import job_tracker.composeapp.generated.resources.export_settings
@@ -240,8 +249,12 @@ private fun SynchronizationView() {
             }
         }
         item {
+            val errorMessage = stringResource(Res.string.error_import)
+            val launcher = rememberFilePickerLauncher { importFromFile(it, errorMessage) }
             OutlinedButton(
-                onClick = {},
+                onClick = {
+                    launcher.launch()
+                },
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
                     .pointerHoverIcon(PointerIcon.Hand)
             ) {
@@ -271,6 +284,48 @@ private fun exportToFile(platformFile: PlatformFile?) {
             }
         } catch (e: Exception) {
             showSnackbar("Error exporting file: $e")
+        }
+    }
+}
+
+private fun importFromFile(platformFile: PlatformFile?, errorMessage: String) {
+    if (platformFile != null) {
+        try {
+            platformFile.openZipInputStream().use { zipInputStream ->
+                while (true) {
+                    val entry = zipInputStream.nextEntry
+                    when (entry?.name) {
+                        "jobs.json" -> {
+                            Job.clear()
+                            fetchJobList(zipInputStream.readBytes().decodeToString()).forEach {
+                                Job.list.add(it)
+                                it.addPropertiesToDictionary()
+                            }
+                            saveJobList()
+                            Settings.applyFilters()
+                        }
+
+                        "settings.json" -> {
+                            fetchSettings(zipInputStream.readBytes().decodeToString())
+                            saveSettings()
+                        }
+
+                        "colors.json" -> {
+                            fetchPropertyColors(
+                                zipInputStream.readBytes().decodeToString()
+                            ).forEach {
+                                setPropertyColor(it.first, it.second, false)
+                            }
+                        }
+
+                        null -> break
+                        else -> showSnackbar(errorMessage)
+                    }
+                    zipInputStream.closeEntry()
+                }
+            }
+        } catch (e: Exception) {
+            showSnackbar("Error importing from file: $e")
         }
     }
 }

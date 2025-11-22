@@ -5,6 +5,7 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.path
 import kotlinx.serialization.json.Json
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
@@ -15,27 +16,28 @@ val dataDir get() = Path(FileKit.filesDir.path)
 
 private val json = Json { prettyPrint = true }
 
-fun fetchJobList(): List<Job> {
+fun fetchJobList(jsonString: String = dataDir.resolve("jobs.json").readText()): List<Job> {
     return try {
-        json.decodeFromString<MutableList<Job>>(dataDir.resolve("jobs.json").readText())
+        json.decodeFromString<MutableList<Job>>(jsonString)
     } catch (_: Exception) {
         listOf()
     }
 }
 
-fun saveJobList(list: List<Job>) {
+fun saveJobList() {
     try {
-        dataDir.resolve("jobs.json").createParentDirectories().writeText(json.encodeToString(list))
+        dataDir.resolve("jobs.json").createParentDirectories()
+            .writeText(json.encodeToString(Job.list))
     } catch (e: Exception) {
         showSnackbar("Error when saving file: '${e.message}'")
     }
 }
 
-fun fetchPropertyColors(): List<Pair<String, PropertyColor>> {
+fun fetchPropertyColors(
+    jsonString: String = dataDir.resolve("colors.json").readText()
+): List<Pair<String, PropertyColor>> {
     return try {
-        json.decodeFromString<List<Pair<String, PropertyColor>>>(
-            dataDir.resolve("colors.json").readText()
-        )
+        json.decodeFromString<List<Pair<String, PropertyColor>>>(jsonString)
     } catch (_: Exception) {
         defaultStatusColors
     }
@@ -49,9 +51,9 @@ fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
     }
 }
 
-fun fetchSettings() {
+fun fetchSettings(jsonString: String = dataDir.resolve("settings.json").readText()) {
     runCatching {
-        json.decodeFromString<Settings>(dataDir.resolve("settings.json").readText())
+        json.decodeFromString<Settings>(jsonString)
     }
 }
 
@@ -65,3 +67,5 @@ fun saveSettings() {
 }
 
 expect fun PlatformFile.openZipOutputStream(): ZipOutputStream
+
+expect fun PlatformFile.openZipInputStream(): ZipInputStream
