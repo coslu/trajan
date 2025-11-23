@@ -66,6 +66,16 @@
     <string name="preferred_color">Tercih edilen renk</string>
     <string name="use_system_colors">Dinamik renk kullan</string>
     <string name="use_system_colors_subtitle">Renkleri duvar kağıdınızdan alır</string>
+    <string name="system">Sistem</string>
+    <string name="light">Aydınlık</string>
+    <string name="dark">Karanlık</string>
+
+    <string name="trajan_green">Trajan Yeşili</string>
+    <string name="mediterranean_blue">Akdeniz Mavisi</string>
+    <string name="imperial_purple">İmparator Moru</string>
+    <string name="colosseum_gold">Kolezyum Altını</string>
+    <string name="legion_red">Lejyon Kırmızısı</string>
+    <string name="pompeii_gray">Pompeii Grisi</string>
 
     <string name="language_settings">Dil Ayarları</string>
     <string name="app_language">Uygulama dili</string>

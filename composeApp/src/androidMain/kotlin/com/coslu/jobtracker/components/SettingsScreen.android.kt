@@ -100,7 +100,7 @@ actual fun ThemeView(modifier: Modifier) {
                             .size(24.dp)
                     )
                     Spacer(Modifier.height(5.dp))
-                    Text(it.name, textAlign = TextAlign.Center, color = textColor)
+                    Text(stringResource(it.name), textAlign = TextAlign.Center, color = textColor)
                 }
             }
         }

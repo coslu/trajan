@@ -20,9 +20,20 @@ import com.coslu.jobtracker.SortingMethod.Name
 import com.coslu.jobtracker.SortingMethod.Status
 import com.coslu.jobtracker.SortingMethod.Type
 import job_tracker.composeapp.generated.resources.Res
+import job_tracker.composeapp.generated.resources.colosseum_gold
+import job_tracker.composeapp.generated.resources.dark
 import job_tracker.composeapp.generated.resources.dark_mode
+import job_tracker.composeapp.generated.resources.english
+import job_tracker.composeapp.generated.resources.imperial_purple
+import job_tracker.composeapp.generated.resources.legion_red
+import job_tracker.composeapp.generated.resources.light
 import job_tracker.composeapp.generated.resources.light_mode
+import job_tracker.composeapp.generated.resources.mediterranean_blue
+import job_tracker.composeapp.generated.resources.pompeii_gray
+import job_tracker.composeapp.generated.resources.system
 import job_tracker.composeapp.generated.resources.system_theme
+import job_tracker.composeapp.generated.resources.trajan_green
+import job_tracker.composeapp.generated.resources.turkish
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -39,6 +50,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import java.util.Locale
 
@@ -65,7 +77,7 @@ object Settings {
     val exportSettings = mutableStateOf(true)
 
     sealed class Option {
-        abstract val name: String
+        abstract val name: StringResource
         abstract val id: String
 
         open val icon: @Composable (() -> Unit)? = null
@@ -73,7 +85,7 @@ object Settings {
 
     object Theme {
         class ThemeOption(
-            override val name: String,
+            override val name: StringResource,
             override val id: String,
             val iconDrawable: DrawableResource
         ) :
@@ -83,9 +95,9 @@ object Settings {
             }
         }
 
-        val System = ThemeOption("System", "System", Res.drawable.system_theme)
-        val Light = ThemeOption("Light", "Light", Res.drawable.light_mode)
-        val Dark = ThemeOption("Dark", "Dark", Res.drawable.dark_mode)
+        val System = ThemeOption(Res.string.system, "System", Res.drawable.system_theme)
+        val Light = ThemeOption(Res.string.light, "Light", Res.drawable.light_mode)
+        val Dark = ThemeOption(Res.string.dark, "Dark", Res.drawable.dark_mode)
         val options = listOf(System, Light, Dark)
         val current = mutableStateOf(System)
 
@@ -95,7 +107,7 @@ object Settings {
 
     object Color {
         class ColorOption(
-            override val name: String,
+            override val name: StringResource,
             override val id: String,
             val lightScheme: ColorScheme,
             val darkScheme: ColorScheme
@@ -108,12 +120,15 @@ object Settings {
             fun iconColor() = if (Theme.isDark()) darkScheme.primary else lightScheme.primary
         }
 
-        val Green = ColorOption("Trajan Green", "Green", greenLightScheme, greenDarkScheme)
-        val Blue = ColorOption("Blue", "Blue", blueLightScheme, blueDarkScheme)
-        val Purple = ColorOption("Purple", "Purple", purpleLightScheme, purpleDarkScheme)
-        val Yellow = ColorOption("Yellow", "Yellow", yellowLightScheme, yellowDarkScheme)
-        val Red = ColorOption("Red", "Red", redLightScheme, redDarkScheme)
-        val Gray = ColorOption("Gray", "Gray", grayLightScheme, grayDarkScheme)
+        val Green = ColorOption(Res.string.trajan_green, "Green", greenLightScheme, greenDarkScheme)
+        val Blue =
+            ColorOption(Res.string.mediterranean_blue, "Blue", blueLightScheme, blueDarkScheme)
+        val Purple =
+            ColorOption(Res.string.imperial_purple, "Purple", purpleLightScheme, purpleDarkScheme)
+        val Yellow =
+            ColorOption(Res.string.colosseum_gold, "Yellow", yellowLightScheme, yellowDarkScheme)
+        val Red = ColorOption(Res.string.legion_red, "Red", redLightScheme, redDarkScheme)
+        val Gray = ColorOption(Res.string.pompeii_gray, "Gray", grayLightScheme, grayDarkScheme)
         val options = listOf(Green, Blue, Purple, Yellow, Red, Gray)
         val current = mutableStateOf(Green)
         val useSystemColors = mutableStateOf(true)
@@ -121,13 +136,13 @@ object Settings {
 
     object Language {
         class LanguageOption(
-            override val name: String,
+            override val name: StringResource,
             override val id: String,
             val locale: Locale
         ) : Option()
 
-        val English = LanguageOption("English", "English", Locale.ENGLISH)
-        val Turkish = LanguageOption("Türkçe", "Turkish", Locale.forLanguageTag("tr-TR"))
+        val English = LanguageOption(Res.string.english, "English", Locale.ENGLISH)
+        val Turkish = LanguageOption(Res.string.turkish, "Turkish", Locale.forLanguageTag("tr-TR"))
         val options = listOf(English, Turkish)
         val current = mutableStateOf(English)
     }
@@ -231,6 +246,7 @@ private class SettingsSerializer : KSerializer<Settings> {
                         Settings.Language.current.value =
                             Settings.Language.options.first { it.id == language }
                     }
+
                     11 -> Settings.exportJobs.value = decodeBooleanElement(descriptor, 11)
                     12 -> Settings.exportSettings.value = decodeBooleanElement(descriptor, 12)
 

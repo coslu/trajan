@@ -66,6 +66,16 @@
     <string name="preferred_color">Preferred color</string>
     <string name="use_system_colors">Use dynamic color</string>
     <string name="use_system_colors_subtitle">Takes colors from your wallpaper</string>
+    <string name="system">System</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+
+    <string name="trajan_green">Trajan Green</string>
+    <string name="mediterranean_blue">Mediterranean Blue</string>
+    <string name="imperial_purple">Imperial Purple</string>
+    <string name="colosseum_gold">Colosseum Gold</string>
+    <string name="legion_red">Legion Red</string>
+    <string name="pompeii_gray">Pompeii Gray</string>
 
     <string name="language_settings">Language Settings</string>
     <string name="app_language">App language</string>
@@ -76,4 +86,9 @@
     <string name="export_to_file">Export to file</string>
     <string name="import_from_file">Import from file</string>
     <string name="error_import">Could not import: Selected file was not recognized as a Trajan export.</string>
+
+    <!--Languages (no translation)-->
+    <string name="english">English</string>
+    <string name="turkish">Türkçe</string>
+    <string name="german">Deutsch</string>
 </resources>

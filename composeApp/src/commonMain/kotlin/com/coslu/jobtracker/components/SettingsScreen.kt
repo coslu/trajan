@@ -152,7 +152,7 @@ fun <T : Settings.Option> DropdownSetting(
                 Text(text, Modifier.weight(1f))
             ExposedDropdownMenuBox(expanded, { expanded = it }) {
                 TextField(
-                    value = current.name,
+                    value = stringResource(current.name),
                     onValueChange = {},
                     modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                         .pointerHoverIcon(icon = PointerIcon.Hand, overrideDescendants = true),
@@ -166,7 +166,7 @@ fun <T : Settings.Option> DropdownSetting(
                 ExposedDropdownMenu(expanded, { expanded = false }) {
                     options.forEach {
                         DropdownMenuItem(
-                            text = { Text(it.name) },
+                            text = { Text(stringResource(it.name)) },
                             onClick = {
                                 current = it
                                 saveSettings()

@@ -31,7 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 actual fun ThemeView(modifier: Modifier) {
-    LazyVerticalGrid(GridCells.Adaptive(140.dp), modifier) {
+    LazyVerticalGrid(GridCells.Adaptive(160.dp), modifier) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             TitleText(stringResource(Res.string.theme_settings))
         }
@@ -60,7 +60,7 @@ actual fun ThemeView(modifier: Modifier) {
                 ) {
                     it.icon()
                     Spacer(Modifier.height(5.dp))
-                    Text(it.name, textAlign = TextAlign.Center)
+                    Text(stringResource(it.name), textAlign = TextAlign.Center)
                 }
             }
         }
