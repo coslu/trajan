@@ -1,8 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-private val trajanVersionCode = 6
-private val trajanVersionName = "1.3.1"
+private val trajanVersionCode = 7
+private val trajanVersionName = "1.4.0"
 
 plugins {
     alias(libs.plugins.serialization)
@@ -108,6 +108,7 @@ compose.desktop {
             }
             linux {
                 iconFile.set(icons.resolve("icon-linux.png"))
+                modules("jdk.security.auth")
             }
         }
     }
