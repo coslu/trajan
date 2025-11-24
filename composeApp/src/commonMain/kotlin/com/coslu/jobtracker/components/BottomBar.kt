@@ -18,6 +18,7 @@ import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -80,7 +81,10 @@ private fun SmallBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
             SearchBar(maxWidth)
             TooltipBox(
                 positionProvider =
-                    TooltipDefaults.rememberTooltipPositionProvider(5.dp),
+                    TooltipDefaults.rememberTooltipPositionProvider(
+                        TooltipAnchorPosition.Above,
+                        5.dp
+                    ),
                 tooltip = { PlainTooltip { Text(action.description) } },
                 state = rememberTooltipState()
             ) {
@@ -139,7 +143,6 @@ private fun SearchBar(maxWidth: Dp) {
     )
 }
 
-@Suppress("UnusedBoxWithConstraintsScope")
 @Composable
 fun BottomBar(actions: Array<BottomBarAction>) {
     BoxWithConstraints {

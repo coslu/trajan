@@ -465,5 +465,5 @@ val grayDarkScheme = darkColorScheme(
 @Composable
 expect fun TrajanTheme(
     darkTheme: Boolean = Settings.Theme.isDark(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 )
