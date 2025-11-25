@@ -50,16 +50,19 @@ import com.coslu.jobtracker.showSnackbar
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
+import io.github.vinceglb.filekit.extension
 import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
-import job_tracker.composeapp.generated.resources.error_import
 import job_tracker.composeapp.generated.resources.export
 import job_tracker.composeapp.generated.resources.export_jobs
 import job_tracker.composeapp.generated.resources.export_settings
+import job_tracker.composeapp.generated.resources.export_success
 import job_tracker.composeapp.generated.resources.export_to_file
 import job_tracker.composeapp.generated.resources.import
+import job_tracker.composeapp.generated.resources.import_error_not_recognized
+import job_tracker.composeapp.generated.resources.import_exception
 import job_tracker.composeapp.generated.resources.import_from_file
 import job_tracker.composeapp.generated.resources.language
 import job_tracker.composeapp.generated.resources.language_settings
@@ -249,8 +252,7 @@ private fun SynchronizationView() {
             }
         }
         item {
-            val errorMessage = stringResource(Res.string.error_import)
-            val launcher = rememberFilePickerLauncher { importFromFile(it, errorMessage) }
+            val launcher = rememberFilePickerLauncher { importFromFile(it) }
             OutlinedButton(
                 onClick = {
                     launcher.launch()
@@ -282,14 +284,19 @@ private fun exportToFile(platformFile: PlatformFile?) {
                     zipOutputStream.closeEntry()
                 }
             }
+            showSnackbar(Res.string.export_success)
         } catch (e: Exception) {
             showSnackbar("Error exporting file: $e")
         }
     }
 }
 
-private fun importFromFile(platformFile: PlatformFile?, errorMessage: String) {
+private fun importFromFile(platformFile: PlatformFile?) {
     if (platformFile != null) {
+        if (platformFile.extension != "zip") {
+            showSnackbar(Res.string.import_error_not_recognized)
+            return
+        }
         try {
             platformFile.openZipInputStream().use { zipInputStream ->
                 while (true) {
@@ -319,13 +326,16 @@ private fun importFromFile(platformFile: PlatformFile?, errorMessage: String) {
                         }
 
                         null -> break
-                        else -> showSnackbar(errorMessage)
+                        else -> {
+                            showSnackbar(Res.string.import_error_not_recognized)
+                            return
+                        }
                     }
                     zipInputStream.closeEntry()
                 }
             }
         } catch (e: Exception) {
-            showSnackbar("Error importing from file: $e")
+            showSnackbar(Res.string.import_exception, e)
         }
     }
 }

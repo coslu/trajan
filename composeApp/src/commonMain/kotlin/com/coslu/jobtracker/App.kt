@@ -73,6 +73,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import java.util.Locale
@@ -261,6 +263,9 @@ fun App() {
 
 fun showSnackbar(message: String) =
     coroutineScope.launch { snackbarHostState.showSnackbar(message) }
+
+fun showSnackbar(resource: StringResource, vararg formatArgs: Any) =
+    coroutineScope.launch { snackbarHostState.showSnackbar(getString(resource, formatArgs)) }
 
 fun jumpToItem(index: Int) = coroutineScope.launch { listState.scrollToItem(index) }
 
