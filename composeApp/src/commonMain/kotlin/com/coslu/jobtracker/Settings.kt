@@ -24,6 +24,7 @@ import job_tracker.composeapp.generated.resources.colosseum_gold
 import job_tracker.composeapp.generated.resources.dark
 import job_tracker.composeapp.generated.resources.dark_mode
 import job_tracker.composeapp.generated.resources.english
+import job_tracker.composeapp.generated.resources.german
 import job_tracker.composeapp.generated.resources.imperial_purple
 import job_tracker.composeapp.generated.resources.legion_red
 import job_tracker.composeapp.generated.resources.light
@@ -143,7 +144,8 @@ object Settings {
 
         val English = LanguageOption(Res.string.english, "English", Locale.ENGLISH)
         val Turkish = LanguageOption(Res.string.turkish, "Turkish", Locale.forLanguageTag("tr-TR"))
-        val options = listOf(English, Turkish)
+        val German = LanguageOption(Res.string.german, "German", Locale.GERMAN)
+        val options = listOf(German, English, Turkish)
         val current = mutableStateOf(English)
     }
 

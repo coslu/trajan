@@ -132,7 +132,7 @@ fun SwitchSetting(title: String, setting: MutableState<Boolean>, subtitle: Strin
         Switch(
             checked = setting.value,
             onCheckedChange = { setting.value = it; saveSettings() },
-            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+            modifier = Modifier.padding(start = 10.dp).pointerHoverIcon(PointerIcon.Hand)
         )
     }
 }

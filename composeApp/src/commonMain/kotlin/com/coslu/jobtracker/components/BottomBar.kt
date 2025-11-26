@@ -152,7 +152,7 @@ fun BottomBar(actions: Array<BottomBarAction>) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (maxWidth >= 1040.dp)
+            if (maxWidth >= 1200.dp)
                 BigBottomBar(actions, maxWidth)
             else
                 SmallBottomBar(actions, maxWidth)

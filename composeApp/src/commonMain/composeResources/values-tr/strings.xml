@@ -65,7 +65,7 @@
     <string name="preferred_theme">Tercih edilen tema</string>
     <string name="preferred_color">Tercih edilen renk</string>
     <string name="use_system_colors">Dinamik renk kullan</string>
-    <string name="use_system_colors_subtitle">Renkleri duvar kağıdınızdan alır</string>
+    <string name="use_system_colors_subtitle">Renkleri sistem ayarlarınızdan alır</string>
     <string name="system">Sistem</string>
     <string name="light">Aydınlık</string>
     <string name="dark">Karanlık</string>

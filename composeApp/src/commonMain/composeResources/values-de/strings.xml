@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name">Trajan</string>
+
+    <!--App-->
+    <string name="show_notes">Zeige Notizen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="add_job">Job Hinzufügen</string>
+    <string name="sort_filter">Sortieren &amp; Filtern</string>
+
+    <!--Job-->
+    <string name="awaiting_response">Antwort ausstehend</string>
+    <string name="meeting_scheduled">Termin vereinbart</string>
+    <string name="pending_application">Bewerbung ausstehend</string>
+    <string name="rejected">Abgelehnt</string>
+
+    <!--Job Name-->
+    <string name="go_to_job">Zum Job</string>
+    <string name="invalid_url">Die URL ist ungültig oder kann vom System nicht verarbeitet werden.</string>
+
+    <!--Job Dialog-->
+    <string name="new_job">Neuer Job</string>
+    <string name="delete">Löschen</string>
+    <string name="confirm_delete">Möchten Sie diesen Job wirklich löschen?</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="company_name">Name des Unternehmens</string>
+    <string name="url_of_job_posting">URL der Stellenanzeige</string>
+    <string name="type_of_work">Art der Arbeit</string>
+    <string name="location">Standort</string>
+    <string name="application_status">Bewerbungsstatus</string>
+    <string name="additional_notes">Zusätzliche Notizen</string>
+    <string name="help">Hilfe</string>
+    <string name="save">Speichern</string>
+    <string name="edit_job">Job Bearbeiten</string>
+    <string name="actualize_date">Datum aktualisieren</string>
+    <string name="actualize_date_description">Wenn diese Option aktiviert ist, wird beim Speichern der Änderungen das Datum dieses Auftrags auf heute gesetzt.</string>
+
+    <!--Side Sheet-->
+    <string name="back">Zurück</string>
+
+    <!--Sort & Filter-->
+    <string name="sort">Sortieren</string>
+    <string name="descending">Absteigend</string>
+    <string name="date">Datum</string>
+    <string name="name">Name</string>
+    <string name="type">Art</string>
+    <string name="status">Status</string>
+    <string name="filter">Filtern</string>
+
+    <!--Bottom Bar-->
+    <string name="clear">Löschen</string>
+
+    <!--Settings-->
+    <string name="settings">Einstellungen</string>
+    <string name="search">Suche</string>
+    <string name="theme">Design</string>
+    <string name="synchronization">Synchronisation</string>
+    <string name="language">Sprache</string>
+
+    <string name="search_settings">Sucheinstellungen</string>
+    <string name="search_in_types">Suche in Arten</string>
+    <string name="search_in_locations">Suche in Standorten</string>
+    <string name="search_in_notes">Suche in Notizen</string>
+
+    <string name="theme_settings">Designeinstellungen</string>
+    <string name="preferred_theme">Bevorzugtes Design</string>
+    <string name="preferred_color">Bevorzugte Farbe</string>
+    <string name="use_system_colors">Dynamische Farben verwenden</string>
+    <string name="use_system_colors_subtitle">Nimmt Farben aus Ihren Systemeinstellungen auf.</string>
+    <string name="system">System</string>
+    <string name="light">Hell</string>
+    <string name="dark">Dunkel</string>
+
+    <string name="trajan_green">Trajangrün</string>
+    <string name="mediterranean_blue">Mittelmeerblau</string>
+    <string name="imperial_purple">Kaiserpurpur</string>
+    <string name="colosseum_gold">Kolosseumgold</string>
+    <string name="legion_red">Legionrot</string>
+    <string name="pompeii_gray">Pompejigrau</string>
+
+    <string name="language_settings">Spracheinstellungen</string>
+    <string name="app_language">App-Sprache</string>
+
+    <string name="synchronization_settings">Synchronisierungseinstellungen</string>
+    <string name="export_jobs">Exportiere Jobs</string>
+    <string name="export_settings">Exportiere Einstellungen</string>
+    <string name="export_to_file">In Datei exportieren</string>
+    <string name="import_from_file">Aus Datei importieren</string>
+    <string name="export_success">Export erfolgreich</string>
+    <string name="export_exception">Fehler beim Exportieren: %s</string>
+    <string name="import_success">Import erfolgreich</string>
+    <string name="import_exception">Fehler beim Importieren: %s</string>
+    <string name="import_error_not_recognized">Import fehlgeschlagen: Die ausgewählte Datei wurde nicht als Trajan-Export erkannt.</string>
+</resources>

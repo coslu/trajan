@@ -42,7 +42,7 @@ actual fun ThemeView(modifier: Modifier) {
         Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !Settings.Color.useSystemColors.value
     val disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
     val textColor = if (colorsEnabled) Color.Unspecified else disabledColor
-    LazyVerticalGrid(GridCells.Adaptive(140.dp), modifier) {
+    LazyVerticalGrid(GridCells.Adaptive(160.dp), modifier) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             TitleText(stringResource(Res.string.theme_settings))
         }

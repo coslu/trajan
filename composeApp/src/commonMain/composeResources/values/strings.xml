@@ -65,7 +65,7 @@
     <string name="preferred_theme">Preferred theme</string>
     <string name="preferred_color">Preferred color</string>
     <string name="use_system_colors">Use dynamic color</string>
-    <string name="use_system_colors_subtitle">Takes colors from your wallpaper</string>
+    <string name="use_system_colors_subtitle">Takes colors from your system settings</string>
     <string name="system">System</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
@@ -86,9 +86,9 @@
     <string name="export_to_file">Export to file</string>
     <string name="import_from_file">Import from file</string>
     <string name="export_success">Export successful</string>
-    <string name="export_exception">Error when exporting to file: %s</string>
+    <string name="export_exception">Error when exporting: %s</string>
     <string name="import_success">Import successful</string>
-    <string name="import_exception">Error when importing from file: %s</string>
+    <string name="import_exception">Error when importing: %s</string>
     <string name="import_error_not_recognized">Could not import: Selected file was not recognized as a Trajan export.</string>
 
     <!--Languages (no translation)-->
