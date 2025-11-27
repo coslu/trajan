@@ -88,7 +88,6 @@ private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
-@Suppress("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
 @Composable
 fun App() {

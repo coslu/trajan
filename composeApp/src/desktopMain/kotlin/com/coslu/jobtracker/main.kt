@@ -29,12 +29,11 @@ import kotlin.io.path.writeText
 
 private val json = Json { prettyPrint = true }
 
-private var windowState = fetchWindowState()
-private var position = windowState.position
-private var size = windowState.size
-
 fun main() {
     FileKit.init("Trajan")
+    val windowState = fetchWindowState()
+    var position = windowState.position
+    var size = windowState.size
     application {
         LaunchedEffect(windowState.position, windowState.size) {
             if (windowState.placement != WindowPlacement.Maximized) {
@@ -44,7 +43,7 @@ fun main() {
         }
         Window(
             state = windowState,
-            onCloseRequest = { saveWindowState(); exitApplication() },
+            onCloseRequest = { saveWindowState(windowState, position, size); exitApplication() },
             title = "Trajan",
             icon = painterResource(Res.drawable.icon_linux)
         ) {
@@ -113,7 +112,7 @@ private fun fetchWindowState(): WindowState {
     }
 }
 
-private fun saveWindowState() {
+private fun saveWindowState(windowState: WindowState, position: WindowPosition, size: DpSize) {
     if (windowState.placement == WindowPlacement.Maximized) {
         windowState.position = position
         windowState.size = size
