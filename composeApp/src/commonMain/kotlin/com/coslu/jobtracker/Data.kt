@@ -16,9 +16,11 @@ val dataDir get() = Path(FileKit.filesDir.path)
 
 private val json = Json { prettyPrint = true }
 
-fun fetchJobList(jsonString: String = dataDir.resolve("jobs.json").readText()): List<Job> {
+fun fetchJobList(jsonString: String? = null): List<Job> {
     return try {
-        json.decodeFromString<MutableList<Job>>(jsonString)
+        json.decodeFromString<MutableList<Job>>(
+            jsonString ?: dataDir.resolve("jobs.json").readText()
+        )
     } catch (_: Exception) {
         listOf()
     }
@@ -33,11 +35,11 @@ fun saveJobList() {
     }
 }
 
-fun fetchPropertyColors(
-    jsonString: String = dataDir.resolve("colors.json").readText()
-): List<Pair<String, PropertyColor>> {
+fun fetchPropertyColors(jsonString: String? = null): List<Pair<String, PropertyColor>> {
     return try {
-        json.decodeFromString<List<Pair<String, PropertyColor>>>(jsonString)
+        json.decodeFromString<List<Pair<String, PropertyColor>>>(
+            jsonString ?: dataDir.resolve("colors.json").readText()
+        )
     } catch (_: Exception) {
         defaultStatusColors
     }
@@ -51,9 +53,9 @@ fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
     }
 }
 
-fun fetchSettings(jsonString: String = dataDir.resolve("settings.json").readText()) {
+fun fetchSettings(jsonString: String? = null) {
     runCatching {
-        json.decodeFromString<Settings>(jsonString)
+        json.decodeFromString<Settings>(jsonString ?: dataDir.resolve("settings.json").readText())
     }
 }
 
