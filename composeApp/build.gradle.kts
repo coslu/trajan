@@ -83,10 +83,6 @@ android {
     }
 }
 
-dependencies {
-    debugImplementation(compose.uiTooling)
-}
-
 compose.desktop {
     configurations.all {
         exclude(group = "androidx.compose.ui", module = "ui-util")
