@@ -27,8 +27,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +34,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
@@ -46,7 +43,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.coslu.jobtracker.Settings.sortingMethod
 import com.coslu.jobtracker.components.BottomBar
 import com.coslu.jobtracker.components.BottomBarAction
 import com.coslu.jobtracker.components.JobDialog
@@ -77,7 +73,6 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import java.util.Locale
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -91,21 +86,18 @@ private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 @OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    var currentLanguage by Settings.Language.current
-    CompositionLocalProvider(staticCompositionLocalOf { currentLanguage.locale } provides currentLanguage.locale) {
-        Locale.setDefault(currentLanguage.locale)
-        TrajanTheme {
-            jobs = remember {
-                Job.list.sortedWith(sortingMethod.comparator).toMutableStateList()
-            }
-            LaunchedEffect(Unit) { fetchSettings(); Settings.applyFilters() }
-            propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
+    jobs = remember { Job.list.toMutableStateList() }
+    propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
+    coroutineScope = rememberCoroutineScope()
+    snackbarHostState = remember { SnackbarHostState() }
+    fetchSettings()
+
+    AppTheme {
+        AppLocale {
             val showJobDialog = remember { MutableTransitionState(false) }
             val showFilters = remember { MutableTransitionState(false) }
             val showSettings = remember { MutableTransitionState(false) }
             var selectedJob by remember { mutableStateOf<Job?>(null) }
-            coroutineScope = rememberCoroutineScope()
-            snackbarHostState = remember { SnackbarHostState() }
             Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { contentPadding ->
                 AnimatedVisibility(
                     !jobs.any { it.visible.targetState },
@@ -171,7 +163,10 @@ fun App() {
                                             modifier = Modifier.padding(horizontal = 10.dp)
                                         )
                                     }
-                                    Row(Modifier, verticalAlignment = Alignment.CenterVertically) {
+                                    Row(
+                                        Modifier,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         Row(Modifier.weight(1f).padding(start = 40.dp)) {
                                             JobProperty(it.type, Modifier.weight(1f, false))
                                             JobProperty(it.location, Modifier.weight(1f, false))
@@ -229,7 +224,10 @@ fun App() {
                             ) {
                                 showFilters.targetState = true
                             },
-                            BottomBarAction(stringResource(Res.string.add_job), Res.drawable.add) {
+                            BottomBarAction(
+                                stringResource(Res.string.add_job),
+                                Res.drawable.add
+                            ) {
                                 selectedJob = null
                                 showJobDialog.targetState = true
                             }
@@ -248,7 +246,12 @@ fun App() {
                     SortAndFilter()
                 }
                 val showDeleteDialog = remember { MutableTransitionState(false) }
-                SideSheet(showJobDialog, Modifier.padding(contentPadding), true, showDeleteDialog) {
+                SideSheet(
+                    showJobDialog,
+                    Modifier.padding(contentPadding),
+                    true,
+                    showDeleteDialog
+                ) {
                     JobDialog(
                         onDismissRequest = { showJobDialog.targetState = false },
                         selectedJob,

@@ -56,6 +56,7 @@ fun savePropertyColors(map: List<Pair<String, PropertyColor>>) {
 fun fetchSettings(jsonString: String? = null) {
     runCatching {
         json.decodeFromString<Settings>(jsonString ?: dataDir.resolve("settings.json").readText())
+        Settings.applyFilters()
     }
 }
 
