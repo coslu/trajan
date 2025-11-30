@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coslu.jobtracker.Settings
@@ -53,7 +55,9 @@ actual fun ThemeView(modifier: Modifier) {
             ) else Modifier
             Box(
                 modifier.clip(RoundedCornerShape(10))
-                    .clickable { Settings.Color.current.value = it; saveSettings() }) {
+                    .clickable { Settings.Color.current.value = it; saveSettings() }
+                    .pointerHoverIcon(PointerIcon.Hand)
+            ) {
                 Column(
                     Modifier.padding(20.dp).fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally

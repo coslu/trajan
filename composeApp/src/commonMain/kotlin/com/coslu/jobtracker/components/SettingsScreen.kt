@@ -171,6 +171,7 @@ fun <T : Settings.Option> DropdownSetting(
                 ExposedDropdownMenu(expanded, { expanded = false }) {
                     options.forEach {
                         DropdownMenuItem(
+                            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                             text = { Text(stringResource(it.name)) },
                             onClick = {
                                 current = it
