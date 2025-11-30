@@ -132,7 +132,7 @@ object Settings {
         val Gray = ColorOption(Res.string.pompeii_gray, "Gray", grayLightScheme, grayDarkScheme)
         val options = listOf(Green, Blue, Purple, Yellow, Red, Gray)
         val current = mutableStateOf(Green)
-        val useSystemColors = mutableStateOf(true)
+        val useSystemColors = mutableStateOf(false)
     }
 
     object Language {

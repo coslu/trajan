@@ -56,6 +56,7 @@ import job_tracker.composeapp.generated.resources.app_language
 import job_tracker.composeapp.generated.resources.arrow_dropdown_open
 import job_tracker.composeapp.generated.resources.arrow_enter_right
 import job_tracker.composeapp.generated.resources.export
+import job_tracker.composeapp.generated.resources.export_exception
 import job_tracker.composeapp.generated.resources.export_jobs
 import job_tracker.composeapp.generated.resources.export_settings
 import job_tracker.composeapp.generated.resources.export_success
@@ -64,6 +65,7 @@ import job_tracker.composeapp.generated.resources.import
 import job_tracker.composeapp.generated.resources.import_error_not_recognized
 import job_tracker.composeapp.generated.resources.import_exception
 import job_tracker.composeapp.generated.resources.import_from_file
+import job_tracker.composeapp.generated.resources.import_success
 import job_tracker.composeapp.generated.resources.language
 import job_tracker.composeapp.generated.resources.language_settings
 import job_tracker.composeapp.generated.resources.search
@@ -286,7 +288,7 @@ private fun exportToFile(platformFile: PlatformFile?) {
             }
             showSnackbar(Res.string.export_success)
         } catch (e: Exception) {
-            showSnackbar("Error exporting file: $e")
+            showSnackbar(Res.string.export_exception, e)
         }
     }
 }
@@ -325,7 +327,11 @@ private fun importFromFile(platformFile: PlatformFile?) {
                             }
                         }
 
-                        null -> break
+                        null -> {
+                            showSnackbar(Res.string.import_success)
+                            return
+                        }
+
                         else -> {
                             showSnackbar(Res.string.import_error_not_recognized)
                             return
