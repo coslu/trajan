@@ -32,7 +32,7 @@ import kotlin.uuid.Uuid
 
 @Serializable(with = JobSerializer::class)
 class Job(
-    var id: Uuid = Uuid.random(),
+    var id: String = Uuid.random().toString(),
     var name: String = "",
     var url: String = "",
     var type: String = "",
@@ -171,7 +171,7 @@ private class JobSerializer : KSerializer<Job> {
             loop@ while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     DECODE_DONE -> break@loop
-                    0 -> job.id = Uuid.parse(decodeStringElement(descriptor, 0))
+                    0 -> job.id = decodeStringElement(descriptor, 0)
                     1 -> job.name = decodeStringElement(descriptor, 0)
                     2 -> job.url = decodeStringElement(descriptor, 1)
                     3 -> job.type = decodeStringElement(descriptor, 2)
@@ -188,7 +188,7 @@ private class JobSerializer : KSerializer<Job> {
 
     override fun serialize(encoder: Encoder, value: Job) {
         encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, value.id.toString())
+            encodeStringElement(descriptor, 0, value.id)
             encodeStringElement(descriptor, 1, value.name)
             encodeStringElement(descriptor, 2, value.url)
             encodeStringElement(descriptor, 3, value.type)

@@ -38,21 +38,22 @@ import job_tracker.composeapp.generated.resources.add_job
 import job_tracker.composeapp.generated.resources.clear
 import job_tracker.composeapp.generated.resources.search
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 data class BottomBarAction(
-    val description: String,
+    val stringRes: StringResource,
     val drawableRes: DrawableResource,
     val onClick: () -> Unit
 )
 
 @Composable
-private fun BigBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
+private fun BigBottomBar(actions: List<BottomBarAction>) {
     actions.forEachIndexed { index, action ->
         if (index == actions.size - 1) {
             // Last action is to the right of search bar with filled button
-            SearchBar(maxWidth)
+            SearchBar(Modifier.width(600.dp))
             Button(
                 onClick = action.onClick,
                 modifier = Modifier.padding(horizontal = 5.dp).pointerHoverIcon(PointerIcon.Hand)
@@ -66,7 +67,7 @@ private fun BigBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
                 modifier = Modifier.padding(horizontal = 5.dp).pointerHoverIcon(PointerIcon.Hand)
             ) {
                 Icon(painterResource(action.drawableRes), null)
-                Text(action.description, Modifier.padding(start = 10.dp))
+                Text(stringResource(action.stringRes), Modifier.padding(start = 10.dp))
             }
         }
     }
@@ -74,18 +75,18 @@ private fun BigBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SmallBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
+private fun SmallBottomBar(actions: List<BottomBarAction>, maxWidth: Dp) {
     actions.forEachIndexed { index, action ->
         if (index == actions.size - 1) {
             // Last action is to the right of search bar with filled button
-            SearchBar(maxWidth)
+            SearchBar(Modifier.width(maxWidth * 0.5f))
             TooltipBox(
                 positionProvider =
                     TooltipDefaults.rememberTooltipPositionProvider(
                         TooltipAnchorPosition.Above,
                         5.dp
                     ),
-                tooltip = { PlainTooltip { Text(action.description) } },
+                tooltip = { PlainTooltip { Text(stringResource(action.stringRes)) } },
                 state = rememberTooltipState()
             ) {
                 FloatingActionButton(
@@ -93,12 +94,12 @@ private fun SmallBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
                     modifier = Modifier.padding(5.dp).pointerHoverIcon(PointerIcon.Hand),
                     elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)
                 ) {
-                    Icon(painterResource(action.drawableRes), action.description)
+                    Icon(painterResource(action.drawableRes), stringResource(action.stringRes))
                 }
             }
         } else {
-            TooltipButton(action.description, action.onClick) {
-                Icon(painterResource(action.drawableRes), action.description)
+            TooltipButton(stringResource(action.stringRes), action.onClick) {
+                Icon(painterResource(action.drawableRes), stringResource(action.stringRes))
             }
         }
     }
@@ -106,12 +107,10 @@ private fun SmallBottomBar(actions: Array<BottomBarAction>, maxWidth: Dp) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchBar(maxWidth: Dp) {
+private fun SearchBar(modifier: Modifier = Modifier) {
     var searchString by Settings.searchString
     TextField(
-        modifier = Modifier.width(
-            if (maxWidth * 0.5f > 600.dp) 600.dp else maxWidth * 0.5f
-        ).padding(vertical = 2.dp, horizontal = 5.dp).height(56.dp),
+        modifier = modifier.padding(vertical = 2.dp, horizontal = 5.dp).height(56.dp),
         value = searchString,
         onValueChange = { value ->
             searchString = value
@@ -144,7 +143,7 @@ private fun SearchBar(maxWidth: Dp) {
 }
 
 @Composable
-fun BottomBar(actions: Array<BottomBarAction>) {
+fun BottomBar(actions: List<BottomBarAction>) {
     BoxWithConstraints {
         val maxWidth = maxWidth
         Row(
@@ -153,7 +152,7 @@ fun BottomBar(actions: Array<BottomBarAction>) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (maxWidth >= 1200.dp)
-                BigBottomBar(actions, maxWidth)
+                BigBottomBar(actions)
             else
                 SmallBottomBar(actions, maxWidth)
         }

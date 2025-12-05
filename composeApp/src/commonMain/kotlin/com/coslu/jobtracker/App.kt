@@ -27,6 +27,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +76,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
+import kotlin.uuid.ExperimentalUuidApi
 
 lateinit var jobs: SnapshotStateList<Job> // separate list for lazy column allows delete animations
 
@@ -83,14 +85,14 @@ private lateinit var coroutineScope: CoroutineScope
 private lateinit var listState: LazyListState
 private lateinit var propertyColors: SnapshotStateMap<String, PropertyColor>
 
-@OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 fun App() {
     jobs = remember { Job.list.toMutableStateList() }
     propertyColors = remember { fetchPropertyColors().toMutableStateMap() }
     coroutineScope = rememberCoroutineScope()
     snackbarHostState = remember { SnackbarHostState() }
-    fetchSettings()
+    LaunchedEffect(Unit) { fetchSettings() }
 
     AppTheme {
         AppLocale {
@@ -133,7 +135,7 @@ fun App() {
                         item {
                             Box(modifier = Modifier.height(1.dp))
                         }
-                        items(jobs) {
+                        items(jobs, key = { it.id }) {
                             val showNotes =
                                 remember {
                                     MutableTransitionState(false).apply {
@@ -211,21 +213,21 @@ fun App() {
                         }
                     }
                     BottomBar(
-                        actions = arrayOf(
+                        actions = listOf(
                             BottomBarAction(
-                                stringResource(Res.string.settings),
+                                Res.string.settings,
                                 Res.drawable.settings
                             ) {
                                 showSettings.targetState = true
                             },
                             BottomBarAction(
-                                stringResource(Res.string.sort_filter),
+                                Res.string.sort_filter,
                                 Res.drawable.sort_filter
                             ) {
                                 showFilters.targetState = true
                             },
                             BottomBarAction(
-                                stringResource(Res.string.add_job),
+                                Res.string.add_job,
                                 Res.drawable.add
                             ) {
                                 selectedJob = null
