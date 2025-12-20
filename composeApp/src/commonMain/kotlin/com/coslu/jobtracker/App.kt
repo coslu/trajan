@@ -10,9 +10,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -28,6 +34,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.coslu.jobtracker.components.BottomBar
@@ -126,7 +134,11 @@ fun App() {
                     }
                 }
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(contentPadding),
+                    modifier = Modifier.padding(
+                        contentPadding + WindowInsets.ime.exclude(
+                            WindowInsets.navigationBars
+                        ).asPaddingValues()
+                    ),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -292,3 +304,22 @@ fun setPropertyColor(property: String, color: PropertyColor, override: Boolean =
 
 @Composable
 fun Dp.toInt() = LocalDensity.current.run { roundToPx() }
+
+// Implementation from androidx.compose.foundation.Padding version 1.11.0-alpha01
+@Stable
+operator fun PaddingValues.plus(other: PaddingValues): PaddingValues =
+    object : PaddingValues {
+        override fun calculateLeftPadding(layoutDirection: LayoutDirection): Dp =
+            this@plus.calculateLeftPadding(layoutDirection) +
+                    other.calculateLeftPadding(layoutDirection)
+
+        override fun calculateTopPadding(): Dp =
+            this@plus.calculateTopPadding() + other.calculateTopPadding()
+
+        override fun calculateRightPadding(layoutDirection: LayoutDirection): Dp =
+            this@plus.calculateRightPadding(layoutDirection) +
+                    other.calculateRightPadding(layoutDirection)
+
+        override fun calculateBottomPadding(): Dp =
+            this@plus.calculateBottomPadding() + other.calculateBottomPadding()
+    }
