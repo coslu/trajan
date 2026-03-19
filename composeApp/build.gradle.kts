@@ -1,21 +1,24 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-private val trajanVersionCode = 7
-private val trajanVersionName = "1.4.0"
-
 plugins {
     alias(libs.plugins.serialization)
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
-    androidTarget {
+    android {
+        namespace = "com.coslu.jobtracker"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+        }
+        androidResources {
+            enable = true
         }
     }
 
@@ -24,18 +27,13 @@ kotlin {
     sourceSets {
         val desktopMain by getting
 
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.ui.util.android)
-        }
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
+            implementation(libs.jetbrains.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
@@ -50,37 +48,6 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.coslu.jobtracker"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.coslu.jobtracker"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = trajanVersionCode
-        versionName = trajanVersionName
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        release {
-            isDebuggable = false
-            isMinifyEnabled = true
-        }
-        debug {
-            isDebuggable = true
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
 compose.desktop {
     configurations.all {
         exclude(group = "androidx.compose.ui", module = "ui-util")
@@ -91,7 +58,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Trajan"
-            packageVersion = trajanVersionName
+            packageVersion = libs.versions.trajan.versionName.get()
             description = "Tracking Assistant for Job Applications"
             vendor = "Coslu"
             licenseFile.set(project.file("../LICENSE"))
