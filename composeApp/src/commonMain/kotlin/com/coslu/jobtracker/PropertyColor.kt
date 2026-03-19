@@ -50,7 +50,7 @@ enum class PropertyColor(private val color: Color, private val textColor: Color)
         if (this != Transparent) textColor else MaterialTheme.colorScheme.onBackground
 }
 
-private class PropertyColorSerializer : KSerializer<PropertyColor> {
+class PropertyColorSerializer : KSerializer<PropertyColor> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("com.coslu.jobtracker.PropertyColor", PrimitiveKind.STRING)
 

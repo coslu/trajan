@@ -153,7 +153,7 @@ class Job(
     }
 }
 
-private class JobSerializer : KSerializer<Job> {
+class JobSerializer : KSerializer<Job> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("com.coslu.job") {
         element<String>("id")
         element<String>("name")

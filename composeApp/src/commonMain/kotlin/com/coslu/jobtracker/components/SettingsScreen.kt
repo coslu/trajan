@@ -48,6 +48,7 @@ import com.coslu.jobtracker.saveSettings
 import com.coslu.jobtracker.setPropertyColor
 import com.coslu.jobtracker.showSnackbar
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.extension
@@ -235,7 +236,8 @@ private fun SynchronizationView() {
             SwitchSetting(stringResource(Res.string.export_settings), Settings.exportSettings)
         }
         item {
-            val launcher = rememberFileSaverLauncher { exportToFile(it) }
+            val launcher =
+                rememberFileSaverLauncher(FileKitDialogSettings.createDefault()) { exportToFile(it) }
             OutlinedButton(
                 onClick = {
                     val defaultName = "Trajan-" + Clock.System.now()

@@ -165,7 +165,7 @@ object Settings {
     }
 }
 
-private class SettingsSerializer : KSerializer<Settings> {
+class SettingsSerializer : KSerializer<Settings> {
     val filterSerializer = MapSerializer(String.serializer(), Boolean.serializer())
 
     @OptIn(ExperimentalSerializationApi::class)
