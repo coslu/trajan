@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -45,6 +46,7 @@ import job_tracker.composeapp.generated.resources.Res
 import job_tracker.composeapp.generated.resources.transparent
 import org.jetbrains.compose.resources.painterResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("UnusedBoxWithConstraintsScope")
 @Composable
 fun JobProperty(
@@ -53,6 +55,7 @@ fun JobProperty(
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
     val showFullName = remember { MutableTransitionState(false) }
+    val propertyColor = getPropertyColor(property)
     BoxWithConstraints(modifier = modifier.pointerHoverIcon(PointerIcon.Hand)) {
         DropdownMenu(showColorPicker, { showColorPicker = false }) {
             Column(Modifier.height(150.dp).width(300.dp)) {
@@ -79,7 +82,6 @@ fun JobProperty(
                 }
             }
         }
-        val propertyColor = getPropertyColor(property)
         PopupBubble(
             dpOffset = DpOffset(25.dp, 30.dp),
             visible = showFullName,
@@ -87,6 +89,7 @@ fun JobProperty(
             backgroundColor = propertyColor.getBackgroundColor(false),
             textColor = propertyColor.getTextColor(),
         )
+
         if (maxWidth < 120.dp) {
             SmallProperty(
                 property,

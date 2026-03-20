@@ -138,16 +138,14 @@ fun App() {
                         contentPadding + WindowInsets.ime.exclude(
                             WindowInsets.navigationBars
                         ).asPaddingValues()
-                    ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    )
                 ) {
                     listState = rememberLazyListState()
                     LazyColumn(modifier = Modifier.weight(1f), state = listState) {
-                        item {
+                        item(key = 0) {
                             Box(modifier = Modifier.height(1.dp))
                         }
-                        items(jobs, key = { it.id }) {
+                        items(jobs, key = { it.id }, contentType = { it.type }) {
                             val showNotes =
                                 remember {
                                     MutableTransitionState(false).apply {

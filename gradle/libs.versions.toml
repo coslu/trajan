@@ -1,6 +1,6 @@
 [versions]
-trajan-versionName = "1.4.0"
-trajan-versionCode = "7"
+trajan-versionName = "1.4.1"
+trajan-versionCode = "8"
 agp = "9.1.0"
 android-compileSdk = "36"
 android-minSdk = "26"
